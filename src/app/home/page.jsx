@@ -15,7 +15,7 @@ import Autoplay from 'embla-carousel-autoplay';
 import SideBar from '@/components/sidebar/SideBar';
 const page = () => {
     return (
-        <div className="relative flex h-screen flex-col bg-background">
+        <div className="relative flex h-full flex-col bg-background">
             <Navbar />
             <div className="flex flex-col flex-grow">
                 <div className="hidden lg:block fixed top-0 left-0 h-full xl:w-[250px] lg:w-[200px] bg-neutral-100 overflow-auto">
@@ -67,11 +67,11 @@ const page = () => {
                                     </div>
                                 </CarouselItem>
                             </CarouselContent>
-                            <CarouselPrevious/>
-                            <CarouselNext/>
+                            <CarouselPrevious />
+                            <CarouselNext />
                         </Carousel>
                         <p className="font-bold text-3xl p-4 select-none">Upcoming events</p>
-                        <div className="grid grid-cols-2 gap-8 p-1">
+                        <div className="grid ipad:grid-cols-2 grid-cols-1 gap-8 p-1">
                             <Card className="h-[360px]">
                                 <CardContent className="flex p-6 h-full bg-cover bg-center rounded-md items-center select-none"
                                     style={{
@@ -115,6 +115,22 @@ const page = () => {
                         </div>
                     </div>
                 </div>
+                <footer className="fixed bottom-0 inset-x-0 lg:hidden bg-white h-[50px] shadow-md border-t">
+                    <div className="flex justify-center items-center h-full gap-16">
+                        <div className="flex flex-col justify-center items-center cursor-pointer">
+                            <Image src="/home.svg" alt="home" width={20} height={20} />
+                            <p className="text-xs font">Home</p>
+                        </div>
+                        <div className="flex flex-col justify-center items-center cursor-pointer">
+                            <Image src="/search.svg" alt="search" width={20} height={20} />
+                            <p className="text-xs font">Search</p>
+                        </div>
+                        <div className="flex flex-col justify-center items-center cursor-pointer">
+                            <Image src="/library.svg" alt="library" width={20} height={20} />
+                            <p className="text-xs font">Your library</p>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </div>
     );
