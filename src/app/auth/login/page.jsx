@@ -22,6 +22,12 @@ const page = () => {
         }
     }
 
+    const handeAuthSpotify = async (state) => {
+        const responce = await AuthService.authSpotify(state);
+        if (responce?.status === 200)
+            window.location.href = responce.data;
+    }
+
     return (
         <div className="flex min-h-screen justify-center items-center bg-background">
             <div className="ipad:m-2 min-h-full flex items-center border-foreground border rounded-lg overflow-hidden">
@@ -36,7 +42,8 @@ const page = () => {
                             <p>Don't have an account?</p>
                             <p className="underline cursor-pointer ml-1" onClick={() => router.push("/auth/registration")}>Sign up</p>
                         </div>
-                        <div className="lg:mt-12 mb-2 flex items-center justify-center border border-foreground px-6 py-2 rounded-md text-xs font-bold cursor-pointer">
+                        <div className="lg:mt-12 mb-2 flex items-center justify-center border border-foreground px-6 py-2 rounded-md text-xs font-bold cursor-pointer"
+                            onClick={() => handeAuthSpotify("login")}>
                             <Image src="/spotify-2.svg" alt="spotify" width={20} height={20} className="mr-1" />
                             <p>
                                 Login with Spotify
