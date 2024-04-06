@@ -23,6 +23,25 @@ export default class AuthService {
         }
     }
 
+    static async authSpotify(state) {
+        try {
+            const response = await $api.get(`${API_URL}/auth/spotify-auth?${state}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async verifySpotify(code, state) {
+        try {
+            const response = await $api.get(`${API_URL}/auth/callback?code=${code}&state=${state}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+    
+
     static async chechAuth() {
         try {
             const response = axios.get(`${API_URL}/auth/refresh`, { withCredentials: true });
