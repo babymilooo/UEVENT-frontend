@@ -1,22 +1,25 @@
 "use client"
 
 import { Input } from '@/components/ui/input';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from "@/components/ui/card"
 import AuthService from '@/service/authService';
 import toast from 'react-hot-toast';
+import { RootStoreContext } from '@/providers/rootStoreProvider';
+import { observer } from "mobx-react-lite";
 const page = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const rootStore = useContext(RootStoreContext);
+    const { userStore } = rootStore;
 
     const handeLogin = async () => {
-        console.log(email, password);
-        const responce = await AuthService.login(email, password);
-
-        if (responce?.status === 200) {
+        // const responce = await AuthService.login(email, password);
+        const response = await userStore.login(email, password);
+        if (response?.status === 200) {
             router.push("/home");
             toast.success("Login success");
         }
@@ -57,8 +60,8 @@ const page = () => {
                         style={{
                             backgroundImage: `url('/gradient.jpeg')`,
                         }}>
-                        <Image src="/bigLogo.png" height={40} width={1000} className='rounded-xl w-[40px] lg:w-[100px] ipad:w-[50px]' />
-                        <Image src="/logoWord.png" height={40} width={1000} className='rounded-xl w-[60px] lg:w-[250px] ipad:w-[175px] hidden ipad:block' />
+                        <Image src="/bigLogo.png" alt='logo' height={40} width={1000} className='rounded-xl w-[40px] lg:w-[100px] ipad:w-[50px]' />
+                        <Image src="/logoWord.png" alt="word" height={40} width={1000} className='rounded-xl w-[60px] lg:w-[250px] ipad:w-[175px] hidden ipad:block' />
                     </CardContent>
                 </Card>
             </div>
@@ -66,4 +69,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default observer(page);

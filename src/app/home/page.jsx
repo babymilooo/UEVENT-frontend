@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
     Carousel,
     CarouselContent,
@@ -15,9 +15,14 @@ import Autoplay from 'embla-carousel-autoplay';
 import SideBar from '@/components/sidebar/SideBar';
 import { Footer } from '@/components/footer/Footer';
 import { useRouter } from 'next/navigation';
+import { observer } from 'mobx-react-lite';
+import { RootStoreContext } from '@/providers/rootStoreProvider';
 
 const page = () => {
     const router = useRouter();
+    const rootStore = useContext(RootStoreContext);
+    const { userStore } = rootStore;
+
     return (
         <div className="relative flex h-full flex-col bg-background">
             <Navbar />
@@ -99,4 +104,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default observer(page);

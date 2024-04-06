@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 export default class AuthService {
     static async login(email, password) {
         try {
-            console.log(email)
             const response = await $api.post(`${API_URL}/auth/login`, { email, password });
             return response;
         } catch (e) {
@@ -16,7 +15,6 @@ export default class AuthService {
     static async register(email, password) {
         try {
             const response = await $api.post(`${API_URL}/auth/register`, { email, password });
-            console.log(response);
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
