@@ -64,8 +64,8 @@ const page = () => {
                                         <Card className="xl:h-[350px] lg:h-[250px] phone:h-[250px]">
                                             <CardContent className="flex h-full p-6 bg-cover bg-center rounded-md items-center justify-center select-none bg-lime-400">
                                                 <p className="font-bold xl:text-5xl lg:text-4xl ipad:text-4xl phone:text-xl text-black ">Join our community</p>
-                                                <Image src="/bigLogo.png" height={40} width={1000} className='rounded-xl w-[40px] ipad:w-[100px]' />
-                                                <Image src="/logoWord.png" height={40} width={1000} className='rounded-xl w-[60px] ipad:w-[250px] hidden ipad:block' />
+                                                <Image src="/bigLogo.png" alt="Logo" height={40} width={1000} className='rounded-xl w-[40px] ipad:w-[100px]' />
+                                                <Image src="/logoWord.png" alt="word" height={40} width={1000} className='rounded-xl w-[60px] ipad:w-[250px] hidden ipad:block' />
                                             </CardContent>
                                         </Card>
                                     </div>
@@ -77,7 +77,7 @@ const page = () => {
                         <p className="font-bold text-3xl p-4 select-none">Upcoming events</p>
                         <div className="grid ipad:grid-cols-2 grid-cols-1 gap-8 p-1">
                             {Array.from({ length: 3 }).map((_, index) => (
-                                <div onClick={() => router.push(`/events/${index}`)}>
+                                <div onClick={() => router.push(`/events/${index}`)} key={index}>
                                     <Card className="h-[360px] cursor-pointer" >
                                         <CardContent className="flex p-6 h-full bg-cover bg-center rounded-md items-center select-none"
                                             style={{

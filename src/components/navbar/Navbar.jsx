@@ -13,8 +13,8 @@ const Navbar = () => {
             <div className="container flex h-14 max-w-screen-2xl items-center">
                 <div className="hidden ipad:flex">
                     <div className="text-xl text-foreground flex items-center cursor-pointer" onClick={() => router.push("/home")}>
-                        <Image src="/bigLogo.png" height={40} width={35} />
-                        <Image src="/logoWord.png" height={40} width={100} />
+                        <Image src="/bigLogo.png" alt='logo' height={40} width={35} />
+                        <Image src="/logoWord.png" alt='word' height={40} width={100} />
                     </div>
                 </div>
                 <div className='flex flex-1 items-center space-x-2 justify-end'>
