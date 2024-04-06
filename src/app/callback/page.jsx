@@ -24,7 +24,7 @@ const page = () => {
           if (response?.status === 200) {
             toast.success('Successfully authenticated with Spotify.');
             router.push('/home');
-          } router.push('/auth/login');
+          };
         } catch (error) {
           console.error(error);
           toast.error('Authorization error. Please try again.');
