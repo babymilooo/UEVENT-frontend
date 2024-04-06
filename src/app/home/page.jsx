@@ -6,14 +6,18 @@ import {
     CarouselItem,
     CarouselNext,
     CarouselPrevious,
-} from "@/components/ui/carousel"
+} from "@/components/ui/MyCarousel"
 
 import { Card, CardContent } from "@/components/ui/card"
 import Navbar from '@/components/navbar/Navbar';
 import Image from 'next/image';
 import Autoplay from 'embla-carousel-autoplay';
 import SideBar from '@/components/sidebar/SideBar';
+import { Footer } from '@/components/footer/Footer';
+import { useRouter } from 'next/navigation';
+
 const page = () => {
+    const router = useRouter();
     return (
         <div className="relative flex h-full flex-col bg-background">
             <Navbar />
@@ -72,65 +76,24 @@ const page = () => {
                         </Carousel>
                         <p className="font-bold text-3xl p-4 select-none">Upcoming events</p>
                         <div className="grid ipad:grid-cols-2 grid-cols-1 gap-8 p-1">
-                            <Card className="h-[360px]">
-                                <CardContent className="flex p-6 h-full bg-cover bg-center rounded-md items-center select-none"
-                                    style={{
-                                        backgroundImage: `url('/carti.jpg')`,
-                                    }}>
-                                    <p className="font-bold xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-xl text-white">get tickets to the best <br /> concerts in the world</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="h-[360px]">
-                                <CardContent className="flex p-6 h-full bg-cover bg-center rounded-md items-center select-none"
-                                    style={{
-                                        backgroundImage: `url('/carti.jpg')`,
-                                    }}>
-                                    <p className="font-bold xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-xl text-white">get tickets to the best <br /> concerts in the world</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="h-[360px]">
-                                <CardContent className="flex p-6 h-full bg-cover bg-center rounded-md items-center select-none"
-                                    style={{
-                                        backgroundImage: `url('/carti.jpg')`,
-                                    }}>
-                                    <p className="font-bold xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-xl text-white">get tickets to the best <br /> concerts in the world</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="h-[360px]">
-                                <CardContent className="flex p-6 h-full bg-cover bg-center rounded-md items-center select-none"
-                                    style={{
-                                        backgroundImage: `url('/carti.jpg')`,
-                                    }}>
-                                    <p className="font-bold xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-xl text-white">get tickets to the best <br /> concerts in the world</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="h-[360px]">
-                                <CardContent className="flex p-6 h-full bg-cover bg-center rounded-md items-center select-none"
-                                    style={{
-                                        backgroundImage: `url('/carti.jpg')`,
-                                    }}>
-                                    <p className="font-bold xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-xl text-white">get tickets to the best <br /> concerts in the world</p>
-                                </CardContent>
-                            </Card>
+                            {Array.from({ length: 3 }).map((_, index) => (
+                                <div onClick={() => router.push(`/events/${index}`)}>
+                                    <Card className="h-[360px] cursor-pointer" >
+                                        <CardContent className="flex p-6 h-full bg-cover bg-center rounded-md items-center select-none"
+                                            style={{
+                                                backgroundImage: `url('/carti.jpg')`,
+                                            }}
+                                        >
+                                            <p className="font-bold xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-xl text-white">get tickets to the best <br /> concerts in the world</p>
+                                        </CardContent>
+                                    </Card>
+
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
-                <footer className="fixed bottom-0 inset-x-0 lg:hidden bg-white h-[50px] shadow-md border-t">
-                    <div className="flex justify-center items-center h-full gap-16">
-                        <div className="flex flex-col justify-center items-center cursor-pointer">
-                            <Image src="/home.svg" alt="home" width={20} height={20} />
-                            <p className="text-xs font">Home</p>
-                        </div>
-                        <div className="flex flex-col justify-center items-center cursor-pointer">
-                            <Image src="/search.svg" alt="search" width={20} height={20} />
-                            <p className="text-xs font">Search</p>
-                        </div>
-                        <div className="flex flex-col justify-center items-center cursor-pointer">
-                            <Image src="/library.svg" alt="library" width={20} height={20} />
-                            <p className="text-xs font">Your library</p>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         </div>
     );
