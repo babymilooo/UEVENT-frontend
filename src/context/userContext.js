@@ -101,7 +101,7 @@ class UserStore {
 
     async getUserArtists() {
         try {
-            const response = await UserService.getUserArtists(this.user.id);
+            const response = await UserService.getUserArtists();
             runInAction(() => {
                 this.setArtists(response.data);
             });

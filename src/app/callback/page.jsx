@@ -6,12 +6,10 @@ import toast from 'react-hot-toast';
 import { RootStoreContext } from '@/providers/rootStoreProvider';
 
 const page = () => {
-  console.log('============');
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const rootStore = useContext(RootStoreContext);
   const { userStore } = rootStore;
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
