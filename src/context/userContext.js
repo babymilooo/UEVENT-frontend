@@ -80,6 +80,7 @@ class UserStore {
             await AuthService.logout();
             this.setUser({ username: null, id: null, email: null, profilePicture: null, isVerified: false});
             this.setLoggedIn(false);
+            this.setArtists([]);
             return true;
         }
         catch (e) {
