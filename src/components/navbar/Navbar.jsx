@@ -96,7 +96,7 @@ const Navbar = ({ data }) => {
                                 <MyPopoverTrigger>
                                     <Tooltip text={userStore.user?.userName}>
                                         <Avatar>
-                                            <AvatarImage src={userStore.user?.image} alt="@avatar" className="w-[100px]" />
+                                            <AvatarImage src={userStore.user?.profilePicture} alt="@avatar" className="w-10" />
                                             <AvatarFallback>CN</AvatarFallback>
                                         </Avatar>
                                     </Tooltip>

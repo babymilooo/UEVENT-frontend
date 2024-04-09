@@ -6,7 +6,7 @@ class UserStore {
     user = {
         userName: "",
         id: "",
-        // image: null,
+        profilePicture: null,
         email: "",
         isVerified: false
     };
@@ -78,7 +78,7 @@ class UserStore {
     async logout() {
         try {
             await AuthService.logout();
-            this.setUser({ username: null, id: null, email: null });
+            this.setUser({ username: null, id: null, email: null, profilePicture: null, isVerified: false});
             this.setLoggedIn(false);
             return true;
         }
