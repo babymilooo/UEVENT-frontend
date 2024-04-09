@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { RootStoreContext } from '@/providers/rootStoreProvider';
+import { observer } from 'mobx-react-lite';
+
 import {
     Popover as MyPopover,
     PopoverContent as MyPopoverContent,
@@ -16,13 +18,58 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import Tooltip from '../tooltip/tooltip';
+import AuthService from '@/service/authService';
 
 
-const Navbar = () => {
+const Navbar = ({ data }) => {
     const router = useRouter();
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const checkAuthentication = async () => {
+            try {
+                const response = await userStore.checkAuth();
+                console.log(response);
+                if (response?.status !== 200) {
+                    setLoading(false);
+                } else {
+                    console.log("User is authenticated");
+                    setLoading(false);
+                }
+            } catch (error) {
+                console.error("Authentication check failed", error);
+            }
+        };
+
+        checkAuthentication();
+    }, [userStore]);
+
+    const handleLogout = async () => {
+        try {
+            await userStore.logout();
+            router.push("/");
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
+    };
+
+    if (loading) {
+        return < header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" >
+            <div className="container flex h-14 max-w-screen-2xl items-center">
+                <div className="hidden ipad:flex">
+                    <div className="text-xl text-foreground flex items-center cursor-pointer" onClick={() => router.push("/home")}>
+                        <Image src="/bigLogo.png" alt='logo' height={40} width={35} />
+                        <Image src="/logoWord.png" alt='word' height={40} width={100} />
+                    </div>
+                </div>
+                <div className='flex flex-1 items-center space-x-2 justify-end'>
+                    loading...
+                </div>
+            </div>
+        </header >;
+    }
 
     return (
 
@@ -72,7 +119,7 @@ const Navbar = () => {
                                         settings
                                     </div>
                                     <div className="w-full border-t">
-                                        <p className="p-4 cursor-pointer">
+                                        <p className="p-4 cursor-pointer" onClick={handleLogout}>
                                             Logout
                                         </p>
                                     </div>
@@ -86,4 +133,15 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default observer(Navbar);
+
+// export async function getServerSideProps(context) {
+//     const cookie = context.req.headers.cookie;
+//     // const response = await AuthService.checkAuth(cookie);
+//     const response = await user.checkAuth(cookie);
+//     return {
+//         props: {
+//             response, // Передаем ответ как проп в ваш компонент
+//         },
+//     };
+// }

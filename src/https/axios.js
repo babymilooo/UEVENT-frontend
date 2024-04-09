@@ -26,7 +26,7 @@ $api.interceptors.response.use((config) => {
         const originalRequest = error.config;
         originalRequest._iRetry = true;
         try {
-            await axios.get(`${API_URL}/auth/refresh`, { withCredentials: true });
+            await axios.get(`${API_URL}/auth/refreshToken`, { withCredentials: true });
             return $api.request(originalRequest);
         }
         catch (e) {

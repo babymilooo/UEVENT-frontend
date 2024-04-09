@@ -32,8 +32,8 @@ const page = () => {
     }
 
     return (
-        <div className="flex min-h-screen justify-center items-center bg-background">
-            <div className="ipad:m-2 min-h-full flex items-center border-foreground border rounded-lg overflow-hidden">
+        <div className="flex justify-center items-center bg-background my-32">
+            <div className="ipad:m-2 flex items-center border-foreground border rounded-lg overflow-hidden">
                 <div className="lg:w-1/2 ipad:w-1/3 lg:ml-12 lg:mt-16 lg:mb-32">
                     <p className="p-12 text-foreground text-center text-3xl font-bold">Welcome back</p>
                     <div className="flex flex-col gap-2 lg:mx-16 mx-2">

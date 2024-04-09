@@ -38,14 +38,16 @@ export default class AuthService {
             toast.error(e.response?.data?.message);
         }
     }
-    
 
-    static async chechAuth() {
+
+    static async checkAuth() {
         try {
-            const response = axios.get(`${API_URL}/auth/refresh`, { withCredentials: true });
+            const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, {
+                withCredentials: true
+            });
             return response;
         } catch (e) {
-            console.log(e.response?.data?.message);
+            toast.error(e.response?.data?.message);
         }
     }
 

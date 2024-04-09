@@ -3,10 +3,10 @@ import { makeAutoObservable, runInAction } from 'mobx';
 
 class UserStore {
     user = {
-        userName: null,
-        id: null,
+        userName: "",
+        id: "",
         // image: null,
-        email: null,
+        email: "",
         isVerified: false
     };
 
@@ -27,7 +27,7 @@ class UserStore {
 
     async checkAuth() {
         try {
-            const response = await AuthService.chechAuth();
+            const response = await AuthService.checkAuth();
             runInAction(() => {
                 this.setUser(response.data);
                 this.setLoggedIn(true);
@@ -59,6 +59,7 @@ class UserStore {
             const response = await AuthService.register(email, password);
             runInAction(() => {
                 this.setUser(response.data);
+                this.setLoggedIn(true);
             });
             return response;
         }
@@ -71,9 +72,8 @@ class UserStore {
     async logout() {
         try {
             await AuthService.logout();
-            // this.setUser({ username: null, id: null, image: null });
             this.setUser({ username: null, id: null, email: null });
-
+            this.setLoggedIn(false);
             return true;
         }
         catch (e) {
