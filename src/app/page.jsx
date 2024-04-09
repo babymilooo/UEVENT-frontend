@@ -8,6 +8,7 @@ export default function Home() {
   const router = useRouter();
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
+      <Navbar />
       <div className="flex-grow flex justify-center items-center p-4">
         <div className="flex flex-col items-center justify-center">
           <p className=" xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-3xl font-bold text-center animate-fade-up animate-duration-[1500ms] animate-ease-out">Visit your favorite</p>

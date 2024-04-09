@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
+        
         <Toaster position="bottom-right" reverseOrder={false} />
         {children}
       </body>

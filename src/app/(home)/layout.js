@@ -1,4 +1,5 @@
 import { Footer } from "@/components/footer/Footer";
+import Navbar from "@/components/navbar/Navbar";
 import SideBar from "@/components/sidebar/SideBar";
 
 export const metadata = {
@@ -9,6 +10,7 @@ export const metadata = {
 export default function Layout({ children }) {
   return (
     <div className="relative flex h-full flex-col bg-background">
+      <Navbar />
       <div className="flex flex-col flex-grow">
         <div className="hidden lg:block fixed top-0 left-0 h-full xl:w-[250px] lg:w-[200px] bg-neutral-100 overflow-auto">
           <SideBar />

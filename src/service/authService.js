@@ -21,9 +21,9 @@ export default class AuthService {
         }
     }
 
-    static async authSpotify(state) {
+    static async authSpotify() {
         try {
-            const response = await $api.get(`${API_URL}/auth/spotify-auth?${state}`);
+            const response = await $api.get(`${API_URL}/auth/spotify-auth`);
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
@@ -39,7 +39,6 @@ export default class AuthService {
         }
     }
 
-
     static async checkAuth() {
         try {
             const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, {
@@ -47,7 +46,7 @@ export default class AuthService {
             });
             return response;
         } catch (e) {
-            toast.error(e.response?.data?.message);
+            // toast.error(e.response?.data?.message);
         }
     }
 

@@ -1,4 +1,5 @@
 const { default: AuthService } = require("@/service/authService");
+import UserService from '@/service/userService';
 import { makeAutoObservable, runInAction } from 'mobx';
 
 class UserStore {
@@ -11,6 +12,7 @@ class UserStore {
     };
 
     isLoggedIn = false;
+    userArtists = [];
     constructor(user, rootStore) {
         this.rootStore = rootStore;
         makeAutoObservable(this);
@@ -23,6 +25,10 @@ class UserStore {
 
     setLoggedIn(value) {
         this.isLoggedIn = value;
+    }
+
+    setArtists(artists) {
+        this.userArtists = artists;
     }
 
     async checkAuth() {
@@ -77,6 +83,29 @@ class UserStore {
             return true;
         }
         catch (e) {
+            console.error(e.response?.data?.message);
+            return e.response?.data?.message;
+        }
+    }
+
+    async authSpotify() {
+        try {
+            const response = await AuthService.authSpotify();
+            return response;
+        } catch (e) {
+            console.error(e.response?.data?.message);
+            return e.response?.data?.message;
+        }
+    }
+
+    async getUserArtists() {
+        try {
+            const response = await UserService.getUserArtists(this.user.id);
+            runInAction(() => {
+                this.setArtists(response.data);
+            });
+            return response;
+        } catch (e) {
             console.error(e.response?.data?.message);
             return e.response?.data?.message;
         }
