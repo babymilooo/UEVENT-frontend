@@ -1,7 +1,6 @@
 'use client'
 
 import { Input } from '@/components/ui/input';
-import UserService from '@/service/userService';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/avatar"
 
 import { Avatar } from '@/components/ui/avatar';
+import ArtistService from '@/service/artistService';
 
 const page = () => {
     const [search, setSearch] = useState('');
@@ -30,10 +30,10 @@ const page = () => {
         const savedHistory = localStorage.getItem('searchHistory');
         return savedHistory ? JSON.parse(savedHistory) : [];
     });
+    const [artistsInfo, setArtistsInfo] = useState([]);
 
     const router = useRouter();
 
-    const [artistsInfo, setArtistsInfo] = useState([]);
 
     useEffect(() => {
         if (searchHistory.length > 0) {
@@ -43,8 +43,15 @@ const page = () => {
 
     const loadArtistsInfo = async (artistIds) => {
         try {
-            const artists = await Promise.all(artistIds.map(id => UserService.getArtistById(id)));
-            setArtistsInfo(artists);
+            console.log("artistIds", artistIds);
+            const response = await ArtistService.getArtists(artistIds);
+            setArtistsInfo(response.data.map((artist) => {
+                return {
+                    artist: artist.name,
+                    id: artist.id,
+                    image: artist.images[1].url,
+                };
+            }));
         } catch (error) {
             console.error("Ошибка при загрузке информации об исполнителях:", error);
             // Обработка ошибок
@@ -53,7 +60,7 @@ const page = () => {
 
     const handleSearch = async () => {
         try {
-            const response = await UserService.searchArtists(search);
+            const response = await ArtistService.searchArtists(search);
             setArtists(response.data.map((artist) => {
                 return {
                     artist: artist.name,
@@ -69,9 +76,13 @@ const page = () => {
     };
 
     const handleArtistClick = (artistId) => {
-        setSearchHistory(prevHistory => [...new Set([artistId, ...prevHistory])]);
+        setSearchHistory(prevHistory => {
+            const filteredHistory = prevHistory.filter(id => id !== artistId);
+            return [artistId, ...filteredHistory];
+        });
         router.push(`/artist/${artistId}`);
     };
+
 
     useEffect(() => {
         localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
@@ -112,20 +123,16 @@ const page = () => {
                 onChange={(e) => setSearch(e.target.value)}
                 className='w-2/3 mt-10 lg:ml-10'
             />
-            <div className='flex-grow grid grid-cols-1 ipad:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 overflow-y-auto p-2 gap-4 mt-10 w-full'>
+            {search === '' && searchHistory.length > 0 && (
+                <p className='mt-4 mb-2 font-bold pl-2'>Search History</p>
+            )}
+            <div className='grid grid-cols-1 ipad:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 overflow-y-auto p-2 gap-4 w-full'>
                 {/* Отображение истории поиска */}
+
                 {search === '' && searchHistory.length > 0 ? (
-                    <div>
-                        {artistsInfo.map((artist, index) => (
-                            <div key={index} className="col-span-1">
-                                <p>Имя: {artist.name}</p>
-                                {/* Другая информация об исполнителе */}
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    artists.map((artist) => (
-                        <div key={artist.id} className="col-span-1">
+
+                    artistsInfo.map((artist, index) => (
+                        <div key={index} className="col-span-1">
                             <Card
                                 onClick={() => handleArtistClick(artist.id)}
                                 className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center  cursor-pointer hover:bg-secondary w-full"
@@ -136,6 +143,27 @@ const page = () => {
                                         <AvatarFallback>AR</AvatarFallback>
                                     </Avatar>
                                     <div classname="flex flex-col ml-2">
+                                        <p className="text-xd font-bold ml-2 pt-2">{artist.artist}</p>
+                                        <p className="text-muted-foreground text-xs ml-2">Artist</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    ))
+
+                ) : (
+                    artists.map((artist) => (
+                        <div key={artist.id} className="col-span-1 mt-10">
+                            <Card
+                                onClick={() => handleArtistClick(artist.id)}
+                                className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center  cursor-pointer hover:bg-secondary w-full"
+                            >
+                                <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4">
+                                    <Avatar>
+                                        <AvatarImage src={artist.image} alt={artist.artist} className="ipad:w-full w-10" />
+                                        <AvatarFallback>AR</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col ml-2">
                                         <p className="text-xd font-bold ml-2 pt-2">{artist.artist}</p>
                                         <p className="text-muted-foreground text-xs ml-2">Artist</p>
                                     </div>
