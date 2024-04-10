@@ -5,9 +5,9 @@ import toast from 'react-hot-toast';
 
 export default class UserService {
 
-    static async getUserArtists(id) {
+    static async getUserArtists() {
         try {
-            const response = await $api.get(`${API_URL}/info/user-following-artists/${id}`, {}, { withCredentials: true });
+            const response = await $api.get(`${API_URL}/artists/user-following-artists`, {}, { withCredentials: true });
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
