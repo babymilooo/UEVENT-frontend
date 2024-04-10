@@ -12,13 +12,14 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar"
+import { useRouter } from 'next/navigation';
 const SideBar = () => {
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredArtists, setFilteredArtists] = useState([]);
-
+    const router = useRouter();
     useEffect(() => {
         const getArtists = async () => {
             try {
@@ -57,9 +58,9 @@ const SideBar = () => {
     return (
         <div className="mt-16">
             <div className="flex flex-grow h-[50px] bg-background m-2 rounded-lg items-center justify-center overflow-hidden">
-                <div className="flex rounded-md w-full cursor-pointer ml-6">
+                <div className="flex rounded-md w-full cursor-pointer ml-6" onClick={() => router.push('/search')}>
                     <Image src="/search.svg" alt="spotify" width={20} height={20} className="mr-1" />
-                    <p>
+                    <p >
                         search
                     </p>
                 </div>

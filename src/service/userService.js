@@ -7,7 +7,7 @@ export default class UserService {
 
     static async getUserArtists() {
         try {
-            const response = await $api.get(`${API_URL}/artists/user-following-artists`, {}, { withCredentials: true });
+            const response = await $api.get(`${API_URL}/artists/user-following-artists`);
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
@@ -16,7 +16,7 @@ export default class UserService {
 
     static async searchArtists(query) {
         try {
-            const response = await $api.get(`${API_URL}/info/get-artist/${query}`, {}, { withCredentials: true });
+            const response = await $api.get(`${API_URL}/artists/get-artist`, { params: { artistName: query } }, { withCredentials: true });
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
