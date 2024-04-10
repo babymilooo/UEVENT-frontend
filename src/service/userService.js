@@ -13,4 +13,13 @@ export default class UserService {
             toast.error(e.response?.data?.message);
         }
     }
+
+    static async searchArtists(query) {
+        try {
+            const response = await $api.get(`${API_URL}/info/get-artist/${query}`, {}, { withCredentials: true });
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
 }
