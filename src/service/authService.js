@@ -39,16 +39,26 @@ export default class AuthService {
         }
     }
 
-    static async checkAuth() {
+    static async checkAuth(accessTokenObj, refreshTokenObj) {
         try {
+            // Убедитесь, что значения accessToken и refreshToken являются строками
+            const accessToken = accessTokenObj.value;
+            const refreshToken = refreshTokenObj.value;
+            console.log("refreshToken", refreshToken);
+            const cookieString = `accessToken=${accessToken}; refreshToken=${refreshToken}`;
             const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, {
+                headers: {
+                    'Cookie': cookieString
+                },
                 withCredentials: true
             });
             return response;
         } catch (e) {
+            // Обработка ошибки
             // toast.error(e.response?.data?.message);
         }
     }
+
 
     static async logout() {
         try {

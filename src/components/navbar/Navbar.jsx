@@ -21,30 +21,19 @@ import Tooltip from '../tooltip/tooltip';
 import AuthService from '@/service/authService';
 
 
-const Navbar = ({ data }) => {
+const Navbar = ({ user }) => {
     const router = useRouter();
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const checkAuthentication = async () => {
-            try {
-                const response = await userStore.checkAuth();
-                console.log(response);
-                if (response?.status !== 200) {
-                    setLoading(false);
-                } else {
-                    console.log("User is authenticated");
-                    setLoading(false);
-                }
-            } catch (error) {
-                console.error("Authentication check failed", error);
-            }
-        };
-
-        checkAuthentication();
-    }, [userStore]);
+        userStore.setUser(user);
+        if (user) {
+            userStore.setLoggedIn(true);
+        }
+        setLoading(false);
+    }, []);
 
     const handleLogout = async () => {
         try {
