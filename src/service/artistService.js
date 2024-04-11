@@ -25,10 +25,19 @@ export default class ArtistService {
 
     static async getArtists(artistIds) {
         try {
-            const response = await $api.post(`${API_URL}/artists/get-artists`, {artistIds});
+            const response = await $api.post(`${API_URL}/artists/get-artists`, { artistIds });
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async getArtist(artistId) {
+        try {
+            const response = await $api.get(`${API_URL}/artists/get-artist/${artistId}`);
+            return response;
+        } catch (e) {
+            // toast.error(e.response?.data?.message);
         }
     }
 }

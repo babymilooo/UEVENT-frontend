@@ -14,6 +14,14 @@ export default class UserService {
         }
     }
 
+    static async getUserInfo() {
+        try {
+            const response = await $api.get(`${API_URL}/user/user-info`);
+            return response;
+        } catch (e) {
+            // toast.error(e.response?.data?.message);
+        }
+    }
     // static async searchArtists(query) {
     //     try {
     //         const response = await $api.get(`${API_URL}/artists/get-artist`, { params: { artistName: query } }, { withCredentials: true });

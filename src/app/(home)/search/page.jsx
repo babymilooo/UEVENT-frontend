@@ -49,7 +49,7 @@ const page = () => {
                 return {
                     artist: artist.name,
                     id: artist.id,
-                    image: artist.images[1].url,
+                    image: artist.images[1]?.url,
                 };
             }));
         } catch (error) {
@@ -65,7 +65,7 @@ const page = () => {
                 return {
                     artist: artist.name,
                     id: artist.id,
-                    image: artist.images[1].url,
+                    image: artist.images[1]?.url,
                 };
             }));
             // console.log("Результат поиска артистов:", artists);
@@ -75,18 +75,17 @@ const page = () => {
         }
     };
 
-    const handleArtistClick = (artistId) => {
-        setSearchHistory(prevHistory => {
-            const filteredHistory = prevHistory.filter(id => id !== artistId);
-            return [artistId, ...filteredHistory];
-        });
-        router.push(`/artist/${artistId}`);
-    };
+    // const handleArtistClick = (artistId) => {
+    //     setSearchHistory(prevHistory => {
+    //         const filteredHistory = prevHistory.filter(id => id !== artistId);
+    //         return [artistId, ...filteredHistory];
+    //     });
+    // };
 
 
-    useEffect(() => {
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-    }, [searchHistory]);
+    // useEffect(() => {
+    //     localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    // }, [searchHistory]);
 
 
 
@@ -134,7 +133,10 @@ const page = () => {
                     artistsInfo.map((artist, index) => (
                         <div key={index} className="col-span-1">
                             <Card
-                                onClick={() => handleArtistClick(artist.id)}
+                                onClick={() => {
+
+                                    router.push(`/artist/${artist.id}`);
+                                }}
                                 className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center  cursor-pointer hover:bg-secondary w-full"
                             >
                                 <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4">
@@ -142,7 +144,7 @@ const page = () => {
                                         <AvatarImage src={artist.image} alt={artist.artist} className="ipad:w-full w-10" />
                                         <AvatarFallback>AR</AvatarFallback>
                                     </Avatar>
-                                    <div classname="flex flex-col ml-2">
+                                    <div className="flex flex-col ml-2">
                                         <p className="text-xd font-bold ml-2 pt-2">{artist.artist}</p>
                                         <p className="text-muted-foreground text-xs ml-2">Artist</p>
                                     </div>
@@ -155,7 +157,10 @@ const page = () => {
                     artists.map((artist) => (
                         <div key={artist.id} className="col-span-1 mt-10">
                             <Card
-                                onClick={() => handleArtistClick(artist.id)}
+                                onClick={() => {
+
+                                    router.push(`/artist/${artist.id}`);
+                                }}
                                 className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center  cursor-pointer hover:bg-secondary w-full"
                             >
                                 <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4">
