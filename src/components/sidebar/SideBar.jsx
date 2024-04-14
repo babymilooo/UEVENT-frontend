@@ -13,7 +13,8 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import { useRouter } from 'next/navigation';
-const SideBar = () => {
+import { toast } from 'react-hot-toast';
+const SideBar = ({ artists }) => {
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
     const [loading, setLoading] = useState(true);
@@ -21,24 +22,15 @@ const SideBar = () => {
     const [filteredArtists, setFilteredArtists] = useState([]);
     const router = useRouter();
     useEffect(() => {
-        const getArtists = async () => {
-            try {
-                const response = await userStore.getUserArtists();
-                console.log(response);
-                if (response?.status !== 200) {
-                    setLoading(false);
-                } else {
-                    console.log("user artists", response.data);
-                    setFilteredArtists(response.data);
-                    setLoading(false);
-                }
-            } catch (error) {
-                console.error("user artists failed", error);
-            }
+        if (artists) {
+            userStore.setArtists(artists);
         }
-        getArtists();
+        else {
+            toast.error("login with spotify to see your artists");
+        }
 
-    }, [userStore]);
+        setLoading(false);
+    }, []);
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);

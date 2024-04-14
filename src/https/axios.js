@@ -10,7 +10,7 @@ const $api = axios.create({
 
 $api.interceptors.request.use((config) => {
     const token = Cookies.get('accessToken');
-
+    
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -26,7 +26,7 @@ $api.interceptors.response.use((config) => {
         const originalRequest = error.config;
         originalRequest._iRetry = true;
         try {
-            await axios.get(`${API_URL}/auth/refreshToken`, { withCredentials: true });
+            await axios.post(`${API_URL}/auth/refreshToken`, {}, { withCredentials: true });
             return $api.request(originalRequest);
         }
         catch (e) {

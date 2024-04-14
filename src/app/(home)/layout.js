@@ -1,7 +1,6 @@
 import { Footer } from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import SideBar from "@/components/sidebar/SideBar";
-import AuthService from "@/service/authService";
 import UserService from "@/service/userService";
 import { cookies } from 'next/headers'
 export const metadata = {
@@ -9,13 +8,14 @@ export const metadata = {
 };
 
 export default async function Layout({ children }) {
-  const user = await getServerSideProps();
+
+  const artists = await getServerSideArtists();
   return (
     <div className="relative flex h-full flex-col bg-background">
-      <Navbar user={user} />
+
       <div className="flex flex-col flex-grow">
         <div className="hidden lg:block fixed top-0 left-0 h-full xl:w-[250px] lg:w-[200px] bg-neutral-100 overflow-auto">
-          <SideBar />
+          <SideBar artists={artists} />
         </div>
         {children}
         <Footer />
@@ -24,10 +24,10 @@ export default async function Layout({ children }) {
   );
 }
 
-async function getServerSideProps() {
-  const res = await UserService.getUserInfo();
+async function getServerSideArtists() {
+  const res = await UserService.getUserArtists();
   if (!res)
     return null;
-  const artist = res.data;
-  return artist;
+  const artists = res.data;
+  return artists;
 }

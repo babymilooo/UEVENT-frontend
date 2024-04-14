@@ -26,7 +26,11 @@ const Render = ({ artist }) => {
                     )}
                     <h1 className='text-6xl font-bold'>{artist.name}</h1>
                     <p className=' text-muted-foreground'>{artist.genres[0]}</p>
-                    <p className='text-xl mt-16 '>{artist.followers.total} followers</p>
+                    <div className='flex items-center mt-16 gap-1'>
+                        <p className='text-xl font-bold'>{artist.followers.total.toLocaleString()}
+                        </p>
+                        <p className='font-bold text-xs pt-1'>Followers</p>
+                    </div>
                 </div>
 
             </div>

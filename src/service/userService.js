@@ -10,7 +10,8 @@ export default class UserService {
             const response = await $api.get(`${API_URL}/artists/user-following-artists`);
             return response;
         } catch (e) {
-            toast.error(e.response?.data?.message);
+            console.error(e.response?.data?.message);
+            // toast.error(e.response?.data?.message);
         }
     }
 
@@ -19,6 +20,8 @@ export default class UserService {
             const response = await $api.get(`${API_URL}/user/user-info`);
             return response;
         } catch (e) {
+            console.error(e.response?.data?.message);
+
             // toast.error(e.response?.data?.message);
         }
     }
