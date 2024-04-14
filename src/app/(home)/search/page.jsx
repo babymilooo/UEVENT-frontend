@@ -75,20 +75,6 @@ const page = () => {
         }
     };
 
-    // const handleArtistClick = (artistId) => {
-    //     setSearchHistory(prevHistory => {
-    //         const filteredHistory = prevHistory.filter(id => id !== artistId);
-    //         return [artistId, ...filteredHistory];
-    //     });
-    // };
-
-
-    // useEffect(() => {
-    //     localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-    // }, [searchHistory]);
-
-
-
     useEffect(() => {
         if (timer) {
             clearTimeout(timer);
@@ -111,8 +97,6 @@ const page = () => {
             }
         };
     }, [search]);
-
-
 
     return (
         <div className='xl:pl-[250px] lg:pl-[200px] flex flex-col items-center lg:items-start mb-12 w-full '>

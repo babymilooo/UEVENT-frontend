@@ -40,4 +40,13 @@ export default class ArtistService {
             // toast.error(e.response?.data?.message);
         }
     }
+
+    static async getArtistTopTracks(artistId) {
+        try {
+            const response = await $api.get(`${API_URL}/artists/get-artist-songs/${artistId}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
 }

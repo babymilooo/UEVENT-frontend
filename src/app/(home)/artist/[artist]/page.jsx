@@ -10,6 +10,10 @@ export default async function page({ params }) {
 
 async function getServerSideProps(params) {
     const res = await ArtistService.getArtist(params.artist);
-    const artist = res.data;
+    const tracks = await ArtistService.getArtistTopTracks(params.artist);
+    if (!res || !tracks)
+        return null;
+    const artist = { ...res.data, tracks: tracks.data };
+    // const artist = res.data;
     return artist;
 }

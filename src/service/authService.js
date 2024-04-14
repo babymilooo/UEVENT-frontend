@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 export default class AuthService {
     static async login(email, password) {
         try {
-            const response = await axios.post(`${API_URL}/auth/login`, { email, password }, {withCredentials: true });
+            const response = await axios.post(`${API_URL}/auth/login`, { email, password }, { withCredentials: true });
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
@@ -14,7 +14,7 @@ export default class AuthService {
 
     static async register(email, password) {
         try {
-            const response = await axios.post(`${API_URL}/auth/register`, { email, password }, {withCredentials: true });
+            const response = await axios.post(`${API_URL}/auth/register`, { email, password }, { withCredentials: true });
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
@@ -23,7 +23,7 @@ export default class AuthService {
 
     static async authSpotify() {
         try {
-            const response = await axios.get(`${API_URL}/auth/spotify-auth`,{}, {withCredentials: true });
+            const response = await axios.get(`${API_URL}/auth/spotify-auth`, {}, { withCredentials: true });
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
@@ -32,7 +32,7 @@ export default class AuthService {
 
     static async verifySpotify(code, state) {
         try {
-            const response = await axios.get(`${API_URL}/auth/callback?code=${code}&state=${state}`);
+            const response = await axios.get(`${API_URL}/auth/callback?code=${code}&state=${state}`, { withCredentials: true });
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
