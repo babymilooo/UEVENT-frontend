@@ -7,14 +7,16 @@ import { Input } from '@/components/ui/input';
 import { RootStoreContext } from '@/providers/rootStoreProvider';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { observer } from 'mobx-react-lite';
+import { Skeleton } from "@/components/ui/skeleton"
+
 import {
     Avatar,
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar"
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-hot-toast';
-const SideBar = ({ artists }) => {
+
+const SideBar = () => {
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
     const [loading, setLoading] = useState(true);
@@ -22,15 +24,24 @@ const SideBar = ({ artists }) => {
     const [filteredArtists, setFilteredArtists] = useState([]);
     const router = useRouter();
     useEffect(() => {
-        if (artists) {
-            userStore.setArtists(artists);
+        const getArtists = async () => {
+            try {
+                const response = await userStore.getUserArtists();
+                console.log(response);
+                if (response?.status !== 200) {
+                    setLoading(false);
+                } else {
+                    console.log("user artists", response.data);
+                    setFilteredArtists(response.data);
+                    setLoading(false);
+                }
+            } catch (error) {
+                console.error("user artists failed", error);
+            }
         }
-        else {
-            toast.error("login with spotify to see your artists");
-        }
+        getArtists();
 
-        setLoading(false);
-    }, []);
+    }, [userStore]);
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
@@ -45,7 +56,6 @@ const SideBar = ({ artists }) => {
             setFilteredArtists(userStore.userArtists);
         }
     }, [searchQuery]);
-
 
     return (
         <div className="mt-16">
@@ -67,16 +77,30 @@ const SideBar = ({ artists }) => {
                     />
                 </div>
                 <ScrollArea className="mx-2 mb-2" style={{ height: `calc(100vh - 196px)`, overflowY: 'auto' }}>
-                    {filteredArtists.map((artist, index) => (
-                        <div key={index} className="flex rounded-md cursor-pointer m-1 h-[50px] items-center hover:bg-secondary">
-                            {/* <Image src={artist.images[0].url} alt="spotify" width={50} height={50} className="mr-1 rounded-full" /> */}
-                            <Avatar>
-                                <AvatarImage src={artist.images[0].url} alt="@spotify" className="w-10" />
-                                <AvatarFallback>A</AvatarFallback>
-                            </Avatar>
-                            <p className='ml-3'>{artist.name}</p>
-                        </div>
-                    ))}
+                    {loading ?
+                        (
+                            Array.from({ length: 13 }).map((_, index) => (
+
+                                <div key={index} className="flex items-center space-x-4 mb-2">
+                                    <Skeleton className="h-12 w-12 rounded-full" />
+                                    <div className="space-y-2">
+                                        <Skeleton className="h-4 w-[150px]" />
+                                        <Skeleton className="h-4 w-[150px]" />
+                                    </div>
+                                </div>
+                            ))
+
+                        ) :
+                        (filteredArtists.map((artist, index) => (
+                            <div key={index} className="flex rounded-md cursor-pointer m-1 h-[50px] items-center hover:bg-secondary">
+                                <Avatar>
+                                    <AvatarImage src={artist.images[0].url} alt="@spotify" className="w-10" />
+                                    <AvatarFallback>A</AvatarFallback>
+                                </Avatar>
+                                <p className='ml-3'>{artist.name}</p>
+                            </div>
+                        )))
+                    }
                 </ScrollArea>
             </div>
         </div>

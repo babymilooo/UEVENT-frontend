@@ -9,25 +9,16 @@ export const metadata = {
 
 export default async function Layout({ children }) {
 
-  const artists = await getServerSideArtists();
   return (
     <div className="relative flex h-full flex-col bg-background">
 
       <div className="flex flex-col flex-grow">
         <div className="hidden lg:block fixed top-0 left-0 h-full xl:w-[250px] lg:w-[200px] bg-neutral-100 overflow-auto">
-          <SideBar artists={artists} />
+          <SideBar />
         </div>
         {children}
         <Footer />
       </div>
     </div>
   );
-}
-
-async function getServerSideArtists() {
-  const res = await UserService.getUserArtists();
-  if (!res)
-    return null;
-  const artists = res.data;
-  return artists;
 }

@@ -26,6 +26,7 @@ const page = () => {
     const [search, setSearch] = useState('');
     const [timer, setTimer] = useState(null);
     const [artists, setArtists] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [searchHistory, setSearchHistory] = useState(() => {
         const savedHistory = localStorage.getItem('searchHistory');
         return savedHistory ? JSON.parse(savedHistory) : [];
@@ -38,6 +39,7 @@ const page = () => {
     useEffect(() => {
         if (searchHistory.length > 0) {
             loadArtistsInfo(searchHistory);
+            setLoading(false);
         }
     }, [searchHistory]);
 
@@ -113,39 +115,50 @@ const page = () => {
                 {/* Отображение истории поиска */}
 
                 {search === '' && searchHistory.length > 0 ? (
-
-                    artistsInfo.map((artist, index) => (
-                        <div key={index} className="col-span-1">
-                            <Card
-                                onClick={() => {
-
-                                    router.push(`/artist/${artist.id}`);
-                                }}
-                                className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center  cursor-pointer hover:bg-secondary w-full"
-                            >
-                                <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4">
-                                    <Avatar>
-                                        <AvatarImage src={artist.image} alt={artist.artist} className="ipad:w-full w-10" />
-                                        <AvatarFallback>AR</AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex flex-col ml-2">
-                                        <p className="text-xd font-bold ml-2 pt-2">{artist.artist}</p>
-                                        <p className="text-muted-foreground text-xs ml-2">Artist</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    ))
-
+                    loading ? (
+                        Array.from({ length: 6 }).map((_, index) => (
+                            <div key={index} className="col-span-1">
+                                <Card className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center cursor-pointer hover:bg-secondary w-full">
+                                    <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4">
+                                        <Avatar>
+                                            <AvatarImage src="/search.svg" alt="search" className="ipad:w-full w-10" />
+                                            <AvatarFallback>AR</AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex flex-col ml-2">
+                                            <p className="text-xd font-bold ml-2 pt-2">Search</p>
+                                            <p className="text-muted-foreground text-xs ml-2">Search</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        ))
+                    ) : (
+                        artistsInfo.map((artist, index) => (
+                            <div key={index} className="col-span-1">
+                                <Card
+                                    onClick={() => router.push(`/artist/${artist.id}`)}
+                                    className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center cursor-pointer hover:bg-secondary w-full"
+                                >
+                                    <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4">
+                                        <Avatar>
+                                            <AvatarImage src={artist.image} alt={artist.artist} className="ipad:w-full w-10" />
+                                            <AvatarFallback>AR</AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex flex-col ml-2">
+                                            <p className="text-xd font-bold ml-2 pt-2">{artist.artist}</p>
+                                            <p className="text-muted-foreground text-xs ml-2">Artist</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        ))
+                    )
                 ) : (
                     artists.map((artist) => (
                         <div key={artist.id} className="col-span-1 mt-10">
                             <Card
-                                onClick={() => {
-
-                                    router.push(`/artist/${artist.id}`);
-                                }}
-                                className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center  cursor-pointer hover:bg-secondary w-full"
+                                onClick={() => router.push(`/artist/${artist.id}`)}
+                                className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center cursor-pointer hover:bg-secondary w-full"
                             >
                                 <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4">
                                     <Avatar>
