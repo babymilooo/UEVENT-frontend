@@ -26,6 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 import ImageLoader from '@/components/ImageLoader/ImageLoader';
 import { Button } from '@/components/ui/button';
 import OrganizationService from '@/service/orgService';
+import GoogleMap from '@/components/googlemap/GoogleMap';
 
 const Render = () => {
     const [search, setSearch] = useState('');
@@ -89,7 +90,7 @@ const Render = () => {
                                     </div>
                                 </div>
                                 <div className='col-span-2'>
-                                    dasd
+                                    <GoogleMap />
                                 </div>
                                 <DialogClose className='col-span-5 justify-end grid grid-cols-3'>
                                     <div></div>

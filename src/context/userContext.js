@@ -35,8 +35,8 @@ class UserStore {
         try {
             const response = await AuthService.checkAuth();
             runInAction(() => {
-                this.setUser(response.data);
                 this.setLoggedIn(true);
+                this.setUser(response.data);
             });
             return response;
         } catch (e) {
@@ -78,7 +78,7 @@ class UserStore {
     async logout() {
         try {
             await AuthService.logout();
-            this.setUser({ username: null, id: null, email: null, profilePicture: null, isVerified: false});
+            this.setUser({ username: null, id: null, email: null, profilePicture: null, isVerified: false });
             this.setLoggedIn(false);
             this.setArtists([]);
             return true;

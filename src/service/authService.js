@@ -39,18 +39,9 @@ export default class AuthService {
         }
     }
 
-    static async checkAuth(accessTokenObj, refreshTokenObj) {
+    static async checkAuth() {
         try {
-            // Убедитесь, что значения accessToken и refreshToken являются строками
-            const accessToken = accessTokenObj.value;
-            const refreshToken = refreshTokenObj.value;
-            const cookieString = `accessToken=${accessToken}; refreshToken=${refreshToken}`;
-            const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, {
-                headers: {
-                    'Cookie': cookieString
-                },
-                withCredentials: true
-            });
+            const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, { withCredentials: true });
             return response;
         } catch (e) {
             console.log(e.response?.data?.message);
