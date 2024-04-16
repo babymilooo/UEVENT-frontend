@@ -1,21 +1,24 @@
 "use client"
 
 import { Input } from '@/components/ui/input';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from "@/components/ui/card"
 
 import AuthService from '@/service/authService';
 import toast from 'react-hot-toast';
+import { RootStoreContext } from '@/providers/rootStoreProvider';
 const page = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const rootStore = useContext(RootStoreContext);
+    const { userStore } = rootStore;
 
     const handeLogin = async () => {
         console.log(email, password);
-        const responce = await AuthService.register(email, password);
+        const responce = await userStore.registration(email, password);
         if (responce?.status === 201) {
             router.push("/home");
             toast.success("registration success");
@@ -24,7 +27,7 @@ const page = () => {
 
     const handeAuthSpotify = async (state) => {
         const responce = await AuthService.authSpotify(state);
-        if (responce?.status === 200) 
+        if (responce?.status === 200)
             window.location.href = responce.data;
     }
 

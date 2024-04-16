@@ -8,7 +8,7 @@ import { cookies } from 'next/headers'
 export default async function Layout({ children }) {
   const user = await getServerSideProps();
   return (
-    <div>
+    <div className=''>
       <Navbar user={user} />
       <Toaster position="bottom-right" reverseOrder={false} />
       {children}

@@ -92,10 +92,15 @@ const Navbar = ({ user }) => {
                                 </MyPopoverTrigger>
                                 <MyPopoverContent className="rounded-lg">
                                     <div className="flex flex-col font-bold">
-                                        <div className="pt-4 pl-4 cursor-pointer">
+                                        <div className="p-3 pl-4 cursor-pointer hover:bg-muted">
                                             account
                                         </div>
-                                        <div className="p-4 cursor-pointer ">
+                                        <div className="p-3 pl-4 cursor-pointer hover:bg-muted" onClick={() => router.push("/organizations")}>
+                                            <p>
+                                                My organizations
+                                            </p>
+                                        </div>
+                                        <div className="p-3 pl-4 cursor-pointer hover:bg-muted">
                                             settings
                                         </div>
                                         <div className="w-full border-t">
