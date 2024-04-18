@@ -17,6 +17,10 @@ const AvatarImage = React.forwardRef(({ className, ...props }, ref) => (
   <AvatarPrimitive.Image
     ref={ref}
     className={cn("aspect-square h-full w-full", className)}
+    style={{
+      objectFit: 'cover',      // Заполнение контейнера без искажений
+      objectPosition: 'center' // Позиционирование изображения по центру
+    }}
     {...props} />
 ))
 AvatarImage.displayName = AvatarPrimitive.Image.displayName

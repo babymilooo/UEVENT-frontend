@@ -10,10 +10,7 @@ import { PlaceAutocompleteClassic } from './GoogleSeach';
 const API_KEY = "AIzaSyD-Lw8rPOFQaODCy2s4IN8aOa923JX6TsY";
 
 
-const App = () => {
-
-    const [selectedPlace, setSelectedPlace] =
-        useState(null);
+const App = ({ selectedPlace, setSelectedPlace }) => {
 
     const handleMapClick = async (event) => {
         const { lat, lng } = event.detail.latLng;
@@ -38,16 +35,6 @@ const App = () => {
         }
     };
 
-    // const handlePlaceSelect = (place) => {
-    //     // Обработка выбранного места из автозаполнения
-    //     console.log('Selected place:', place);
-    //     const { geometry, formatted_address } = place;
-    //     const { location } = geometry;
-    //     const latLng = { lat: location.lat(), lng: location.lng() };
-
-    //     setSelectedPlace({ latLng, address: formatted_address });
-    // };
-
     useEffect(() => {
         if (selectedPlace && selectedPlace.geometry) {
             const { geometry, formatted_address } = selectedPlace;
@@ -67,12 +54,15 @@ const App = () => {
         <APIProvider apiKey={API_KEY}>
             <PlaceAutocompleteClassic onPlaceSelect={setSelectedPlace} />
             <Map
-                style={{ width: '100%', height: '500px' }}
+                // style={{ width: '500px', height: '500px' }}
+                className='w-full h-[450px]'
                 defaultCenter={{ lat: 22.54992, lng: 0 }}
                 defaultZoom={3}
                 gestureHandling={'greedy'}
                 disableDefaultUI={true}
                 onClick={handleMapClick}
+                language="en"
+
             >
                 {selectedPlace && (
                     <Marker

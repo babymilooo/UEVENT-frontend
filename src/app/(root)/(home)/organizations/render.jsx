@@ -2,7 +2,8 @@
 
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { use, useContext, useEffect, useState } from 'react';
+
 import {
     Card,
     CardContent,
@@ -35,7 +36,13 @@ const Render = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [name, Setname] = useState('');
     const [description, SetDescription] = useState('');
-    const [markerPosition, setMarkerPosition] = useState(null);
+    const [backgroundImage, setBackgroundImage] = useState('/rolingLoud.webp');
+    const [selectedPlace, setSelectedPlace] =
+        useState(null);
+
+    useEffect(() => {
+        console.log(selectedPlace);
+    }, [selectedPlace]);
 
     const handleNameChange = (e) => {
         Setname(e.target.value);
@@ -50,10 +57,16 @@ const Render = () => {
         const response = await OrganizationService.createOrganization(data);
     }
 
-    useEffect(() => {
-        console.log(markerPosition);
-    }
-        , [markerPosition]);
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setBackgroundImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col bg-muted overflow-x-hidden h-full min-h-[94vh] select-none mb-[50px] lg:mb-0">
@@ -74,32 +87,43 @@ const Render = () => {
                         <DialogTrigger className=" bg-lime-400 px-6 rounded-3xl font-bold text-xs">
                             Create new
                         </DialogTrigger>
-                        <DialogContent className="max-w-[1500px] ">
+                        <DialogContent className="max-w-[1000px] ">
                             <DialogHeader>
                                 <DialogTitle>Create new organization</DialogTitle>
                             </DialogHeader>
-                            <div className="grid grid-cols-5 gap-4">
-                                <div className='col-span-1 flex items-center'>
-                                    <ImageLoader selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
-                                </div>
-                                <div className='col-span-2'>
-                                    <div className='flex flex-col gap-4'>
-                                        <div className='flex items-center gap-4'>
-                                            <Label className="text-right font-bold">
-                                                Name
-                                            </Label>
-                                            <Input onChange={(e) => handleNameChange(e)} />
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className='col-span-1'>
+                                    <div className='flex flex-col gap-4 items-center'>
+
+                                        <div className="relative flex h-[200px] w-full items-end bg-cover bg-center select-none overflow-hidden"
+                                            style={{
+                                                backgroundImage: `url('${backgroundImage}')`,
+                                            }}>
+                                            <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
+                                            <label htmlFor="background-image-upload" className="absolute inset-0 cursor-pointer">
+                                                <input
+                                                    id="background-image-upload"
+                                                    type="file"
+                                                    className="absolute inset-0 h-full opacity-0 cursor-pointer"
+                                                    onChange={handleImageChange}
+                                                    accept="image/*"
+                                                />
+                                            </label>
                                         </div>
-                                        <div className=" items-center gap-2">
-                                            <Textarea placeholder="Description" onChange={(e) => handleDescriptionChange(e)} />
+                                        <div className="relative w-full p-6 mt-[-50px] bg-background z-30 rounded-[40px]">
+                                            <div className='flex items-center gap-4'>
+                                                <ImageLoader selectedImage={selectedImage} setSelectedImage={setSelectedImage} className="w-[100px]" />
+                                                <Input onChange={(e) => handleNameChange(e)} placeholder="organization name" />
+                                            </div>
+                                            <Textarea placeholder="Description" className="mt-4 h-[200px]" onChange={(e) => handleDescriptionChange(e)} />
+
                                         </div>
                                     </div>
                                 </div>
-                                <div className='col-span-2'>
-                                    {/* <GoogleMap markerPosition={markerPosition} setMarkerPosition={setMarkerPosition} /> */}
-                                    <GoogleMap />
+                                <div className='col-span-1'>
+                                    <GoogleMap selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
                                 </div>
-                                <DialogClose className='col-span-5 justify-end grid grid-cols-3'>
+                                <DialogClose className='col-span-2 justify-end grid grid-cols-3'>
                                     <div></div>
                                     <div></div>
                                     <Button onClick={handleCreate} className="col-span-1">New</Button>

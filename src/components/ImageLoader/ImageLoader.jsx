@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import React from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-const ImageLoader = ({ selectedImage, setSelectedImage }) => {
+const ImageLoader = ({ selectedImage, setSelectedImage, className }) => {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -15,15 +16,24 @@ const ImageLoader = ({ selectedImage, setSelectedImage }) => {
     };
 
     return (
-        <div className="relative rounded-lg overflow-hidden">
-            <Image src={`${selectedImage || '/bigLogo.png'}`} alt='logo' height={200} width={200} className='rounded-lg bg-lime-400' />
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-                <span className="text-white text-lg">Change Image</span>
-            </div>
-            <input
+        <div className="relative overflow-hidden">
+
+            {/* <Avatar
+               
+                
+                height={height}
+                width={width}
+                className={` ${rounded}`} // Применяем классы для скругления изображения
+            /> */}
+            <Avatar>
+                <AvatarImage src={`${selectedImage || '/bigLogo.png'}`} alt='logo' className={className} />
+                <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+
+            < input
                 id="image-upload"
                 type="file"
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                className="absolute inset-0 h-full opacity-0 cursor-pointer"
                 onChange={handleImageChange}
                 accept="image/*,video/*,.gif"
             />
