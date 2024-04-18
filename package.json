@@ -21,6 +21,7 @@
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cmdk": "^1.0.0",
     "embla-carousel": "^8.0.1",
     "embla-carousel-autoplay": "^8.0.1",
     "embla-carousel-react": "^8.0.1",
@@ -32,10 +33,12 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
+    "react-select": "^5.8.0",
     "shadcn-ui": "^0.8.0",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-animated": "^1.0.1"
+    "tailwindcss-animated": "^1.0.1",
+    "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",

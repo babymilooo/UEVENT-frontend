@@ -2,7 +2,7 @@
 
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Card,
     CardContent,
@@ -35,6 +35,7 @@ const Render = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [name, Setname] = useState('');
     const [description, SetDescription] = useState('');
+    const [markerPosition, setMarkerPosition] = useState(null);
 
     const handleNameChange = (e) => {
         Setname(e.target.value);
@@ -48,6 +49,11 @@ const Render = () => {
         const data = { name, description, picture: selectedImage };
         const response = await OrganizationService.createOrganization(data);
     }
+
+    useEffect(() => {
+        console.log(markerPosition);
+    }
+        , [markerPosition]);
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col bg-muted overflow-x-hidden h-full min-h-[94vh] select-none mb-[50px] lg:mb-0">
@@ -90,7 +96,7 @@ const Render = () => {
                                     </div>
                                 </div>
                                 <div className='col-span-2'>
-                                    <GoogleMap />
+                                    <GoogleMap markerPosition={markerPosition} setMarkerPosition={setMarkerPosition} />
                                 </div>
                                 <DialogClose className='col-span-5 justify-end grid grid-cols-3'>
                                     <div></div>
