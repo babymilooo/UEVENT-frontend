@@ -1,42 +1,19 @@
 "use client"
 
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import React, { useEffect, useState } from 'react';
-import { Input } from '../ui/input';
+import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import axios from 'axios';
-import GoogleSeach from './GoogleSeach';
-import { getGeocode, getLatLng } from 'use-places-autocomplete';
 
-const API_KEY = "AIzaSyD-Lw8rPOFQaODCy2s4IN8aOa923JX6TsY"; // Правильный ключ API Google Maps
+import MapHandler from './map-handler';
+import { PlaceAutocompleteClassic } from './GoogleSeach';
 
-const GoogleMap = ({ markerPosition, setMarkerPosition }) => {
-    const [search, setSearch] = useState('');
-    const [timer, setTimer] = useState(null);
-    const [selectedPlace, setSelectedPlace] = useState(null);
-    // useEffect(() => {
-    //     if (timer) {
-    //         clearTimeout(timer);
-    //     }
-
-    //     if (search.length === 0) {
-    //         setArtists([]); // Очистить список артистов, если строка поиска пуста
-    //     } else {
-    //         setTimer(setTimeout(() => {
-    //             if (search) {
-    //                 handleSearch();
-    //             }
-    //         }, 500)); // Задержка в 500 мс
-    //     }
-
-    //     // Очистка таймера при размонтировании компонента
-    //     return () => {
-    //         if (timer) {
-    //             clearTimeout(timer);
-    //         }
-    //     };
-    // }, [search]);
+const API_KEY = "AIzaSyD-Lw8rPOFQaODCy2s4IN8aOa923JX6TsY";
 
 
+const App = () => {
+
+    const [selectedPlace, setSelectedPlace] =
+        useState(null);
 
     const handleMapClick = async (event) => {
         const { lat, lng } = event.detail.latLng;
@@ -61,14 +38,36 @@ const GoogleMap = ({ markerPosition, setMarkerPosition }) => {
         }
     };
 
+    // const handlePlaceSelect = (place) => {
+    //     // Обработка выбранного места из автозаполнения
+    //     console.log('Selected place:', place);
+    //     const { geometry, formatted_address } = place;
+    //     const { location } = geometry;
+    //     const latLng = { lat: location.lat(), lng: location.lng() };
+
+    //     setSelectedPlace({ latLng, address: formatted_address });
+    // };
+
+    useEffect(() => {
+        if (selectedPlace && selectedPlace.geometry) {
+            const { geometry, formatted_address } = selectedPlace;
+            const { location } = geometry;
+            const latLng = { lat: location.lat(), lng: location.lng() };
+
+            setSelectedPlace({ latLng, address: formatted_address });
+        }
+    }, [selectedPlace]);
+
+
     const handleMarkerClick = () => {
         setSelectedPlace(null); // Удаляем маркер
     };
 
     return (
         <APIProvider apiKey={API_KEY}>
+            <PlaceAutocompleteClassic onPlaceSelect={setSelectedPlace} />
             <Map
-                style={{ width: '100%', height: '400px' }}
+                style={{ width: '100%', height: '500px' }}
                 defaultCenter={{ lat: 22.54992, lng: 0 }}
                 defaultZoom={3}
                 gestureHandling={'greedy'}
@@ -89,10 +88,11 @@ const GoogleMap = ({ markerPosition, setMarkerPosition }) => {
                     </div>
                 )}
             </Map>
-            <GoogleSeach search={search} setSearch={setSearch} />
-            {/* <Input className="mt-2" onChange={(e) => setSearch(e.target.value)} /> */}
+
+
+            <MapHandler place={selectedPlace} />
         </APIProvider>
     );
 };
 
-export default GoogleMap;
+export default App;

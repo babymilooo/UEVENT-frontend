@@ -96,7 +96,8 @@ const Render = () => {
                                     </div>
                                 </div>
                                 <div className='col-span-2'>
-                                    <GoogleMap markerPosition={markerPosition} setMarkerPosition={setMarkerPosition} />
+                                    {/* <GoogleMap markerPosition={markerPosition} setMarkerPosition={setMarkerPosition} /> */}
+                                    <GoogleMap />
                                 </div>
                                 <DialogClose className='col-span-5 justify-end grid grid-cols-3'>
                                     <div></div>

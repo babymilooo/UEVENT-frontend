@@ -1,67 +1,44 @@
 
 "use client"
 
-import { useEffect, useState } from 'react';
-
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import React, { useRef, useEffect, useState } from 'react';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
+import '@vis.gl/react-google-maps/dist/examples.css';
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-} from "@/components/ui/command"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
+    Combobox,
+    ComboboxInput,
+    ComboboxPopover,
+    ComboboxList,
+    ComboboxOption,
+} from "@reach/combobox";
 import { Input } from '../ui/input';
 
+export const PlaceAutocompleteClassic = ({ onPlaceSelect }) => {
+    const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
+    const inputRef = useRef(null);
+    const places = useMapsLibrary('places');
 
-const GoogleSeach = ({ search, setSearch }) => {
-    const [open, setOpen] = useState(false)
-    const [value, setValue] = useState("")
+    useEffect(() => {
+        if (!places || !inputRef.current) return;
 
-    const requestData = {
-        textQuery: { search }
-    };
+        const options = {
+            fields: ['geometry', 'name', 'formatted_address']
+        };
 
-    // const headers = {
-    //     'Content-Type': 'application/json',
-    //     'X-Goog-Api-Key': API_KEY,
-    //     'X-Goog-FieldMask': 'places.displayName,places.formattedAddress'
-    // };
+        setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
+    }, [places]);
 
-    // const handleSearch = async () => {
-    //     try {
-    //         const response = await ArtistService.searchArtists(search);
-    //         setArtists(response.data.map((artist) => {
-    //             return {
-    //                 artist: artist.name,
-    //                 id: artist.id,
-    //                 image: artist.images[1]?.url,
-    //             };
-    //         }));
-    //         // console.log("Результат поиска артистов:", artists);
-    //     } catch (error) {
-    //         console.error("Ошибка при поиске артистов:", error);
-    //         // Обработка ошибок при запросе
-    //     }
-    // };
+    useEffect(() => {
+        if (!placeAutocomplete) return;
+
+        placeAutocomplete.addListener('place_changed', () => {
+            onPlaceSelect(placeAutocomplete.getPlace());
+        });
+    }, [onPlaceSelect, placeAutocomplete]);
 
     return (
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." />
-        // <Popover open={open} onOpenChange={setOpen}>
-        //     <PopoverTrigger asChild>
-        //     </PopoverTrigger>
-        //     <PopoverContent>
-        //         123123
-        //     </PopoverContent>
-        // </Popover>
-
+        <div className="w-full">
+            <Input ref={inputRef} className='w-full mb-4' />
+        </div>
     );
 };
-
-export default GoogleSeach;
