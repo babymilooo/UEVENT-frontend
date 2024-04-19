@@ -18,13 +18,6 @@ const ImageLoader = ({ selectedImage, setSelectedImage, className }) => {
     return (
         <div className="relative overflow-hidden">
 
-            {/* <Avatar
-               
-                
-                height={height}
-                width={width}
-                className={` ${rounded}`} // Применяем классы для скругления изображения
-            /> */}
             <Avatar>
                 <AvatarImage src={`${selectedImage || '/bigLogo.png'}`} alt='logo' className={className} />
                 <AvatarFallback>CN</AvatarFallback>

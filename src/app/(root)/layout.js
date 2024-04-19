@@ -3,10 +3,13 @@ import { Toaster } from 'react-hot-toast';
 
 export default async function Layout({ children }) {
   return (
-    <div className=''>
+    <div className='h-screen flex flex-col'>
       <Navbar />
       <Toaster position="bottom-right" reverseOrder={false} />
-      {children}
+      <div className='flex-grow h-full'>
+        {children}
+      </div>
+
     </div>
   );
 }
