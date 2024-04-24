@@ -14,9 +14,70 @@ export default class OrganizationService {
         }
     }
 
+    static async addLogoToOrg(id, logo) {
+        const formData = new FormData();
+        formData.append('logo', logo);
+        try {
+            const response = await axios.patch(`${API_URL}/organization/edit-organization-logo/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                withCredentials: true
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async addBgToOrg(id, picture) {
+        const formData = new FormData();
+        formData.append('picture', picture);
+        try {
+            const response = await axios.patch(`${API_URL}/organization/edit-organization-picture/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                withCredentials: true
+            });
+            console.log(response);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
     static async getOrganizations() {
         try {
-            const response = await $api.get(`${API_URL}/organization/get-organizations`);
+            const response = await $api.get(`${API_URL}/organization/get-my-organizations`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async getOrganization(id) {
+        try {
+            const response = await $api.get(`${API_URL}/organization/get-organization/${id}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async editOrganization(id, data) {
+        try {
+            const response = await $api.patch(`${API_URL}/organization/edit-organization/${id}`, data);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+    
+    static async deleteOrganization(id) {
+        try {
+            const response = await $api.delete(`${API_URL}/organization/delete-organization/${id}`);
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);

@@ -35,6 +35,7 @@ const Navbar = () => {
                 } else {
                     console.log("User is authenticated");
                     setLoading(false);
+                    userStore.setLoggedIn(true);
                 }
             } catch (error) {
                 console.error("Authentication check failed", error);
@@ -102,7 +103,7 @@ const Navbar = () => {
                                 </MyPopoverTrigger>
                                 <MyPopoverContent className="rounded-lg">
                                     <div className="flex flex-col font-bold">
-                                        <div className="p-3 pl-4 cursor-pointer hover:bg-muted">
+                                        <div className="p-3 pl-4 cursor-pointer hover:bg-muted" onClick={() => router.push(`/user/${userStore.user?._id}`)}>
                                             account
                                         </div>
                                         <div className="p-3 pl-4 cursor-pointer hover:bg-muted" onClick={() => router.push("/organizations")}>

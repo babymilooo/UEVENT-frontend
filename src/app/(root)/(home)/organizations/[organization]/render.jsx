@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/avatar"
 import Image from 'next/image';
 
-const Render = () => {
+const Render = ({ organization }) => {
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center overflow-x-hidden">
             <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none overflow-hidden"
@@ -20,7 +20,7 @@ const Render = () => {
             <div className="relative w-full p-6 mt-[-35px] bg-background z-30 rounded-[40px]">
                 <div className="flex items-center gap-2">
                     <Avatar>
-                        <AvatarImage src="/Rolling_Loud_Logo.png" alt="@avatar" className="w-[50px]" />
+                        <AvatarImage src={organization.logo ? organization.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div className="font-bold">

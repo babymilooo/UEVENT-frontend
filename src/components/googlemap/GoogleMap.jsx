@@ -7,8 +7,11 @@ import axios from 'axios';
 import MapHandler from './map-handler';
 import { PlaceAutocompleteClassic } from './GoogleSeach';
 
-const API_KEY = "AIzaSyD-Lw8rPOFQaODCy2s4IN8aOa923JX6TsY";
+// const API_KEY = "AIzaSyD-Lw8rPOFQaODCy2s4IN8aOa923JX6TsY";
 
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+
+// Используйте apiKey в вашем коде для доступа к ключу API
 
 const App = ({ selectedPlace, setSelectedPlace }) => {
 

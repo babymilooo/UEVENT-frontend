@@ -35,7 +35,6 @@ class UserStore {
         try {
             const response = await AuthService.checkAuth();
             runInAction(() => {
-                this.setLoggedIn(true);
                 this.setUser(response.data);
             });
             return response;

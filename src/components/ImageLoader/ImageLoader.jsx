@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-const ImageLoader = ({ selectedImage, setSelectedImage, className }) => {
+const ImageLoader = ({ selectedImage, setSelectedImage, handleLogoChange, className }) => {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -10,6 +10,7 @@ const ImageLoader = ({ selectedImage, setSelectedImage, className }) => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setSelectedImage(reader.result);
+                handleLogoChange(e);
             };
             reader.readAsDataURL(file);
         }

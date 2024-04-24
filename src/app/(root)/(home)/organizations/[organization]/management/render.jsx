@@ -51,18 +51,30 @@ import { Calendar } from '@/components/ui/calendar';
 import MyTimePicker from '@/components/timePicker/TimePicker';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { APIProvider, Map } from '@vis.gl/react-google-maps';
+import MapHandler from '@/components/googlemap/map-handler';
+import { GearIcon } from '@radix-ui/react-icons';
+import ImageLoader from '@/components/ImageLoader/ImageLoader';
+import OrganizationService from '@/service/orgService';
+import { useRouter } from 'next/navigation';
 
-const Render = () => {
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+
+const Render = ({ res }) => {
+    const [organization, setOrganization] = useState(res);
     const [endDate, setEndDate] = useState(new Date());
     const [startTime, setStartTime] = useState("");
     const [search, setSearch] = useState('');
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(organization.logo);
     const [name, Setname] = useState('');
     const [description, SetDescription] = useState('');
-    const [backgroundImage, setBackgroundImage] = useState('/rolingLoud.webp');
-    const [selectedPlace, setSelectedPlace] =
-        useState(null);
-
+    const [backgroundImage, setBackgroundImage] = useState(organization.picture);
+    const [selectedPlace, setSelectedPlace] = useState(organization.location);
+    const [phone, setPhone] = useState('');
+    const [website, setWebsite] = useState('');
+    const router = useRouter();
+    const [logo, setLogo] = useState(null);
+    const [bg, setBg] = useState(null);
     const handleNameChange = (e) => {
         Setname(e.target.value);
     }
@@ -70,9 +82,35 @@ const Render = () => {
     const handleDescriptionChange = (e) => {
         SetDescription(e.target.value);
     }
+
+    const handleLogoChange = (e) => {
+        setLogo(e.target.files[0]);
+    };
+
+    const handleBgChange = (e) => {
+        setBg(e.target.files[0]);
+    };
+
     const handleCreate = async () => {
         const data = { name, description, picture: selectedImage };
         // const response = await OrganizationService.createOrganization(data);
+    }
+
+    const handeEdit = async () => {
+        const data = { name, description, location: selectedPlace, email: website, phone };
+        const response = await OrganizationService.editOrganization(organization._id, data);
+        if (selectedImage) {
+            const orgLogo = await OrganizationService.addLogoToOrg(response.data._id, logo);
+
+            setOrganization([...response.data, orgLogo]);
+        }
+        else if (backgroundImage) {
+            const picture = await OrganizationService.addBgToOrg(response.data._id, bg);
+            setOrganization([...response.data, picture]);
+        }
+        else {
+            setOrganization(response.data);
+        }
     }
 
     const handleImageChange = (e) => {
@@ -81,16 +119,30 @@ const Render = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setBackgroundImage(reader.result);
+                handleBgChange(e);
             };
             reader.readAsDataURL(file);
         }
     };
-    const isVerified = true;
+
+    const handleDelete = async () => {
+        const response = await OrganizationService.deleteOrganization(organization._id);
+        if (response) {
+            router.push("/organizations")
+        }
+    }
+
+    const isVerified = organization.IsVerified;
+
+    console.log(organization);
     return (
         <div className='grid grid-cols-4 bg-muted h-full'>
             <div className=" lg:col-span-3 col-span-4 rounded-md mt-2 flex flex-col">
                 <div className='ipad:px-5 ipad:pt-20 pt-5 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
-                    <Image src="/BigLogo.png" alt='logo' height={200} width={200} className='rounded-md' />
+                    <Image src={organization.logo ? organization?.logo : "/BigLogo.png"} alt='logo' height={200} width={200} className='rounded-lg h-[200px]' style={{
+                        objectFit: 'cover',
+                        objectPosition: 'center'
+                    }} />
                     <div className='ipad:pl-5 flex-col'>
                         {isVerified && (
                             <div className="hidden ipad:flex items-center none">
@@ -99,11 +151,11 @@ const Render = () => {
                             </div>
                         )}
 
-                        <h1 className='iphone:text-6xl text-5xl font-bold pt-5 ipad:pt-0'>Organization</h1>
+                        <h1 className='iphone:text-6xl text-5xl font-bold pt-5 ipad:pt-0'>{organization.name}</h1>
 
                         <div className='flex items-center ipad:justify-normal justify-between ipad:mt-16 mb-5 ipad:mb-0 gap-1 '>
                             <div className='flex items-center gap-1'>
-                                <p className='text-xl font-bold'>0</p>
+                                <p className='text-xl font-bold'>{organization.followerCount}</p>
                                 <p className='font-bold text-xs pt-1'>Followers</p>
                             </div>
                         </div>
@@ -132,9 +184,12 @@ const Render = () => {
                                                 <div className="font-bold">
                                                     Organization
                                                 </div>
-                                                <div className="flex items-center">
-                                                    <Image src="/verified.svg" alt="verified" width={20} height={20} />
-                                                </div>
+
+                                                {isVerified && (
+                                                    <div className="hidden ipad:flex items-center none">
+                                                        <Image src="/verified.svg" alt="verified" width={20} height={20} />
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="mt-4 p-1">
                                                 <div className="font-bold">Hard Rock Stadium, Miami Gardens, US</div>
@@ -179,9 +234,9 @@ const Render = () => {
                     </Sheet>
                 </div>
                 <div className='bg-background rounded-t-md h-full ipad:p-5'>
-                    <div className='flex justify-center w-full gap-2 border-b pb-5'>
+                    <div className='flex justify-center items-center w-full gap-2 border-b pb-5'>
                         <Dialog>
-                            <DialogTrigger className=" bg-lime-400 px-6 rounded-3xl font-bold text-xs">
+                            <DialogTrigger className=" bg-lime-400 px-6 py-1 rounded-3xl font-bold text-xs">
                                 Create new
                             </DialogTrigger>
                             <DialogContent className="max-w-[1000px] ">
@@ -240,6 +295,80 @@ const Render = () => {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
+
+
+                        <Dialog>
+                            <DialogTrigger>
+                                <GearIcon width={30} height={30} />
+                            </DialogTrigger>
+                            <DialogContent className="max-w-[1000px] ">
+                                <DialogHeader>
+                                    <DialogTitle>Edit organization</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className='col-span-1'>
+                                        <div className='flex flex-col gap-4 items-center'>
+
+                                            <div className="relative flex h-[200px] w-full items-end bg-cover bg-center select-none overflow-hidden"
+                                                style={{
+                                                    backgroundImage: `url('${organization?.picture ? organization?.picture : "/gradient.jpeg"}')`
+                                                }}>
+                                                <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
+                                                <label htmlFor="background-image-upload" className="absolute inset-0 cursor-pointer">
+                                                    <input
+                                                        id="background-image-upload"
+                                                        type="file"
+                                                        className="absolute inset-0 h-full opacity-0 cursor-pointer"
+                                                        onChange={handleImageChange}
+                                                        accept="image/*"
+                                                    />
+                                                </label>
+                                            </div>
+                                            <div className="relative w-full p-6 mt-[-50px] bg-background z-30 rounded-[40px]">
+                                                <div className='flex items-center gap-4'>
+                                                    <ImageLoader selectedImage={selectedImage} setSelectedImage={setSelectedImage} handleLogoChange={handleLogoChange} className="w-[100px]" />
+                                                    <Input onChange={(e) => handleNameChange(e)} placeholder="organization name" defaultValue={organization.name} />
+                                                </div>
+                                                <Textarea placeholder="Description" className="mt-4 h-[150px]" onChange={(e) => handleDescriptionChange(e)} defaultValue={organization.description} />
+                                                <div className='flex items-center mt-4 gap-4'>
+                                                    <Input onChange={(e) => setPhone(e.target.value)} placeholder="phone number" defaultValue={organization.phone} />
+                                                    <Input onChange={(e) => setWebsite(e.target.value)} placeholder="email" defaultValue={organization.website} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <GoogleMap selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
+                                    </div>
+                                    <div className='grid grid-cols-6 justify-end col-span-2 gap-4'>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <Dialog className="col-span-1">
+                                            <DialogTrigger><Button variant="destructive" className="w-full">delete</Button></DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                                    <DialogDescription>
+                                                        This action cannot be undone. This will permanently delete your account
+                                                        and remove your data from our servers.
+                                                    </DialogDescription>
+                                                    <DialogClose className='flex justify-end'>
+                                                        <Button variant="destructive" className="w-24" onClick={handleDelete}>delete</Button>
+                                                    </DialogClose>
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog>
+                                        <DialogClose className='col-span-1'>
+                                            <div className='col-span-1 flex gap-4'>
+                                                <Button onClick={handeEdit} className="w-full">Edit</Button>
+                                            </div>
+                                        </DialogClose>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
             </div>
@@ -249,7 +378,7 @@ const Render = () => {
                         <ScrollArea className="h-full w-full rounded-md border lg:pb-12">
                             <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md"
                                 style={{
-                                    backgroundImage: `url('/gradient.jpeg')`,
+                                    backgroundImage: `url('${organization.picture ? organization.picture : "/gradient.jpeg"}')`
                                 }}>
                                 <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
                             </div>
@@ -262,10 +391,13 @@ const Render = () => {
                                     <div className="font-bold">
                                         Organization
                                     </div>
-                                    <div className="flex items-center">
-                                        <Image src="/verified.svg" alt="verified" width={20} height={20} />
-                                        <div className="text-primary">Verified</div>
-                                    </div>
+
+                                    {isVerified && (
+                                        <div className="hidden ipad:flex items-center none">
+                                            <Image src="/verified.svg" alt="verified" width={20} height={20} />
+                                            <div className="text-primary">Verified</div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="mt-4">
                                     <div className="font-bold text-lg">Hard Rock Stadium, Miami Gardens, US</div>
@@ -274,6 +406,27 @@ const Render = () => {
                                     </p>
                                     <p className=' text-muted-foreground text-sm'>     Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam, at dignissimos deleniti commodi adipisci beatae aperiam saepe harum. Incidunt doloribus quibusdam aspernatur reiciendis quod vel numquam! Officiis sunt aliquid rem.
                                     </p>
+                                    <div>
+                                        <APIProvider apiKey={API_KEY}>
+                                            <Map
+                                                className='w-full h-[450px]'
+                                                defaultCenter={{ lat: 22.54992, lng: 0 }}
+                                                defaultZoom={15}
+                                                gestureHandling={'greedy'}
+                                                disableDefaultUI={true}
+
+                                            >
+
+                                                {/* {selectedPlace && (
+                                                    <div style={{ position: 'absolute', top: 10, left: 10, background: 'white', padding: 10 }}>
+                                                        <p>{selectedPlace.address}</p>
+                                                    </div>
+                                                )} */}
+                                            </Map>
+
+                                            <MapHandler place={selectedPlace} />
+                                        </APIProvider>
+                                    </div>
                                     <p className="font-bold mt-4 mb-2 text-sm">
                                         Events
                                     </p>
