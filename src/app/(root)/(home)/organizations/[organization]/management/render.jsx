@@ -66,12 +66,12 @@ const Render = ({ res }) => {
     const [startTime, setStartTime] = useState("");
     const [search, setSearch] = useState('');
     const [selectedImage, setSelectedImage] = useState(organization.logo);
-    const [name, Setname] = useState('');
-    const [description, SetDescription] = useState('');
+    const [name, Setname] = useState(organization.name);
+    const [description, SetDescription] = useState(organization.description);
     const [backgroundImage, setBackgroundImage] = useState(organization.picture);
     const [selectedPlace, setSelectedPlace] = useState(organization.location);
-    const [phone, setPhone] = useState('');
-    const [website, setWebsite] = useState('');
+    const [phone, setPhone] = useState(organization.phone);
+    const [website, setWebsite] = useState(organization.email);
     const router = useRouter();
     const [logo, setLogo] = useState(null);
     const [bg, setBg] = useState(null);
@@ -99,18 +99,18 @@ const Render = ({ res }) => {
     const handeEdit = async () => {
         const data = { name, description, location: selectedPlace, email: website, phone };
         const response = await OrganizationService.editOrganization(organization._id, data);
-        if (selectedImage) {
-            const orgLogo = await OrganizationService.addLogoToOrg(response.data._id, logo);
+        let orgLogo;
+        let picture;
+        console.log(response);
+        if (selectedImage && selectedImage != organization.logo) {
+            orgLogo = await OrganizationService.addLogoToOrg(response.data._id, logo);
+        }
+        if (backgroundImage && backgroundImage != organization.picture) {
+            picture = await OrganizationService.addBgToOrg(response.data._id, bg);
+        }
 
-            setOrganization([...response.data, orgLogo]);
-        }
-        else if (backgroundImage) {
-            const picture = await OrganizationService.addBgToOrg(response.data._id, bg);
-            setOrganization([...response.data, picture]);
-        }
-        else {
-            setOrganization(response.data);
-        }
+        const org = { ...response.data, logo: orgLogo?.data, picture: picture?.data };
+        setOrganization(org);
     }
 
     const handleImageChange = (e) => {
@@ -134,7 +134,6 @@ const Render = ({ res }) => {
 
     const isVerified = organization.IsVerified;
 
-    console.log(organization);
     return (
         <div className='grid grid-cols-4 bg-muted h-full'>
             <div className=" lg:col-span-3 col-span-4 rounded-md mt-2 flex flex-col">
@@ -332,7 +331,7 @@ const Render = ({ res }) => {
                                                 <Textarea placeholder="Description" className="mt-4 h-[150px]" onChange={(e) => handleDescriptionChange(e)} defaultValue={organization.description} />
                                                 <div className='flex items-center mt-4 gap-4'>
                                                     <Input onChange={(e) => setPhone(e.target.value)} placeholder="phone number" defaultValue={organization.phone} />
-                                                    <Input onChange={(e) => setWebsite(e.target.value)} placeholder="email" defaultValue={organization.website} />
+                                                    <Input onChange={(e) => setWebsite(e.target.value)} placeholder="email" defaultValue={organization.email} />
                                                 </div>
                                             </div>
                                         </div>
@@ -351,7 +350,7 @@ const Render = ({ res }) => {
                                                 <DialogHeader>
                                                     <DialogTitle>Are you absolutely sure?</DialogTitle>
                                                     <DialogDescription>
-                                                        This action cannot be undone. This will permanently delete your account
+                                                        This action cannot be undone. This will permanently delete your organization
                                                         and remove your data from our servers.
                                                     </DialogDescription>
                                                     <DialogClose className='flex justify-end'>
@@ -385,11 +384,11 @@ const Render = ({ res }) => {
                             <div className="relative w-full p-6 mt-[-35px] bg-background z-30 rounded-[40px]">
                                 <div className="flex items-center gap-2">
                                     <Avatar>
-                                        <AvatarImage src="/BigLogo.png" alt="@avatar" className="w-[50px]" />
+                                        <AvatarImage src={organization.logo ? organization?.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
                                         <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>
                                     <div className="font-bold">
-                                        Organization
+                                        {organization.name}
                                     </div>
 
                                     {isVerified && (
@@ -404,24 +403,25 @@ const Render = ({ res }) => {
                                     <p className="font-bold mt-4 text-sm">
                                         About us
                                     </p>
-                                    <p className=' text-muted-foreground text-sm'>     Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam, at dignissimos deleniti commodi adipisci beatae aperiam saepe harum. Incidunt doloribus quibusdam aspernatur reiciendis quod vel numquam! Officiis sunt aliquid rem.
+                                    <p className=' text-muted-foreground text-sm'>
+                                        {organization.description}
                                     </p>
                                     <div>
                                         <APIProvider apiKey={API_KEY}>
                                             <Map
                                                 className='w-full h-[450px]'
                                                 defaultCenter={{ lat: 22.54992, lng: 0 }}
-                                                defaultZoom={15}
+                                                defaultZoom={1}
                                                 gestureHandling={'greedy'}
                                                 disableDefaultUI={true}
 
                                             >
 
-                                                {/* {selectedPlace && (
+                                                {selectedPlace && (
                                                     <div style={{ position: 'absolute', top: 10, left: 10, background: 'white', padding: 10 }}>
                                                         <p>{selectedPlace.address}</p>
                                                     </div>
-                                                )} */}
+                                                )}
                                             </Map>
 
                                             <MapHandler place={selectedPlace} />
