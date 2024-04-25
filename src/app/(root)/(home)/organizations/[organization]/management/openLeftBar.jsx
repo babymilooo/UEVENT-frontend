@@ -32,7 +32,7 @@ export function OpenLeftBar({
     const [backgroundImage, setBackgroundImage] = useState(organization.picture);
 
     return (
-        <div className='lg:hidden fixed right-0'>
+        <div className='xl:hidden fixed right-0'>
             <Sheet>
                 <SheetTrigger>Open</SheetTrigger>
                 <SheetContent>

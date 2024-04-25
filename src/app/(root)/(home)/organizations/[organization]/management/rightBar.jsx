@@ -48,7 +48,7 @@ export function RightBar({
         fetchData();
     }, []);
 
-    return <ScrollArea className="h-full w-full rounded-md border">
+    return <ScrollArea className="h-full w-full rounded-md border lg:pb-12">
         <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md" style={{
             backgroundImage: `url('${organization.picture ? organization.picture : "/gradient.jpeg"}')`
         }}>

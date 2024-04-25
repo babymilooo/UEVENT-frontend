@@ -22,6 +22,7 @@ module.exports = {
       screens: {
         "ipad": "810px",
         "phone": "320px",
+        "ipad2": "1080px",
       },
       colors: {
         border: "hsl(var(--border))",
