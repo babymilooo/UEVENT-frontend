@@ -16,13 +16,11 @@ const page = () => {
       const queryParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
       const code = queryParams ? queryParams.get('code') : null;
       const state = queryParams ? queryParams.get('state') : null;
-      console.log(code, state);
 
       if (code && !isProcessing) {
         setIsProcessing(true);
         try {
           const response = await AuthService.verifySpotify(code);
-          console.log(response);
           if (response?.status === 200) {
             userStore.setUser(response);
             toast.success('Successfully authenticated with Spotify.');

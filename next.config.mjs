@@ -4,13 +4,13 @@ const nextConfig = {
     images: {
         domains: ['i.scdn.co', 'localhost'],
     },
-    asyncProxy: {
-        '/static': {
-            target: 'http://localhost:3001',
-            pathRewrite: { '^/static': '' },
-            changeOrigin: true,
-        },
-    },
+    // asyncProxy: {
+    //     '/static': {
+    //         target: 'http://localhost:3001',
+    //         pathRewrite: { '^/static': '' },
+    //         changeOrigin: true,
+    //     },
+    // }
 };
 
 export default nextConfig;

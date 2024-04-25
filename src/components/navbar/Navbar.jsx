@@ -29,11 +29,9 @@ const Navbar = () => {
         const checkAuthentication = async () => {
             try {
                 const response = await userStore.checkAuth();
-                console.log(response);
                 if (response?.status !== 200) {
                     setLoading(false);
                 } else {
-                    console.log("User is authenticated");
                     setLoading(false);
                     userStore.setLoggedIn(true);
                 }

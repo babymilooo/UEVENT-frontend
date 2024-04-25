@@ -15,6 +15,7 @@ import {
 import {
     Dialog,
     DialogContent,
+    DialogOverlay,
     DialogClose,
     DialogDescription,
     DialogHeader,
@@ -54,6 +55,10 @@ const Render = () => {
     const [searchInput, setSearchInput] = useState('');
     const [filteredOrganizations, setFilteredOrganizations] = useState(organizations);
 
+    useEffect(() => {
+        console.log(selectedPlace)
+    }, [selectedPlace]);
+
     const handleInputChange = (event) => {
         const inputValue = event.target.value;
         setSearchInput(inputValue);
@@ -80,9 +85,9 @@ const Render = () => {
     useEffect(() => {
         const fetchOrganizations = async () => {
             const response = await OrganizationService.getOrganizations();
-            console.log(response);
-            setOrganizations(response.data);
-            setFilteredOrganizations(response.data);
+            const organizationsData = Object.values(response.data);
+            setOrganizations(organizationsData);
+            setFilteredOrganizations(organizationsData);
             setLoading(false);
         }
         fetchOrganizations();
@@ -98,7 +103,8 @@ const Render = () => {
     }
 
     const handleCreate = async () => {
-        const data = { name, description, location: selectedPlace, email: website, phone };
+        const location = {latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng }
+        const data = { name, description, location, email: website, phone };
         const response = await OrganizationService.createOrganization(data);
         if (backgroundImage, selectedImage) {
             const orgLogo = await OrganizationService.addLogoToOrg(response.data._id, logo);
@@ -146,6 +152,7 @@ const Render = () => {
                         <DialogTrigger className=" bg-lime-400 px-6 rounded-3xl font-bold text-xs">
                             Create new
                         </DialogTrigger>
+                        <DialogOverlay /> 
                         <DialogContent className="max-w-[1000px] ">
                             <DialogHeader>
                                 <DialogTitle>Create new organization</DialogTitle>

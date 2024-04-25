@@ -27,11 +27,9 @@ const SideBar = () => {
         const getArtists = async () => {
             try {
                 const response = await userStore.getUserArtists();
-                console.log(response);
                 if (response?.status !== 200) {
                     setLoading(false);
                 } else {
-                    console.log("user artists", response.data);
                     setFilteredArtists(response.data);
                     setLoading(false);
                 }

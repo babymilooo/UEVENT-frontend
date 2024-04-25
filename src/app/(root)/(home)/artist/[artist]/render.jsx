@@ -36,7 +36,6 @@ const Render = ({ artist }) => {
     }, []);
 
     useEffect(() => {
-        console.log(artist.tracks)
         if (userStore.userArtists.includes(artist.id)) {
             setIsFollowing(true);
         }

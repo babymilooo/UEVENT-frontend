@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { use, useState, useEffect } from 'react';
 
 import {
     Avatar,
@@ -20,6 +20,7 @@ import {
 
 import {
     Dialog,
+    DialogOverlay,
     DialogContent,
     DialogClose,
     DialogDescription,
@@ -57,6 +58,7 @@ import { GearIcon } from '@radix-ui/react-icons';
 import ImageLoader from '@/components/ImageLoader/ImageLoader';
 import OrganizationService from '@/service/orgService';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/https/axios';
 
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
@@ -96,12 +98,16 @@ const Render = ({ res }) => {
         // const response = await OrganizationService.createOrganization(data);
     }
 
+    useEffect(() => {
+        console.log(organization)
+    }
+        , [organization])
+
     const handeEdit = async () => {
         const data = { name, description, location: selectedPlace, email: website, phone };
         const response = await OrganizationService.editOrganization(organization._id, data);
         let orgLogo;
-        let picture;
-        console.log(response);
+
         if (selectedImage && selectedImage != organization.logo) {
             orgLogo = await OrganizationService.addLogoToOrg(response.data._id, logo);
         }
@@ -109,8 +115,21 @@ const Render = ({ res }) => {
             picture = await OrganizationService.addBgToOrg(response.data._id, bg);
         }
 
-        const org = { ...response.data, logo: orgLogo?.data, picture: picture?.data };
-        setOrganization(org);
+        if (response.data) {
+            const updatedData = { ...response.data };
+
+            if (orgLogo) {
+                updatedData.logo = orgLogo.data.logo;
+            }
+
+            if (picture) {
+                updatedData.picture = picture.data.picture;
+            }
+
+            setOrganization(updatedData);
+        } else {
+            setOrganization(null); // Пример установки состояния по умолчанию
+        }
     }
 
     const handleImageChange = (e) => {
@@ -119,6 +138,7 @@ const Render = ({ res }) => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setBackgroundImage(reader.result);
+                // setBg(reader.result);
                 handleBgChange(e);
             };
             reader.readAsDataURL(file);
@@ -132,13 +152,26 @@ const Render = ({ res }) => {
         }
     }
 
+    const handleClose = async () => {
+        console.log("close");
+        setSelectedImage (organization.logo);
+        setBackgroundImage(organization.picture);
+        Setname(organization.name);
+        SetDescription(organization.description);
+        setSelectedPlace(organization.location);
+        setPhone(organization.phone);
+        setWebsite(organization.email);
+        setLogo(null);
+        setBg(null);
+    }
+
     const isVerified = organization.IsVerified;
 
     return (
         <div className='grid grid-cols-4 bg-muted h-full'>
             <div className=" lg:col-span-3 col-span-4 rounded-md mt-2 flex flex-col">
                 <div className='ipad:px-5 ipad:pt-20 pt-5 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
-                    <Image src={organization.logo ? organization?.logo : "/BigLogo.png"} alt='logo' height={200} width={200} className='rounded-lg h-[200px]' style={{
+                    <Image src={organization.logo ? organization.logo : "/BigLogo.png"} alt='logo' height={200} width={200} className='rounded-lg h-[200px]' style={{
                         objectFit: 'cover',
                         objectPosition: 'center'
                     }} />
@@ -202,7 +235,7 @@ const Render = ({ res }) => {
                                                 </p>
                                                 {Array.from({ length: 3 }).map((_, index) => (
 
-                                                    <Card
+                                                    <Card key={index}
                                                         className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1"
                                                         style={{
                                                             backgroundImage: `url('/rolingLoud.webp')`,
@@ -238,6 +271,7 @@ const Render = ({ res }) => {
                             <DialogTrigger className=" bg-lime-400 px-6 py-1 rounded-3xl font-bold text-xs">
                                 Create new
                             </DialogTrigger>
+                            <DialogOverlay /> 
                             <DialogContent className="max-w-[1000px] ">
                                 <DialogHeader>
                                     <DialogTitle>New event</DialogTitle>
@@ -300,6 +334,7 @@ const Render = ({ res }) => {
                             <DialogTrigger>
                                 <GearIcon width={30} height={30} />
                             </DialogTrigger>
+                            <DialogOverlay onClick={handleClose} />
                             <DialogContent className="max-w-[1000px] ">
                                 <DialogHeader>
                                     <DialogTitle>Edit organization</DialogTitle>
@@ -310,7 +345,7 @@ const Render = ({ res }) => {
 
                                             <div className="relative flex h-[200px] w-full items-end bg-cover bg-center select-none overflow-hidden"
                                                 style={{
-                                                    backgroundImage: `url('${organization?.picture ? organization?.picture : "/gradient.jpeg"}')`
+                                                    backgroundImage: `url('${backgroundImage ? backgroundImage : "/gradient.jpeg"}')`
                                                 }}>
                                                 <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
                                                 <label htmlFor="background-image-upload" className="absolute inset-0 cursor-pointer">
@@ -353,13 +388,13 @@ const Render = ({ res }) => {
                                                         This action cannot be undone. This will permanently delete your organization
                                                         and remove your data from our servers.
                                                     </DialogDescription>
-                                                    <DialogClose className='flex justify-end'>
+                                                    <DialogClose className='flex justify-end' onClick={handleClose}>
                                                         <Button variant="destructive" className="w-24" onClick={handleDelete}>delete</Button>
                                                     </DialogClose>
                                                 </DialogHeader>
                                             </DialogContent>
                                         </Dialog>
-                                        <DialogClose className='col-span-1'>
+                                        <DialogClose className='col-span-1' onClick={handleClose}>
                                             <div className='col-span-1 flex gap-4'>
                                                 <Button onClick={handeEdit} className="w-full">Edit</Button>
                                             </div>
@@ -384,7 +419,7 @@ const Render = ({ res }) => {
                             <div className="relative w-full p-6 mt-[-35px] bg-background z-30 rounded-[40px]">
                                 <div className="flex items-center gap-2">
                                     <Avatar>
-                                        <AvatarImage src={organization.logo ? organization?.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
+                                        <AvatarImage src={organization.logo ? organization.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
                                         <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>
                                     <div className="font-bold">
@@ -410,7 +445,7 @@ const Render = ({ res }) => {
                                         <APIProvider apiKey={API_KEY}>
                                             <Map
                                                 className='w-full h-[450px]'
-                                                defaultCenter={{ lat: 22.54992, lng: 0 }}
+                                                defaultCenter={{ lat: selectedPlace.latitude, lng: selectedPlace.longitude }}
                                                 defaultZoom={1}
                                                 gestureHandling={'greedy'}
                                                 disableDefaultUI={true}
@@ -433,6 +468,7 @@ const Render = ({ res }) => {
                                     {Array.from({ length: 3 }).map((_, index) => (
 
                                         <Card
+                                        key={index}
                                             className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1"
                                             style={{
                                                 backgroundImage: `url('/rolingLoud.webp')`,

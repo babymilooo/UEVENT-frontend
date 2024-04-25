@@ -45,7 +45,6 @@ const page = () => {
 
     const loadArtistsInfo = async (artistIds) => {
         try {
-            console.log("artistIds", artistIds);
             const response = await ArtistService.getArtists(artistIds);
             setArtistsInfo(response.data.map((artist) => {
                 return {
@@ -70,7 +69,6 @@ const page = () => {
                     image: artist.images[1]?.url,
                 };
             }));
-            // console.log("Результат поиска артистов:", artists);
         } catch (error) {
             console.error("Ошибка при поиске артистов:", error);
             // Обработка ошибок при запросе

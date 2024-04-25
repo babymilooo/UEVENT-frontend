@@ -16,16 +16,13 @@ export const AuthProvider = ({ children }) => {
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
 
-    console.log("AuthProvider");
     useEffect(() => {
-        console.log("useEffect");
         const checkAuthentication = async () => {
             try {
                 const response = await userStore.checkAuth();
                 setIsLoading(false);
                 if (response?.status === 200) {
                     setIsAuthenticated(true);
-                    console.log("User is authenticated");
                 } else {
                     // Перенаправляем на страницу входа
                     router.push('/login');

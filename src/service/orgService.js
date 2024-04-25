@@ -24,7 +24,6 @@ export default class OrganizationService {
                 },
                 withCredentials: true
             });
-            console.log(response);
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
@@ -41,7 +40,6 @@ export default class OrganizationService {
                 },
                 withCredentials: true
             });
-            console.log(response);
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);

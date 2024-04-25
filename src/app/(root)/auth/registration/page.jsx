@@ -17,7 +17,6 @@ const page = () => {
     const { userStore } = rootStore;
 
     const handeLogin = async () => {
-        console.log(email, password);
         const responce = await userStore.registration(email, password);
         if (responce?.status === 201) {
             router.push("/home");
