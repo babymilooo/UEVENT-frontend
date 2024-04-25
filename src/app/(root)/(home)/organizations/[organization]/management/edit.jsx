@@ -50,7 +50,6 @@ const Edit = ({ organization, setOrganization }) => {
     };
 
     const handleClose = async () => {
-        console.log("close");
         setSelectedImage(organization.logo);
         setBackgroundImage(organization.picture);
         Setname(organization.name);
@@ -117,75 +116,75 @@ const Edit = ({ organization, setOrganization }) => {
             <DialogTrigger>
                 <GearIcon width={30} height={30} />
             </DialogTrigger>
-            <DialogOverlay onClick={handleClose}>
-                <DialogContent className="max-w-[1000px] ">
-                    <DialogHeader>
-                        <DialogTitle>Edit organization</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className='col-span-1'>
-                            <div className='flex flex-col gap-4 items-center'>
+            <DialogOverlay onClick={handleClose} />
+            <DialogContent className="max-w-[1000px] ">
+                <DialogHeader>
+                    <DialogTitle>Edit organization</DialogTitle>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className='col-span-1'>
+                        <div className='flex flex-col gap-4 items-center'>
 
-                                <div className="relative flex h-[200px] w-full items-end bg-cover bg-center select-none overflow-hidden"
-                                    style={{
-                                        backgroundImage: `url('${backgroundImage ? backgroundImage : "/gradient.jpeg"}')`
-                                    }}>
-                                    <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-                                    <label htmlFor="background-image-upload" className="absolute inset-0 cursor-pointer">
-                                        <input
-                                            id="background-image-upload"
-                                            type="file"
-                                            className="absolute inset-0 h-full opacity-0 cursor-pointer"
-                                            onChange={handleImageChange}
-                                            accept="image/*"
-                                        />
-                                    </label>
+                            <div className="relative flex h-[200px] w-full items-end bg-cover bg-center select-none overflow-hidden"
+                                style={{
+                                    backgroundImage: `url('${backgroundImage ? backgroundImage : "/gradient.jpeg"}')`
+                                }}>
+                                <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
+                                <label htmlFor="background-image-upload" className="absolute inset-0 cursor-pointer">
+                                    <input
+                                        id="background-image-upload"
+                                        type="file"
+                                        className="absolute inset-0 h-full opacity-0 cursor-pointer"
+                                        onChange={handleImageChange}
+                                        accept="image/*"
+                                    />
+                                </label>
+                            </div>
+                            <div className="relative w-full p-6 mt-[-50px] bg-background z-30 rounded-[40px]">
+                                <div className='flex items-center gap-4'>
+                                    <ImageLoader selectedImage={selectedImage} setSelectedImage={setSelectedImage} handleLogoChange={handleLogoChange} className="w-[100px]" />
+                                    <Input onChange={(e) => handleNameChange(e)} placeholder="organization name" defaultValue={organization.name} />
                                 </div>
-                                <div className="relative w-full p-6 mt-[-50px] bg-background z-30 rounded-[40px]">
-                                    <div className='flex items-center gap-4'>
-                                        <ImageLoader selectedImage={selectedImage} setSelectedImage={setSelectedImage} handleLogoChange={handleLogoChange} className="w-[100px]" />
-                                        <Input onChange={(e) => handleNameChange(e)} placeholder="organization name" defaultValue={organization.name} />
-                                    </div>
-                                    <Textarea placeholder="Description" className="mt-4 h-[150px]" onChange={(e) => handleDescriptionChange(e)} defaultValue={organization.description} />
-                                    <div className='flex items-center mt-4 gap-4'>
-                                        <Input onChange={(e) => setPhone(e.target.value)} placeholder="phone number" defaultValue={organization.phone} />
-                                        <Input onChange={(e) => setWebsite(e.target.value)} placeholder="email" defaultValue={organization.email} />
-                                    </div>
+                                <Textarea placeholder="Description" className="mt-4 h-[150px]" onChange={(e) => handleDescriptionChange(e)} defaultValue={organization.description} />
+                                <div className='flex items-center mt-4 gap-4'>
+                                    <Input onChange={(e) => setPhone(e.target.value)} placeholder="phone number" defaultValue={organization.phone} />
+                                    <Input onChange={(e) => setWebsite(e.target.value)} placeholder="email" defaultValue={organization.email} />
                                 </div>
                             </div>
                         </div>
-                        <div className='col-span-1'>
-                            <GoogleMap selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
-                        </div>
-                        <div className='grid grid-cols-6 justify-end col-span-2 gap-4'>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <Dialog className="col-span-1">
-                                <DialogTrigger><Button variant="destructive" className="w-full">delete</Button></DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>Are you absolutely sure?</DialogTitle>
-                                        <DialogDescription>
-                                            This action cannot be undone. This will permanently delete your organization
-                                            and remove your data from our servers.
-                                        </DialogDescription>
-                                        <DialogClose className='flex justify-end' onClick={handleClose}>
-                                            <Button variant="destructive" className="w-24" onClick={handleDelete}>delete</Button>
-                                        </DialogClose>
-                                    </DialogHeader>
-                                </DialogContent>
-                            </Dialog>
-                            <DialogClose className='col-span-1' onClick={handleClose}>
-                                <div className='col-span-1 flex gap-4'>
-                                    <Button onClick={handeEdit} className="w-full">Edit</Button>
-                                </div>
-                            </DialogClose>
-                        </div>
                     </div>
-                </DialogContent>
-            </DialogOverlay>
+                    <div className='col-span-1'>
+                        <GoogleMap selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
+                    </div>
+                    <div className='grid grid-cols-6 justify-end col-span-2 gap-4'>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <Dialog className="col-span-1">
+                            <DialogTrigger><Button variant="destructive" className="w-full">delete</Button></DialogTrigger>
+                            <DialogOverlay />
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                    <DialogDescription>
+                                        This action cannot be undone. This will permanently delete your organization
+                                        and remove your data from our servers.
+                                    </DialogDescription>
+                                    <DialogClose className='flex justify-end' onClick={handleClose}>
+                                        <Button variant="destructive" className="w-24" onClick={handleDelete}>delete</Button>
+                                    </DialogClose>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
+                        <DialogClose className='col-span-1' onClick={handleClose}>
+                            <div className='col-span-1 flex gap-4'>
+                                <Button onClick={handeEdit} className="w-full">Edit</Button>
+                            </div>
+                        </DialogClose>
+                    </div>
+                </div>
+            </DialogContent>
         </Dialog>
     );
 };

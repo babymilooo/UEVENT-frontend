@@ -18,7 +18,7 @@ import { RightBar } from './rightBar';
 const Render = ({ res }) => {
     const [organization, setOrganization] = useState(res);
     const [search, setSearch] = useState('');
-    const [selectedPlace, setSelectedPlace] = useState(organization.location);
+
 
     useEffect(() => {
         console.log(organization)
@@ -47,9 +47,9 @@ const Render = ({ res }) => {
                 </div>
             </div>
             <div className="lg:col-span-1 z-10 h-full hidden lg:block ">
-                <div className="flex flex-col fixed h-full m-2">
+                <div className="fixed top-0 bottom-0 right-0 h-full m-2 w-[400px]">
                     <div className="bg-background h-full rounded-md">
-                        <RightBar isVerified={isVerified} selectedPlace={selectedPlace} organization={organization} />
+                        <RightBar isVerified={isVerified} organization={organization} className="h-full w-full" />
                     </div>
                 </div>
             </div>

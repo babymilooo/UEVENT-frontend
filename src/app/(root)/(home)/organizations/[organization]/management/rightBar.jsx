@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
     Avatar,
@@ -14,17 +14,41 @@ import {
 } from "@/components/ui/card"
 
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { APIProvider, Map } from '@vis.gl/react-google-maps';
+import { APIProvider, Marker, Map } from '@vis.gl/react-google-maps';
 import MapHandler from '@/components/googlemap/map-handler';
+import axios from "axios";
 
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 export function RightBar({
     isVerified,
-    selectedPlace,
     organization
 }) {
-    return <ScrollArea className="h-full w-full rounded-md border lg:pb-12">
+    const [selectedPlace, setSelectedPlace] = useState(organization.location);
+    const position = { lat: parseFloat(selectedPlace.latitude), lng: parseFloat(selectedPlace.longitude) };
+    const [address, setAdress] = useState("");
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { lat, lng } = position;
+            try {
+                const response = await axios.get(
+                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`
+                );
+                if (response.data.results.length > 0) {
+                    console.log('Place information:', response.data);
+                    const placeInfo = response.data.results[0];
+                    setAdress(placeInfo.formatted_address);
+                }
+            } catch (error) {
+                console.error('Error fetching place information:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    return <ScrollArea className="h-full w-full rounded-md border">
         <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md" style={{
             backgroundImage: `url('${organization.picture ? organization.picture : "/gradient.jpeg"}')`
         }}>
@@ -46,29 +70,21 @@ export function RightBar({
                 </div>}
             </div>
             <div className="mt-4">
-                <div className="font-bold text-lg">Hard Rock Stadium, Miami Gardens, US</div>
                 <p className="font-bold mt-4 text-sm">
                     About us
                 </p>
                 <p className=' text-muted-foreground text-sm'>
                     {organization.description}
                 </p>
-                <div>
+                <div className="font-bold">{address}</div>
+                <div className="w-full">
                     <APIProvider apiKey={API_KEY}>
-                        <Map className='w-full h-[450px]' defaultCenter={{
-                            lat: selectedPlace.latitude,
-                            lng: selectedPlace.longitude
-                        }} defaultZoom={1} gestureHandling={'greedy'} disableDefaultUI={true}>
-
-                            {selectedPlace && <div style={{
-                                position: 'absolute',
-                                top: 10,
-                                left: 10,
-                                background: 'white',
-                                padding: 10
-                            }}>
-                                <p>{selectedPlace.address}</p>
-                            </div>}
+                        <Map className='w-full h-[350px]'
+                            defaultCenter={position}
+                            defaultZoom={15}
+                            gestureHandling={'greedy'}
+                            disableDefaultUI={true}>
+                            <Marker position={position} />
                         </Map>
 
                         <MapHandler place={selectedPlace} />

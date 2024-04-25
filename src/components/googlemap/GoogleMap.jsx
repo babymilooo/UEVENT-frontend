@@ -14,7 +14,7 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 // Используйте apiKey в вашем коде для доступа к ключу API
 
 const App = ({ selectedPlace, setSelectedPlace }) => {
-
+    
     const handleMapClick = async (event) => {
         const { lat, lng } = event.detail.latLng;
 

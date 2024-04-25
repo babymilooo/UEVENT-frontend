@@ -6,7 +6,7 @@ export default async function page({ params }) {
     const response = await getServerSideProps(params);
 
     return (
-        <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col h-full">
+        <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col h-full overflow-hidden">
             <Render res={response} />
         </div>
     );

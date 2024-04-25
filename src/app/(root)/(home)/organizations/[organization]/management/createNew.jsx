@@ -48,7 +48,6 @@ const CreateNew = ({ organization }) => {
     };
 
     const handleClose = async () => {
-        console.log("close");
         setBackgroundImage("/gradient.jpeg");
         Setname("");
         SetDescription("");
@@ -66,7 +65,7 @@ const CreateNew = ({ organization }) => {
             <DialogTrigger className=" bg-lime-400 px-6 py-1 rounded-3xl font-bold text-xs">
                 Create new
             </DialogTrigger>
-            <DialogOverlay onClick={handleClose}>
+            <DialogOverlay onClick={handleClose} />
                 <DialogContent className="max-w-[1000px] ">
                     <DialogHeader>
                         <DialogTitle>New event</DialogTitle>
@@ -116,7 +115,6 @@ const CreateNew = ({ organization }) => {
                         </DialogClose>
                     </div>
                 </DialogContent>
-            </DialogOverlay>
         </Dialog>
     );
 };
