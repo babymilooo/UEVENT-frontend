@@ -34,7 +34,7 @@ const CreateNew = ({ organization }) => {
     const handleNameChange = (e) => {
         Setname(e.target.value);
     }
-    
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
