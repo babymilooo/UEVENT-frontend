@@ -10,6 +10,17 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from "@/components/ui/avatar"
+
+import {
+    Card,
+    CardContent,
+} from "@/components/ui/card"
+
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import DatePicker from '@/components/datePicker/DatePicker';
@@ -21,6 +32,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 import Image from 'next/image';
 import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
+import ArtistService from '@/service/artistService';
 
 
 const CreateNew = ({ organization }) => {
@@ -31,6 +43,12 @@ const CreateNew = ({ organization }) => {
     const [selectedPlace, setSelectedPlace] = useState(organization.location);
     const [name, Setname] = useState("");
     const [description, SetDescription] = useState("");
+    const [artists, setArtists] = useState([]);
+    const [addedArtists, setAddedArtists] = useState([]);
+    const [addedArtistsId, setAddedArtistsId] = useState([]);
+    const [search, setSearch] = useState('');
+    const [timer, setTimer] = useState(null);
+    const [tickets, setTickets] = useState([{ name: '', price: '' }]);
 
     const handleBgChange = (e) => {
         setBg(e.target.files[0]);
@@ -52,22 +70,90 @@ const CreateNew = ({ organization }) => {
         }
     };
 
+    const handleDescriptionChange = (e) => {
+        SetDescription(e.target.value);
+    }
+
     const handleClose = async () => {
         setBackgroundImage("/gradient.jpeg");
         Setname("");
         SetDescription("");
         setSelectedPlace("");
         setBg(null);
+        setArtists([]);
+        setAddedArtists([]);
+        setAddedArtistsId([]);
+        setSearch('');
+        setTickets([{ name: '', price: '' }]);
     }
+
+    const handleSearch = async () => {
+        try {
+            const response = await ArtistService.searchArtists(search);
+            const artistsToAdd = response.data.map((artist) => {
+                return {
+                    artist: artist.name,
+                    id: artist.id,
+                    image: artist.images[1]?.url,
+                };
+            });
+
+            // Фильтруем только те артисты, которые еще не были добавлены
+            const filteredArtists = artistsToAdd.filter((artist) => {
+                // Проверяем наличие артиста в addedArtists по id
+                return !addedArtists.some((addedArtist) => addedArtist.id === artist.id);
+            });
+
+            // Добавляем новых артистов к текущему списку artists
+            setArtists((prevArtists) => [...prevArtists, ...filteredArtists]);
+        } catch (error) {
+            console.error("Ошибка при поиске артистов:", error);
+            // Обработка ошибок при запросе
+        }
+    };
+
+    useEffect(() => {
+        if (timer) {
+            clearTimeout(timer);
+        }
+
+        if (search.length === 0) {
+            setArtists([]); // Очистить список артистов, если строка поиска пуста
+        } else {
+            setTimer(setTimeout(() => {
+                if (search) {
+                    handleSearch();
+                }
+            }, 500)); // Задержка в 500 мс
+        }
+
+        // Очистка таймера при размонтировании компонента
+        return () => {
+            if (timer) {
+                clearTimeout(timer);
+            }
+        };
+    }, [search]);
+
+    const addArtist = (artist) => {
+        const updatedArtists = artists.filter(a => a !== artist);
+        setArtists(updatedArtists);
+
+        setAddedArtists([...addedArtists, artist]);
+        setAddedArtistsId([...addedArtistsId, artist.id]);
+    };
+
+    const deleteArtist = (artist) => {
+        setAddedArtists(addedArtists.filter((item) => item.id !== artist.id));
+        setAddedArtistsId(addedArtistsId.filter((id) => id !== artist.id));
+
+        setArtists([...artists, artist]);
+    };
 
     const handleCreate = async () => {
-        const data = { name, description, picture: bg };
-        // const response = await OrganizationService.createOrganization(data);
+        const data = { name, description, picture: bg, date: endDate, time: startTime, location: selectedPlace, artists: addedArtistsId, tickets };
+        console.log(data);
     }
-
-    const [tickets, setTickets] = useState([
-        { name: '', price: '' } // Начальный билет с пустыми значениями для имени и цены
-    ]);
 
     // Функция для добавления нового билета
     const addTicket = () => {
@@ -85,11 +171,6 @@ const CreateNew = ({ organization }) => {
         newTickets[index][fieldName] = value;
         setTickets(newTickets);
     };
-
-    useEffect(() => {
-        console.log(tickets);
-    }
-        , [tickets]);
 
     return (
         <Dialog>
@@ -132,40 +213,109 @@ const CreateNew = ({ organization }) => {
                                     <DatePicker date={endDate} setDate={setEndDate} />
                                     <MyTimePicker time={startTime} setTime={setStartTime} />
                                 </div>
-                                <div className='flex justify-between items-center'>
-                                    <h1 className="text-lg font-bold">Tickets</h1>
-                                    <div className='flex items-center font-bold text-muted-foreground mt-1'>
-                                        <PlusIcon onClick={addTicket} className='w-12 h-6 cursor-pointer' />
-                                        <MinusIcon onClick={deleteTicket} className='w-12 h-6 cursor-pointer' />
+                                <div className="border rounded-md mt-4">
+                                    <div className='flex justify-between items-center py-1 pl-2'>
+                                        <h1 className="text-lg font-bold">Tickets</h1>
+                                        <div className='flex items-center font-bold text-muted-foreground mt-1'>
+                                            <PlusIcon onClick={addTicket} className='w-12 h-6 cursor-pointer' />
+                                            <MinusIcon onClick={deleteTicket} className='w-12 h-6 cursor-pointer' />
+                                        </div>
                                     </div>
-                                </div>
-                                <ScrollArea className="h-[250px] w-full col-span-1">
-                                    {tickets.map((ticket, index) => (
-                                        <div key={index}>
-                                            <div className='relative'>
-                                                <img src="/ticket.png" alt="ticket" className='w-full h-[150px] rounded-lg' />
-                                                <div className="absolute inset-0 bg-white ml-6 mr-7 my-6 rounded-md">
-                                                    <div className="rounded-lg grid grid-cols-3 gap-4 h-full">
-                                                        <h1 className="text-lg font-bold col-span-1 justify-center flex items-center ">Ticket {index + 1}</h1>
-                                                        <div className='col-span-2 flex flex-col gap-2 pt-2 pr-2'>
-                                                            <Input onChange={(e) => handleTicketChange(index, 'name', e.target.value)} placeholder={`Enter name`} />
-                                                            <Input
-                                                                onChange={(e) => handleTicketChange(index, 'price', e.target.value)}
-                                                                placeholder={`Enter price $`} />
+                                    <ScrollArea className="h-[260px] w-full col-span-1">
+                                        {tickets.map((ticket, index) => (
+                                            <div key={index}>
+                                                <div className='relative'>
+                                                    <img src="/ticket.png" alt="ticket" className='w-full h-[150px] rounded-lg' />
+                                                    <div className="absolute inset-0 bg-white ml-6 mr-7 my-6 rounded-md">
+                                                        <div className="rounded-lg grid grid-cols-3 gap-4 h-full">
+                                                            <h1 className="text-lg font-bold col-span-1 justify-center flex items-center ">Ticket {index + 1}</h1>
+                                                            <div className='col-span-2 flex flex-col gap-2 pt-2 pr-2'>
+                                                                <Input onChange={(e) => handleTicketChange(index, 'name', e.target.value)} placeholder={`Enter name`} />
+                                                                <Input
+                                                                    onChange={(e) => handleTicketChange(index, 'price', e.target.value)}
+                                                                    placeholder={`Enter price $`} />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
-
-                                        </div>
-                                    ))}
-                                </ScrollArea>
-
+                                        ))}
+                                    </ScrollArea>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className='col-span-1'>
-                        <Input placeholder="find artist" />
+                        <Input
+                            placeholder='Search for artists'
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className='w-full mb-2'
+                        />
+                        <div className='border rounded-md'>
+                            <p className='pt-2 pl-2 font-bold'>Finded artists</p>
+                            <ScrollArea className="h-[300px] p-2">
+
+                                {
+                                    artists.map((artist) => (
+                                        <div key={artist.id} className="col-span-1 mb-2">
+                                            <Card
+
+                                                className="h-[80px] flex items-center cursor-pointer hover:bg-secondary w-full"
+                                            >
+                                                <CardContent className="flex flex-row items-center justify-between w-full">
+                                                    <div className='flex px-4'>
+                                                        <Avatar>
+                                                            <AvatarImage src={artist.image} alt={artist.artist} className="w-12 h-12" />
+                                                            <AvatarFallback>AR</AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="flex flex-col ml-2">
+                                                            <p className="text-xd font-bold ml-2 pt-2">{artist.artist}</p>
+                                                            <p className="text-muted-foreground text-xs ml-2">Artist</p>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <PlusIcon onClick={() => addArtist(artist)} className='w-10 h-10   cursor-pointer hover:bg-neutral-200 rounded-full p-2 mr-4' />
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    ))
+                                }
+                            </ScrollArea>
+                        </div>
+                        <div className='border rounded-md mt-2'>
+                            <p className='pt-2 pl-2 font-bold'>Added artists</p>
+                            <ScrollArea className="h-[300px] p-2">
+                                {
+                                    addedArtists.map((artist) => (
+                                        <div key={artist.id} className="col-span-1 mb-2">
+                                            <Card
+
+                                                className="h-[80px] flex items-center cursor-pointer hover:bg-secondary w-full"
+                                            >
+                                                <CardContent className="flex flex-row items-center justify-between w-full">
+                                                    <div className='flex px-4'>
+                                                        <Avatar>
+                                                            <AvatarImage src={artist.image} alt={artist.artist} className="w-12 h-12" />
+                                                            <AvatarFallback>AR</AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="flex flex-col ml-2">
+                                                            <p className="text-xd font-bold ml-2 pt-2">{artist.artist}</p>
+                                                            <p className="text-muted-foreground text-xs ml-2">Artist</p>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <MinusIcon onClick={() => deleteArtist(artist)} className='w-10 h-10   cursor-pointer hover:bg-neutral-200 rounded-full p-2 mr-4' />
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    ))
+                                }
+                            </ScrollArea>
+                        </div>
                     </div>
                     <div className='col-span-1'>
                         <GoogleMap selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
