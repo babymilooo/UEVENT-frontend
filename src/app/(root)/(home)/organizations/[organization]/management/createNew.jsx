@@ -48,7 +48,7 @@ const CreateNew = ({ organization }) => {
     const [addedArtistsId, setAddedArtistsId] = useState([]);
     const [search, setSearch] = useState('');
     const [timer, setTimer] = useState(null);
-    const [tickets, setTickets] = useState([{ name: '', price: '' }]);
+    const [tickets, setTickets] = useState([{ name: '', price: '', quantity: ''}]);
 
     const handleBgChange = (e) => {
         setBg(e.target.files[0]);
@@ -84,7 +84,7 @@ const CreateNew = ({ organization }) => {
         setAddedArtists([]);
         setAddedArtistsId([]);
         setSearch('');
-        setTickets([{ name: '', price: '' }]);
+        setTickets([{ name: '', price: '', quantity: '' }]);
     }
 
     const handleSearch = async () => {
@@ -228,12 +228,20 @@ const CreateNew = ({ organization }) => {
                                                     <img src="/ticket.png" alt="ticket" className='w-full h-[150px] rounded-lg' />
                                                     <div className="absolute inset-0 bg-white ml-6 mr-7 my-6 rounded-md">
                                                         <div className="rounded-lg grid grid-cols-3 gap-4 h-full">
-                                                            <h1 className="text-lg font-bold col-span-1 justify-center flex items-center ">Ticket {index + 1}</h1>
+                                                            <div className='col-span-1 flex flex-col justify-between pb-2 pt-2 pl-2'>
+                                                                <h1 className="text-lg font-bold col-span-1 justify-center flex h-full items-center pb-2 ">Ticket {index + 1}</h1>
+                                                                <Input
+                                                                className=''
+                                                                    onChange={(e) => handleTicketChange(index, 'quantity', e.target.value)}
+                                                                    placeholder={`quantity`} />
+                                                            </div>
+
                                                             <div className='col-span-2 flex flex-col gap-2 pt-2 pr-2'>
                                                                 <Input onChange={(e) => handleTicketChange(index, 'name', e.target.value)} placeholder={`Enter name`} />
                                                                 <Input
                                                                     onChange={(e) => handleTicketChange(index, 'price', e.target.value)}
                                                                     placeholder={`Enter price $`} />
+
                                                             </div>
                                                         </div>
                                                     </div>
