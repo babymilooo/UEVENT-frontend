@@ -36,7 +36,6 @@ export function RightBar({
                     `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`
                 );
                 if (response.data.results.length > 0) {
-                    console.log('Place information:', response.data);
                     const placeInfo = response.data.results[0];
                     setAdress(placeInfo.formatted_address);
                 }

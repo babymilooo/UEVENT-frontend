@@ -21,11 +21,6 @@ const Render = ({ res }) => {
     const [search, setSearch] = useState('');
 
 
-    useEffect(() => {
-        console.log(organization)
-    }
-        , [organization])
-
     const isVerified = organization.IsVerified;
 
     return (

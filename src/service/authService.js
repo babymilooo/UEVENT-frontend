@@ -44,7 +44,7 @@ export default class AuthService {
             const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, { withCredentials: true });
             return response;
         } catch (e) {
-            console.log(e.response?.data?.message);
+            console.error(e.response?.data?.message);
         }
     }
 
@@ -53,7 +53,7 @@ export default class AuthService {
             const response = await $api.post(`${API_URL}/auth/logout`);
             return response;
         } catch (e) {
-            console.log(e.response?.data?.message);
+            console.error(e.response?.data?.message);
         }
     }
 }

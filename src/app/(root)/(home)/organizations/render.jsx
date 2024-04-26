@@ -55,10 +55,6 @@ const Render = () => {
     const [searchInput, setSearchInput] = useState('');
     const [filteredOrganizations, setFilteredOrganizations] = useState(organizations);
 
-    useEffect(() => {
-        console.log(selectedPlace)
-    }, [selectedPlace]);
-
     const handleInputChange = (event) => {
         const inputValue = event.target.value;
         setSearchInput(inputValue);
@@ -103,14 +99,15 @@ const Render = () => {
     }
 
     const handleCreate = async () => {
-        const location = {latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng }
+        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng }
         const data = { name, description, location, email: website, phone };
         const response = await OrganizationService.createOrganization(data);
         if (backgroundImage, selectedImage) {
             const orgLogo = await OrganizationService.addLogoToOrg(response.data._id, logo);
             const picture = await OrganizationService.addBgToOrg(response.data._id, bg);
-            setOrganizations([...organizations, orgLogo, picture]);
-            setFilteredOrganizations([...organizations, orgLogo, picture]);
+            const res = { ...response.data, logo: orgLogo.data.logo, picture: picture.data.picture }
+            setOrganizations([...organizations, res]);
+            setFilteredOrganizations([...organizations, res]);
         }
         else {
             setOrganizations([...organizations, response.data]);
@@ -133,7 +130,7 @@ const Render = () => {
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col bg-muted overflow-x-hidden h-full min-h-[94vh] select-none mb-[50px] lg:mb-0">
             <div className='ipad:px-5 ipad:pt-20 pt-5 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
-                <Image src={userStore.user.profilePicture} alt='logo' height={200} width={200} className='rounded-lg ' />
+                <Image src={userStore.user.profilePicture ? userStore.user?.profilePicture : "/BigLogo.png"} alt='logo' height={200} width={200} className='rounded-lg ' />
                 <div className='ipad:pl-5 flex-col'>
                     <h1 className='iphone:text-6xl text-5xl font-bold pt-5 ipad:pt-0'>My organizations</h1>
                     {loading ?
@@ -152,7 +149,7 @@ const Render = () => {
                         <DialogTrigger className=" bg-lime-400 px-6 rounded-3xl font-bold text-xs">
                             Create new
                         </DialogTrigger>
-                        <DialogOverlay /> 
+                        <DialogOverlay />
                         <DialogContent className="max-w-[1000px] ">
                             <DialogHeader>
                                 <DialogTitle>Create new organization</DialogTitle>

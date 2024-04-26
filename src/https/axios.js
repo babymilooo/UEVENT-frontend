@@ -21,7 +21,7 @@ $api.interceptors.request.use((config) => {
 $api.interceptors.response.use((config) => {
     return config;
 }, async (error) => {
-    console.log(error + "error");
+    console.error(error + "error");
     if (error.response.status === 401 && error.config && !error.config._iRetry) {
         const originalRequest = error.config;
         originalRequest._iRetry = true;
@@ -30,7 +30,7 @@ $api.interceptors.response.use((config) => {
             return $api.request(originalRequest);
         }
         catch (e) {
-            console.log("Non authorized");
+            console.error("Non authorized");
         }
     }
     throw error;
