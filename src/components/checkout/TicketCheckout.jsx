@@ -1,4 +1,5 @@
 "use client";
+
 import { loadStripe } from "@stripe/stripe-js";
 import {
   EmbeddedCheckoutProvider,
@@ -44,6 +45,7 @@ export const TicketCheckout = ({ ticketOptionId }) => {
               required
             />
             <button
+              type="button"
               className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6"
               disabled={!ownerName || ownerName.trim().length == 0}
               onClick={handleProceed}
@@ -55,6 +57,7 @@ export const TicketCheckout = ({ ticketOptionId }) => {
         {collectedPersonalInfo && (
           <div className="m-auto p-2 flex flex-col justify-center">
             <button
+              type="button"
               className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6"
               onClick={() => setCollectedPersonalInfo(false)}
             >
