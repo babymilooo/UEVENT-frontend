@@ -33,6 +33,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
 import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
 import ArtistService from '@/service/artistService';
+import EventService from '@/service/eventService';
 
 
 const CreateNew = ({ organization }) => {
@@ -48,7 +49,7 @@ const CreateNew = ({ organization }) => {
     const [addedArtistsId, setAddedArtistsId] = useState([]);
     const [search, setSearch] = useState('');
     const [timer, setTimer] = useState(null);
-    const [tickets, setTickets] = useState([{ name: '', price: '', quantity: ''}]);
+    const [tickets, setTickets] = useState([{ name: '', price: '', quantity: '' }]);
 
     const handleBgChange = (e) => {
         setBg(e.target.files[0]);
@@ -151,8 +152,19 @@ const CreateNew = ({ organization }) => {
     };
 
     const handleCreate = async () => {
-        const data = { name, description, picture: bg, date: endDate, time: startTime, location: selectedPlace, artists: addedArtistsId, tickets };
+        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng }
+        const data = { organizationId: organization._id, name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
         console.log(data);
+        const response = await EventService.createOrganization(data);
+        if (bg) {
+            const res = await EventService.updatePicture(response.data._id, bg);
+            console.log(res);
+        }
+        if (tickets.length > 0) {
+            // const res = await 
+        }
+        handleClose();
+        console.log(response);
     }
 
     // Функция для добавления нового билета
@@ -231,7 +243,7 @@ const CreateNew = ({ organization }) => {
                                                             <div className='col-span-1 flex flex-col justify-between pb-2 pt-2 pl-2'>
                                                                 <h1 className="text-lg font-bold col-span-1 justify-center flex h-full items-center pb-2 ">Ticket {index + 1}</h1>
                                                                 <Input
-                                                                className=''
+                                                                    className=''
                                                                     onChange={(e) => handleTicketChange(index, 'quantity', e.target.value)}
                                                                     placeholder={`quantity`} />
                                                             </div>
