@@ -18,7 +18,7 @@ export default class OrganizationService {
         const formData = new FormData();
         formData.append('logo', logo);
         try {
-            const response = await axios.patch(`${API_URL}/organization/edit-organization-logo/${id}`, formData, {
+            const response = await axios.patch(`${API_URL}/download/media/organization/${id}?mediaType=logo`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
@@ -34,7 +34,7 @@ export default class OrganizationService {
         const formData = new FormData();
         formData.append('picture', picture);
         try {
-            const response = await axios.patch(`${API_URL}/organization/edit-organization-picture/${id}`, formData, {
+            const response = await axios.patch(`${API_URL}/download/media/organization/${id}?mediaType=picture`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
@@ -72,7 +72,7 @@ export default class OrganizationService {
             toast.error(e.response?.data?.message);
         }
     }
-    
+
     static async deleteOrganization(id) {
         try {
             const response = await $api.delete(`${API_URL}/organization/delete-organization/${id}`);
