@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 import {
     Dialog,
@@ -82,7 +82,7 @@ const Edit = ({ organization, setOrganization }) => {
     }
 
     const handeEdit = async () => {
-        const data = { name, description, location: selectedPlace, email: website, phone };
+        const data = { name, description, location: selectedPlace.latLng, email: website, phone };
         const response = await OrganizationService.editOrganization(organization._id, data);
         let orgLogo;
         let picture;
@@ -110,6 +110,7 @@ const Edit = ({ organization, setOrganization }) => {
             setOrganization(null); // Пример установки состояния по умолчанию
         }
     }
+
 
     return (
         <Dialog>

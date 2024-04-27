@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
 import {
     Avatar,
@@ -25,8 +25,20 @@ export function RightBar({
     organization
 }) {
     const [selectedPlace, setSelectedPlace] = useState(organization.location);
-    const position = { lat: parseFloat(selectedPlace.latitude), lng: parseFloat(selectedPlace.longitude) };
-    const [address, setAdress] = useState("");
+    const [position, setPosition] = useState({ lat: parseFloat(selectedPlace.latitude), lng: parseFloat(selectedPlace.longitude) });
+    const [address, setAddress] = useState("");
+
+    useEffect(() => {
+        setSelectedPlace(organization.location);
+    }, [organization]);
+
+    useEffect(() => {
+        // Обновляем position при изменении selectedPlace или organization
+        setPosition({
+            lat: parseFloat(selectedPlace.latitude),
+            lng: parseFloat(selectedPlace.longitude)
+        });
+    }, [selectedPlace]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,15 +49,18 @@ export function RightBar({
                 );
                 if (response.data.results.length > 0) {
                     const placeInfo = response.data.results[0];
-                    setAdress(placeInfo.formatted_address);
+                    setAddress(placeInfo.formatted_address);
                 }
             } catch (error) {
                 console.error('Error fetching place information:', error);
             }
         };
 
-        fetchData();
-    }, []);
+        // Вызываем fetchData только при изменении organization
+        if (organization) {
+            fetchData();
+        }
+    }, [position]);
 
     return <ScrollArea className="h-full w-full rounded-md border lg:pb-12">
         <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md" style={{
@@ -79,7 +94,7 @@ export function RightBar({
                 <div className="w-full">
                     <APIProvider apiKey={API_KEY}>
                         <Map className='w-full h-[350px]'
-                            defaultCenter={position}
+                            center={position}
                             defaultZoom={15}
                             gestureHandling={'greedy'}
                             disableDefaultUI={true}>

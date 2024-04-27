@@ -154,17 +154,14 @@ const CreateNew = ({ organization }) => {
     const handleCreate = async () => {
         const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng }
         const data = { organizationId: organization._id, name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
-        console.log(data);
         const response = await EventService.createOrganization(data);
         if (bg) {
             const res = await EventService.updatePicture(response.data._id, bg);
-            console.log(res);
         }
         if (tickets.length > 0) {
             // const res = await 
         }
         handleClose();
-        console.log(response);
     }
 
     // Функция для добавления нового билета
