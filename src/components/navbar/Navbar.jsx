@@ -109,7 +109,7 @@ const Navbar = () => {
                                                 My organizations
                                             </p>
                                         </div>
-                                        <div className="p-3 pl-4 cursor-pointer hover:bg-muted">
+                                        <div className="p-3 pl-4 cursor-pointer hover:bg-muted" onClick={() => router.push("/user/settings")}>
                                             settings
                                         </div>
                                         <div className="w-full border-t">
