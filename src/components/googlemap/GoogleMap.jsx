@@ -41,7 +41,7 @@ const App = ({ selectedPlace, setSelectedPlace }) => {
         if (selectedPlace && selectedPlace.geometry) {
             const { geometry, formatted_address } = selectedPlace;
             const { location } = geometry;
-            const latLng = { lat: location.lat(), lng: location.lng() };
+            const latLng = { latitude: location.lat(), longitude: location.lng() };
 
             setSelectedPlace({ latLng, address: formatted_address });
         }

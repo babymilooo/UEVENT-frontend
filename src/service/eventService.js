@@ -30,5 +30,16 @@ export default class EventService {
         }
     }
 
-    // static async createTicket
+    static async createTicket(data) {
+        try {
+            const response = await $api.post(`${API_URL}/tickets/create`, data);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async getEvents(id) {
+        return $api.get(`${API_URL}/organization/get-events/${id}`);
+    }
 }
