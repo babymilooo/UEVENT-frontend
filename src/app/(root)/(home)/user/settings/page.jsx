@@ -150,15 +150,19 @@ const page = () => {
             )}
             
             <div className="mt-8 text-center">
-                <Button
-                    onClick={() => window.location.href = 'https://www.spotify.com/account/profile/'}
+                <a
+                    href="https://www.spotify.com/account/profile/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="px-10 py-3 font-bold rounded-full bg-black text-white flex items-center justify-center gap-2"
                     style={{ backgroundColor: '#000000', minWidth: '300px' }}
-                    >
-                    <img src="/spotify-2.svg" alt="Spotify" className="h-6"/> 
-                    <span>Go to Spotify Account</span>
-                </Button>
+                >
+                <img src="/spotify-2.svg" alt="Spotify" className="h-6"/> 
+                <span>Go to Spotify Account</span>
+                </a>
             </div>
+
+
 
             <div className="mt-8 mb-4 text-center">
                 <Button className="px-6 py-3 text-white font-bold rounded bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
