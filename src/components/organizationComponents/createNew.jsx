@@ -36,7 +36,7 @@ import ArtistService from '@/service/artistService';
 import EventService from '@/service/eventService';
 
 
-const CreateNew = ({ organization }) => {
+const CreateNew = ({ organization, setEvents, events }) => {
     const [backgroundImage, setBackgroundImage] = useState("/gradient.jpeg");
     const [bg, setBg] = useState(null);
     const [endDate, setEndDate] = useState(new Date());
@@ -155,12 +155,14 @@ const CreateNew = ({ organization }) => {
         const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng }
         const data = { organizationId: organization._id, name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
         const response = await EventService.createOrganization(data);
+        let res = null;
         if (bg) {
-            const res = await EventService.updatePicture(response.data._id, bg);
+            res = await EventService.updatePicture(response.data._id, bg);
         }
-        if (tickets.length > 0) {
-            // const res = await 
-        }
+        console.log(res);
+        const dataaa = { ...response.data, picture: res.data.picture }
+
+        setEvents([...events, dataaa]);
         handleClose();
     }
 

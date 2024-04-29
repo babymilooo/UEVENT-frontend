@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import EventService from '@/service/eventService';
 
 import { Main } from '@/components/organizationComponents/main';
@@ -40,7 +40,6 @@ const Render = ({ res, eventsData }) => {
 
     }, []);
 
-
     const isVerified = organization.IsVerified;
 
     return (
@@ -50,7 +49,7 @@ const Render = ({ res, eventsData }) => {
                 <OpenLeftBar isVerified={isVerified} organization={organization} />
                 <div className='bg-background rounded-t-md h-full ipad:p-5'>
                     <div className='flex justify-center items-center w-full gap-2 border-b pb-5'>
-                        <CreateNew organization={organization} />
+                        <CreateNew organization={organization} setEvents={setEvents} events={events} />
 
                         <Input
                             placeholder='Search organization'
