@@ -41,4 +41,39 @@ export default class UserService {
     //         toast.error(e.response?.data?.message);
     //     }
     // }
+
+    static async deleteAccount() {
+        try {
+            const response = await $api.delete(`${API_URL}/user/delete-account`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async editProfile(userData) {
+        try {
+            const response = await $api.patch(`${API_URL}/user/edit-profile`, userData);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async editUserAvatar(picture) {
+        const formData = new FormData();
+        formData.append('avatar', picture);
+        try {
+            const response = await axios.patch(`${API_URL}/user/edit-profile-avatar`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                withCredentials: true
+            });
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+
+    }
 }

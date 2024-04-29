@@ -110,6 +110,32 @@ class UserStore {
             return e.response?.data?.message;
         }
     }
+
+    async deleteAccount() {
+        try {
+            await UserService.deleteAccount();
+            this.setUser({ username: null, id: null, email: null, profilePicture: null, isVerified: false });
+            this.setLoggedIn(false);
+            this.setArtists([]);
+        } catch (e) {
+            console.error(e.response?.data?.message);
+            return e.response?.data?.message;
+        }
+    }
+
+    async updateUser(userData, picture) {
+        try {
+            const response = await UserService.editProfile(userData);
+            const pictureRes = await UserService.editUserAvatar(picture);
+            runInAction(() => {
+                this.setUser([...response.data, pictureRes.data]);
+            });
+            return response;
+        } catch (e) {
+            console.error(e.response?.data?.message);
+            return e.response?.data?.message;
+        }
+    }
 }
 
 export default UserStore;

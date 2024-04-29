@@ -46,7 +46,7 @@ const Render = () => {
     const [selectedPlace, setSelectedPlace] = useState(null);
     const [phone, setPhone] = useState('');
     const [website, setWebsite] = useState('');
-      
+
     const [logo, setLogo] = useState(null);
     const [bg, setBg] = useState(null);
     const [organizations, setOrganizations] = useState([]);
@@ -56,7 +56,7 @@ const Render = () => {
     const [totalItems, setTotalItems] = useState(0);
     const itemsPerPage = 10;
     const [pageCount, setPageCount] = useState(0);
-    
+
     const router = useRouter();
 
     const [searchInput, setSearchInput] = useState('');
@@ -88,7 +88,7 @@ const Render = () => {
     useEffect(() => {
         const fetchOrganizations = async () => {
             setLoading(true);
-            const response = await OrganizationService.getOrganizations(currentPage+1, itemsPerPage);
+            const response = await OrganizationService.getOrganizations(currentPage + 1, itemsPerPage);
             const res = response.data;
             const organizationsData = Object.values(res.organizations);
             setOrganizations(organizationsData);
@@ -261,30 +261,30 @@ const Render = () => {
                         ))
                 }
 
-            {!loading && (
-                <div className="mt-10">
-                <ReactPaginate
-                previousLabel={"<"}
-                nextLabel={">"}
-                breakLabel={"..."}
-                pageCount={pageCount}
-                onPageChange={handlePageClick}
-                containerClassName="flex list-none justify-center p-4"
-                activeClassName="bg-black text-white rounded-full"
-                pageClassName="mx-1" 
-                pageLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300" 
-                previousClassName="mx-1"
-                nextClassName="mx-1"
-                previousLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
-                nextLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
-                breakClassName="mx-1"
-                breakLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
-                forcePage={currentPage}
-                disabledClassName="opacity-30 cursor-not-allowed"
-              />
-              </div>
-              
-            )}
+                {!loading && totalItems > 10 && (
+                    <div className="mt-10">
+                        <ReactPaginate
+                            previousLabel={"<"}
+                            nextLabel={">"}
+                            breakLabel={"..."}
+                            pageCount={pageCount}
+                            onPageChange={handlePageClick}
+                            containerClassName="flex list-none justify-center p-4"
+                            activeClassName="bg-black text-white rounded-full"
+                            pageClassName="mx-1"
+                            pageLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
+                            previousClassName="mx-1"
+                            nextClassName="mx-1"
+                            previousLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
+                            nextLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
+                            breakClassName="mx-1"
+                            breakLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
+                            forcePage={currentPage}
+                            disabledClassName="opacity-30 cursor-not-allowed"
+                        />
+                    </div>
+
+                )}
             </div>
         </div >
     );
