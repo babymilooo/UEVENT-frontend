@@ -34,6 +34,8 @@ import Image from 'next/image';
 import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
 import ArtistService from '@/service/artistService';
 import EventService from '@/service/eventService';
+import axios from 'axios';
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 
 const CreateNew = ({ organization, setEvents, events }) => {
@@ -152,17 +154,33 @@ const CreateNew = ({ organization, setEvents, events }) => {
     };
 
     const handleCreate = async () => {
-        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng }
-        const data = { organizationId: organization._id, name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
-        const response = await EventService.createOrganization(data);
-        let res = null;
-        if (bg) {
-            res = await EventService.updatePicture(response.data._id, bg);
-        }
-        console.log(res);
-        const dataaa = { ...response.data, picture: res.data.picture }
+        let countryCode;
 
-        setEvents([...events, dataaa]);
+        const response = await axios.get(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${selectedPlace.latLng.lat},${selectedPlace.latLng.lng}&key=${API_KEY}`
+        );
+        if (response.data.results.length > 0) {
+            const placeInfo = response.data.results[0];
+            for (let component of placeInfo.address_components) {
+                if (component.types.includes('country')) {
+                    // Получение ISO-кода страны (например, "US" для США)
+                    countryCode = component.short_name;
+                    console.log(countryCode);
+                    break;
+                }
+            }
+        }
+
+
+        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, countryCode: countryCode }
+        const data = { organizationId: organization._id, name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
+        await EventService.createOrganization(data);
+        if (bg) {
+            const res = await EventService.updatePicture(response.data._id, bg);
+        }
+        if (tickets.length > 0) {
+            // const res = await 
+        }
         handleClose();
     }
 

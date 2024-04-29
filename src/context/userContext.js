@@ -130,8 +130,6 @@ class UserStore {
         try {
             const response = await UserService.editProfile(userData);
             const pictureRes = await UserService.editUserAvatar(picture);
-            console.log(pictureRes, 'pictureRes');
-            console.log(response, 'response');
             runInAction(() => {
                 this.setUser(response.data);
                 this.setProfilePicture(pictureRes.data.profilePicture);
