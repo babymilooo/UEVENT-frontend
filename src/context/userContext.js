@@ -23,6 +23,9 @@ class UserStore {
         this.user = user;
     }
 
+    setProfilePicture(picture) {
+        this.user.profilePicture = picture;
+    }
     setLoggedIn(value) {
         this.isLoggedIn = value;
     }
@@ -127,8 +130,11 @@ class UserStore {
         try {
             const response = await UserService.editProfile(userData);
             const pictureRes = await UserService.editUserAvatar(picture);
+            console.log(pictureRes, 'pictureRes');
+            console.log(response, 'response');
             runInAction(() => {
-                this.setUser([...response.data, pictureRes.data]);
+                this.setUser(response.data);
+                this.setProfilePicture(pictureRes.data.profilePicture);
             });
             return response;
         } catch (e) {

@@ -54,6 +54,7 @@ export default class UserService {
     static async editProfile(userData) {
         try {
             const response = await $api.patch(`${API_URL}/user/edit-profile`, userData);
+            console.log(response, 'response');
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
