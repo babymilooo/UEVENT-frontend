@@ -24,72 +24,154 @@ import {
     CardContent
 } from "@/components/ui/card"
 
+
+import React, { use, useEffect, useState } from "react";
+import { APIProvider, Marker, Map } from '@vis.gl/react-google-maps';
+import MapHandler from '@/components/googlemap/map-handler';
+import axios from "axios";
+
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+
 export function OpenLeftBar({
     isVerified,
-    organization
-
+    organization,
+    events
 }) {
-    const [backgroundImage, setBackgroundImage] = useState(organization.picture);
+    const [selectedPlace, setSelectedPlace] = useState(organization.location);
+    const [position, setPosition] = useState({ lat: parseFloat(selectedPlace.latitude), lng: parseFloat(selectedPlace.longitude) });
+    const [address, setAddress] = useState("");
+
+    useEffect(() => {
+        setSelectedPlace(organization.location);
+    }, [organization]);
+
+    useEffect(() => {
+        // Обновляем position при изменении selectedPlace или organization
+        setPosition({
+            lat: parseFloat(selectedPlace.latitude),
+            lng: parseFloat(selectedPlace.longitude)
+        });
+    }, [selectedPlace]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { lat, lng } = position;
+            let address = '';
+            let city = '';
+            let country = '';
+            let street = '';
+            let route = '';
+            try {
+                const response = await axios.get(
+                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`
+                );
+                if (response.data.results.length > 0) {
+                    const placeInfo = response.data.results[0];
+
+                    placeInfo.address_components.forEach((component) => {
+                        const types = component.types;
+                        const shortName = component.short_name;
+
+                        // Check types and assign short names accordingly
+                        if (types.includes('locality')) {
+                            city = shortName;
+                        } else if (types.includes('country')) {
+                            country = shortName;
+                        } else if (types.includes('route')) {
+                            route = shortName;
+                        } else if (types.includes('street_number')) {
+                            street = shortName;
+                        }
+                        // Add additional checks for other types if needed
+                    });
+
+                    address = `${route} ${street}, ${city}, ${country} `;
+
+                    setAddress(address);
+                }
+            } catch (error) {
+                console.error('Error fetching place information:', error);
+            }
+        };
+
+        // Вызываем fetchData только при изменении organization
+        if (organization) {
+            fetchData();
+        }
+    }, [position]);
 
     return (
         <div className='xl:hidden fixed right-0'>
             <Sheet>
                 <SheetTrigger>Open</SheetTrigger>
-                <SheetContent>
-                    <div className="flex flex-col fixed h-full">
+                <SheetContent className="w-full">
+                    <div className="fixed h-full right-0 sm:max-w-sm w-full">
                         <div className="bg-background h-full rounded-md">
                             <ScrollArea className="h-full w-full rounded-md">
                                 <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md" style={{
-                                    backgroundImage: `url('/gradient.jpeg')`
+                                    backgroundImage: `url('${organization.picture ? organization.picture : "/gradient.jpeg"}')`
                                 }}>
                                     <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
                                 </div>
                                 <div className="relative w-full mt-[-35px] bg-background z-30 rounded-[40px]">
                                     <div className="flex items-center gap-2 p-4 pb-0">
                                         <Avatar>
-                                            <AvatarImage src="/BigLogo.png" alt="@avatar" className="w-[50px]" />
+                                            <AvatarImage src={organization.logo ? organization.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
                                             <AvatarFallback>CN</AvatarFallback>
                                         </Avatar>
                                         <div></div>
                                         <div className="font-bold">
-                                            Organization
+                                            {organization.name}
                                         </div>
 
                                         {isVerified && <div className="hidden ipad:flex items-center none">
                                             <Image src="/verified.svg" alt="verified" width={20} height={20} />
+                                            <div className="text-primary">Verified</div>
                                         </div>}
                                     </div>
                                     <div className="mt-4 p-1">
-                                        <div className="font-bold">Hard Rock Stadium, Miami Gardens, US</div>
                                         <p className="font-bold mt-4 text-sm">
                                             About us
                                         </p>
-                                        <p className=' text-muted-foreground text-sm'>     Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam, at dignissimos deleniti commodi adipisci beatae aperiam saepe harum. Incidunt doloribus quibusdam aspernatur reiciendis quod vel numquam! Officiis sunt aliquid rem.
+                                        <p className=' text-muted-foreground text-sm'>
+                                            {organization.description}
                                         </p>
+                                        <div className="font-bold">{address}</div>
+                                        <div className="w-full">
+                                            <APIProvider apiKey={API_KEY}>
+                                                <Map className='w-full h-[350px]'
+                                                    center={position}
+                                                    defaultZoom={15}
+                                                    gestureHandling={'greedy'}
+                                                    disableDefaultUI={true}>
+                                                    <Marker position={position} />
+                                                </Map>
+
+                                                <MapHandler place={selectedPlace} />
+                                            </APIProvider>
+                                        </div>
                                         <p className="font-bold mt-4 mb-2 text-sm">
                                             Events
                                         </p>
-                                        {Array.from({
-                                            length: 3
-                                        }).map((_, index) => <Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1" style={{
-                                            backgroundImage: `url('/rolingLoud.webp')`
+                                        {events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1" style={{
+                                            backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}`
                                         }}>
-                                            <div className="absolute inset-0 bg-black opacity-50"></div>
+                                            <div className="absolute inset-0 bg-black opacity-60"></div>
                                             <CardContent className="flex items-center h-full w-full">
                                                 <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
                                                     <div className="flex flex-col items-center justify-center w-full h-full z-10">
-                                                        <p className="font-bold text-white">May</p>
-                                                        <p className="text-4xl font-bold text-white">18</p>
+                                                        <p className="font-bold text-white">{event.month}</p>
+                                                        <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
 
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <p className="text-sm font-bold ml-2 text-white z-10">Location</p>
-                                                    <p className="text-sm font-bold ml-2 text-white z-10">Name</p>
-                                                    <p className="text-sm font-bold ml-2 text-white z-10">Mon. 17:00</p>
+                                                    <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
+                                                    <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
+                                                    <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
                                                 </div>
                                             </CardContent>
-                                        </Card>)}
+                                        </Card>))}
                                     </div>
                                 </div>
                             </ScrollArea>

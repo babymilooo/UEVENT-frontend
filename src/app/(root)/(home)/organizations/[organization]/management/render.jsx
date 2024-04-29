@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from "@/components/ui/card"
 import Image from 'next/image';
+import axios from 'axios';
 
 const Render = ({ res, eventsData }) => {
     const [organization, setOrganization] = useState(res);
@@ -20,24 +21,92 @@ const Render = ({ res, eventsData }) => {
     const [events, setEvents] = useState(eventsData);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+    const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const processedEvents = await Promise.all(
+                    events.map(async (event) => {
+                        const eventDate = new Date(event.date);
+                        const month = months[eventDate.getMonth()];
+                        const dayOfWeek = days[eventDate.getDay()];
+                        const dayOfMonth = eventDate.getDate();
 
-                const processedEvents = events.map(event => {
-                    const eventDate = new Date(event.date);
-                    const month = months[eventDate.getMonth()];
-                    const dayOfWeek = days[eventDate.getDay()];
-                    const dayOfMonth = eventDate.getDate();
-                    return {
-                        ...event,
-                        month,
-                        dayOfWeek,
-                        dayOfMonth
-                    }
-                });
+                        if (event.location?.latitude && event.location?.longitude) {
+                            const response = await axios.get(
+                                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${event.location.latitude},${event.location.longitude}&key=${API_KEY}`
+                            );
+                            console.log(response.data.results[0]);
+                            let address = '';
+                            let city = '';
+                            let country = '';
+                            let street = '';
+                            let route = '';
+                            if (response.data.results.length > 0) {
+                                const placeInfo = response.data.results[0];
+
+                                // Iterate over address components to extract short names
+                                placeInfo.address_components.forEach((component) => {
+                                    const types = component.types;
+                                    const shortName = component.short_name;
+
+                                    // Check types and assign short names accordingly
+                                    if (types.includes('locality')) {
+                                        city = shortName;
+                                    } else if (types.includes('country')) {
+                                        country = shortName;
+                                    } else if (types.includes('route')) {
+                                        route = shortName;
+                                    } else if (types.includes('street_number')) {
+                                        street = shortName;
+                                    }
+                                    // Add additional checks for other types if needed
+                                });
+
+                                // Construct formatted address using extracted data
+
+                                if (route && street) {
+                                    address = `${route} ${street}, ${city}, ${country}`;
+                                } else if (route || street) {
+                                    address = `${route}${street}, ${city}, ${country}`;
+                                } else {
+                                    address = `${city}, ${country}`;
+                                }
+                            }
+
+                            return {
+                                ...event,
+                                month,
+                                dayOfWeek,
+                                dayOfMonth,
+                                address
+                            };
+                        } else {
+                            // If latitude or longitude is missing, return event without address
+                            return {
+                                ...event,
+                                month,
+                                dayOfWeek,
+                                dayOfMonth,
+                                address: ''
+                            };
+                        }
+                    })
+                );
+
                 setEvents(processedEvents);
                 setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setLoading(false); // Handle loading state in case of error
+            }
+        };
 
+        // Fetch data if events array is not empty
+        if (events.length > 0) {
+            fetchData();
+        }
     }, []);
 
     const isVerified = organization.IsVerified;
@@ -46,7 +115,7 @@ const Render = ({ res, eventsData }) => {
         <div className='flex bg-muted h-full'>
             <div className="rounded-md mt-2 flex flex-col w-full xl:mr-[415px]">
                 <Main isVerified={isVerified} organization={organization} />
-                <OpenLeftBar isVerified={isVerified} organization={organization} />
+                <OpenLeftBar isVerified={isVerified} organization={organization} events={events}/>
                 <div className='bg-background rounded-t-md h-full ipad:p-5'>
                     <div className='flex justify-center items-center w-full gap-2 border-b pb-5'>
                         <CreateNew organization={organization} setEvents={setEvents} events={events} />
@@ -90,7 +159,7 @@ const Render = ({ res, eventsData }) => {
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
-                                            <p className="text-xl font-bold ml-2 text-white z-10">asdsad</p>
+                                            <p className="text-xl font-bold ml-2 text-white z-10">{event.address}</p>
                                             <p className="text-xl font-bold ml-2 text-white z-10">{event.name}</p>
                                             <p className="text-xl font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
                                         </div>
@@ -104,7 +173,7 @@ const Render = ({ res, eventsData }) => {
             <div className="z-10 h-full hidden xl:block ">
                 <div className="fixed top-[55px] bottom-0 right-0 h-full m-2 w-[400px]">
                     <div className="bg-background h-full rounded-md">
-                        <RightBar isVerified={isVerified} organization={organization} className="h-full w-full" />
+                        <RightBar isVerified={isVerified} organization={organization} events={events} className="h-full w-full" />
                     </div>
                 </div>
             </div>

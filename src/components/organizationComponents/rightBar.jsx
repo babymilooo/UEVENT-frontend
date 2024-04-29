@@ -22,7 +22,8 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 export function RightBar({
     isVerified,
-    organization
+    organization,
+    events
 }) {
     const [selectedPlace, setSelectedPlace] = useState(organization.location);
     const [position, setPosition] = useState({ lat: parseFloat(selectedPlace.latitude), lng: parseFloat(selectedPlace.longitude) });
@@ -43,13 +44,38 @@ export function RightBar({
     useEffect(() => {
         const fetchData = async () => {
             const { lat, lng } = position;
+            let address = '';
+            let city = '';
+            let country = '';
+            let street = '';
+            let route = '';
             try {
                 const response = await axios.get(
                     `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`
                 );
                 if (response.data.results.length > 0) {
                     const placeInfo = response.data.results[0];
-                    setAddress(placeInfo.formatted_address);
+
+                    placeInfo.address_components.forEach((component) => {
+                        const types = component.types;
+                        const shortName = component.short_name;
+
+                        // Check types and assign short names accordingly
+                        if (types.includes('locality')) {
+                            city = shortName;
+                        } else if (types.includes('country')) {
+                            country = shortName;
+                        } else if (types.includes('route')) {
+                            route = shortName;
+                        } else if (types.includes('street_number')) {
+                            street = shortName;
+                        }
+                        // Add additional checks for other types if needed
+                    });
+
+                    address = `${route} ${street}, ${city}, ${country} `;
+
+                    setAddress(address);
                 }
             } catch (error) {
                 console.error('Error fetching place information:', error);
@@ -107,27 +133,25 @@ export function RightBar({
                 <p className="font-bold mt-4 mb-2 text-sm">
                     Events
                 </p>
-                {Array.from({
-                    length: 3
-                }).map((_, index) => <Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1" style={{
-                    backgroundImage: `url('/rolingLoud.webp')`
+                {events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1" style={{
+                    backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}`
                 }}>
-                    <div className="absolute inset-0 bg-black opacity-50"></div>
+                    <div className="absolute inset-0 bg-black opacity-60"></div>
                     <CardContent className="flex items-center h-full w-full">
                         <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
                             <div className="flex flex-col items-center justify-center w-full h-full z-10">
-                                <p className="font-bold text-white">May</p>
-                                <p className="text-4xl font-bold text-white">18</p>
+                                <p className="font-bold text-white">{event.month}</p>
+                                <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
 
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <p className="text-sm font-bold ml-2 text-white z-10">Location</p>
-                            <p className="text-sm font-bold ml-2 text-white z-10">Name</p>
-                            <p className="text-sm font-bold ml-2 text-white z-10">Mon. 17:00</p>
+                            <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
+                            <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
+                            <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
                         </div>
                     </CardContent>
-                </Card>)}
+                </Card>))}
             </div>
         </div>
     </ScrollArea>;
