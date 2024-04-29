@@ -46,9 +46,9 @@ export default class OrganizationService {
         }
     }
 
-    static async getOrganizations() {
+    static async getOrganizations(page, limit) {
         try {
-            const response = await $api.get(`${API_URL}/organization/get-my-organizations`);
+            const response = await $api.get(`${API_URL}/organization/get-my-organizations?page=${page}&limit=${limit}`);
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);

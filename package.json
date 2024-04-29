@@ -41,6 +41,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
+    "react-paginate": "^8.2.0",
     "react-select": "^5.8.0",
     "shadcn-ui": "^0.8.0",
     "tailwind-merge": "^2.2.2",
