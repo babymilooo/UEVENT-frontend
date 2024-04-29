@@ -32,6 +32,8 @@ const page = () => {
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
     const [loading, setLoading] = useState(true);
+    const [email, setEmail] = useState(userStore.user?.email);
+    const [isModified, setIsModified] = useState(userStore.user?.emailVerified);
 
     useEffect(() => {
         const checkAuthentication = async () => {
@@ -49,8 +51,14 @@ const page = () => {
         };
 
         checkAuthentication();
+
     }, [userStore]);
 
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value);
+        setIsModified(event.target.value !== userStore.user?.email);
+    };
+    
     return (
         <Tabs defaultValue="account" className="mx-auto my-8">
             {!userStore.user?.isRegisteredViaSpotify && (
@@ -85,12 +93,25 @@ const page = () => {
                         
                         <div className="flex-grow">
                             <div className="grid gap-2 mb-4 mt-4">
-                                <Input 
-                                    type="email" 
-                                    defaultValue={userStore.user?.email} 
-                                    placeholder="Email" 
-                                    className="w-full px-3 py-2 border rounded" 
-                                />
+                                <div className="relative flex items-center">
+                                    <Input 
+                                        type="email" 
+                                        defaultValue={userStore.user?.email} 
+                                        placeholder="Email"
+                                        onChange={handleEmailChange} 
+                                        className="w-full px-3 py-2 border rounded-l" 
+                                    />
+                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        {isModified ? (
+                                            <span className="text-red-500">✖️</span> 
+                                        ) : userStore.user?.emailVerified ? (
+                                            <span className="text-green-500">✔️</span> 
+                                        ) : (
+                                            <span className="text-red-500">✖️</span>
+                                        )}
+                                    </div>
+                                </div>
+
                                 <Input 
                                     id="username" 
                                     defaultValue={userStore.user?.userName} 
@@ -104,6 +125,7 @@ const page = () => {
                                 </Button>
                             </div>
                         </div>
+                        
                     </CardContent>
 
                 </Card>
@@ -118,26 +140,27 @@ const page = () => {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="flex justify-center">
-                            <div className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4">
-                                <Input 
-                                    id="current"  
-                                    placeholder="Current Password"  
-                                    type="password" 
-                                    className="w-full px-3 py-2 border rounded shadow-sm placeholder-gray-400 focus:ring-1 focus:ring-lime-500 focus:border-lime-500" 
-                                />
-                            </div>
+                    <div className="flex justify-center">
+                        <div className="w-full sm:w-2/3 md:w-1/2 lg:w-2/5 xl:w-1/3">
+                            <Input 
+                                id="current"  
+                                placeholder="Current Password"  
+                                type="password" 
+                                className="w-full px-3 py-2 border rounded shadow-sm placeholder-gray-400 focus:ring-1 focus:ring-lime-500 focus:border-lime-500" 
+                            />
                         </div>
-                        <div className="flex justify-center">
-                            <div className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4">
-                                <Input 
-                                    id="new"  
-                                    placeholder="New Password"  
-                                    type="password" 
-                                    className="w-full px-3 py-2 border rounded shadow-sm placeholder-gray-400 focus:ring-1 focus:ring-lime-500 focus:border-lime-500" 
-                                />
-                            </div>
+                    </div>
+                    <div className="flex justify-center">
+                        <div className="w-full sm:w-2/3 md:w-1/2 lg:w-2/5 xl:w-1/3">
+                            <Input 
+                                id="new"  
+                                placeholder="New Password"  
+                                type="password" 
+                                className="w-full px-3 py-2 border rounded shadow-sm placeholder-gray-400 focus:ring-1 focus:ring-lime-500 focus:border-lime-500" 
+                            />
                         </div>
+                    </div>
+
                     </CardContent>
                     <CardFooter className="flex justify-center pt-4">
                         <Button className="px-4 py-2 rounded hover:bg-lime-600 focus:outline-none">
@@ -148,7 +171,9 @@ const page = () => {
             </TabsContent>
             </>
             )}
-            
+
+            {userStore.user?.isRegisteredViaSpotify && (
+            <>
             <div className="mt-8 text-center">
                 <a
                     href="https://www.spotify.com/account/profile/"
@@ -161,8 +186,8 @@ const page = () => {
                 <span>Go to Spotify Account</span>
                 </a>
             </div>
-
-
+            </>
+            )}
 
             <div className="mt-8 mb-4 text-center">
                 <Button className="px-6 py-3 text-white font-bold rounded bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
