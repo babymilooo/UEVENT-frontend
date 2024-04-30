@@ -229,46 +229,49 @@ const Event = ({ org, eventData }) => {
                         </div>
                     </div>
                 }
-                <div className="flex flex-col mt-14">
-                    <p className="font-bold text-xl mb-2">Who is performing</p>
-                    <Carousel
-                        plugins={[
-                            Autoplay({
-                                delay: 5000,
-                                reset: 1000
-                            }),
-                        ]}
-                        opts={{
-                            align: "start",
-                        }}
-                        className="w-full"
-                    >
-                        <CarouselContent>
-                            {artistsInfo.map((artist, index) => (
-                                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6">
-                                    <div className="p-1">
-                                        <Card className="relative flex w-full items-start bg-cover bg-center select-none overflow-hidden h-[245px] cursor-pointer"
-                                            style={{
-                                                backgroundImage: `url('${artist.image ? artist.image : "/concert.webp"}')`,
-                                            }}
-                                            onClick={() => (router.push(`/artist/${artist.id}`))}>
-                                            <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-                                            <p className="absolute bottom-0 mb-2 ml-6 font-bold text-xl text-white z-10">{artist.artist}</p>
-                                        </Card>
-                                    </div>
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
+                {
+                    artistsInfo.length > 0 &&
+                    <div className="flex flex-col mt-14">
+                        <p className="font-bold text-xl mb-2">Who is performing</p>
+                        <Carousel
+                            plugins={[
+                                Autoplay({
+                                    delay: 5000,
+                                    reset: 1000
+                                }),
+                            ]}
+                            opts={{
+                                align: "start",
+                            }}
+                            className="w-full"
+                        >
+                            <CarouselContent>
+                                {artistsInfo.map((artist, index) => (
+                                    <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6">
+                                        <div className="p-1">
+                                            <Card className="relative flex w-full items-start bg-cover bg-center select-none overflow-hidden h-[245px] cursor-pointer"
+                                                style={{
+                                                    backgroundImage: `url('${artist.image ? artist.image : "/concert.webp"}')`,
+                                                }}
+                                                onClick={() => (router.push(`/artist/${artist.id}`))}>
+                                                <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
+                                                <p className="absolute bottom-0 mb-2 ml-6 font-bold text-xl text-white z-10">{artist.artist}</p>
+                                            </Card>
+                                        </div>
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
 
-                        {artistsInfo.length > 2 && (
-                            <>
-                                <CarouselPrevious />
-                                <CarouselNext />
-                            </>
-                        )}
-                    </Carousel>
-                </div>
+                            {artistsInfo.length > 2 && (
+                                <>
+                                    <CarouselPrevious />
+                                    <CarouselNext />
+                                </>
+                            )}
+                        </Carousel>
+                    </div>
 
+                }
             </div>
         </div>
     );
