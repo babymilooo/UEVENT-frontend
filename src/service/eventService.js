@@ -40,6 +40,19 @@ export default class EventService {
     }
 
     static async getEvents(id, limit, page) {
+        //try adding await
         return $api.get(`${API_URL}/organization/get-events/${id}?limit=${limit}&page=${page}`);
+    }
+
+    static async getUpcomingEvents() {
+        const now = new Date();
+        const nextWeek = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
+        return await $api.get('/events/get-events', {params: {
+            limit: 4,
+            page: 1,
+            startDate: now.toISOString(),
+            endDate: nextWeek.toISOString(),
+            order: 'newest',
+        }})
     }
 }
