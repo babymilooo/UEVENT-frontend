@@ -28,6 +28,7 @@ import Image from 'next/image';
 import Autoplay from 'embla-carousel-autoplay';
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import ArtistService from "@/service/artistService";
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const Event = ({ org, eventData }) => {
@@ -36,7 +37,7 @@ const Event = ({ org, eventData }) => {
     const [position, setPosition] = useState({ lat: parseFloat(event.location.latitude), lng: parseFloat(event.location.longitude) });
     const [address, setAddress] = useState("");
     const router = useRouter();
-
+    const [artistsInfo, setArtistsInfo] = useState([]);
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const eventDate = new Date(event.date);
@@ -49,6 +50,36 @@ const Event = ({ org, eventData }) => {
         console.log(organization);
     }
         , [event, organization]);
+
+    useEffect(() => {
+        const loadArtistsInfo = async () => {
+            try {
+                const response = await ArtistService.getArtists(event.artists);
+                if (response.data.length > 0) {
+                    setArtistsInfo(response.data.map((artist) => {
+                        return {
+                            artist: artist.name,
+                            id: artist.id,
+                            image: artist.images[1]?.url,
+                        };
+                    }));
+                }
+
+            } catch (error) {
+                console.error("Ошибка при загрузке информации об исполнителях:", error);
+                // Обработка ошибок
+            }
+        };
+
+        if (event.artists.length > 0) {
+            loadArtistsInfo();
+        }
+
+    }, [event]);
+
+    useEffect(() => {
+        console.log(artistsInfo);
+    }, [artistsInfo]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -129,74 +160,75 @@ const Event = ({ org, eventData }) => {
                     <div className="font-bold text-xl">{address}</div>
                     <div className=" text-neutral-400">{dayOfWeek}, {month} {dayOfMonth}, {event.time}</div>
                 </div>
-                <div className='mt-14 flex flex-col'>
-                    <p className="font-bold text-xl">Buy ticket</p>
-                    <div className="flex flex-row  gap-7 mt-2">
-                        <div className="hidden ipad:block">
-                            {event.ticketOptions.map((ticket, index) => (
-                                <div key={index}>
-                                    <div className='relative select-none'>
-                                        <img src="/ticket.png" alt="ticket" className='w-[500px] h-[200px] rounded-lg' />
-                                        <div className="absolute inset-0  ml-6 mr-36 my-6 rounded-md">
-                                            <div className="rounded-lg grid grid-cols-2 gap-4 h-full bg-white">
-                                                <div className='col-span-1 flex flex-col pb-2 pt-2 pl-2 h-full items-center justify-center'>
-                                                    <h1 className="text-3xl font-bold col-span-1 justify-center flexpb-2">{ticket.name}</h1>
+                {
+                    event.ticketOptions && event.ticketOptions.length > 0 &&
+                    <div className='mt-14 flex flex-col'>
+                        <p className="font-bold text-xl">Buy ticket</p>
+                        <div className="flex flex-row  gap-7 mt-2">
+                            <div className="hidden ipad:block">
+                                {event.ticketOptions.map((ticket, index) => (
+                                    <div key={index}>
+                                        <div className='relative select-none'>
+                                            <img src="/ticket.png" alt="ticket" className='w-[500px] h-[200px] rounded-lg' />
+                                            <div className="absolute inset-0  ml-6 mr-36 my-6 rounded-md">
+                                                <div className="rounded-lg grid grid-cols-2 gap-4 h-full bg-white">
+                                                    <div className='col-span-1 flex flex-col pb-2 pt-2 pl-2 h-full items-center justify-center'>
+                                                        <h1 className="text-3xl font-bold col-span-1 justify-center flexpb-2">{ticket.name}</h1>
+                                                        <p className="text-muted-foreground">
+                                                            tickets left: {ticket.quantity}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className='col-span-1 flex flex-col items-center justify-center'>
+                                                        <p className="text-xl font-bold">{ticket.price / 100}$</p>
+                                                        <button className="bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2">
+                                                            buy now
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="absolute right-[-20px] top-[72px] rounded-md px-3 py-1 -rotate-90 ">
+                                                <p className="text-5xl font-bold text-lime-700">ucode</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="ipad:hidden flex flex-wrap justify-center items-center w-full">
+                                {event.ticketOptions.map((ticket, index) => (
+                                    <div key={index} className="relative select-none w-[200px] h-[450px] col-span-1">
+                                        <div className="absolute inset-0 flex items-center justify-center ">
+                                            <img src="/ticket-rotated.png" alt="ticket" className='w-full h-full rounded-lg' />
+                                        </div>
+                                        <div className="absolute inset-0 ml-6 mr-36 my-6 rounded-md w-[153px] h-[300px]">
+                                            <div className="rounded-lg flex flex-col justify-between py-4 h-full w-full bg-white">
+                                                <div className="justify-center items-center flex flex-col w-full pb-2">
+                                                    <h1 className="text-3xl font-bold">{ticket.name}</h1>
                                                     <p className="text-muted-foreground">
                                                         tickets left: {ticket.quantity}
                                                     </p>
                                                 </div>
-
                                                 <div className='col-span-1 flex flex-col items-center justify-center'>
                                                     <p className="text-xl font-bold">{ticket.price / 100}$</p>
                                                     <button className="bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2">
                                                         buy now
                                                     </button>
                                                 </div>
+
+
                                             </div>
+
                                         </div>
-                                        <div className="absolute right-[-20px] top-[72px] rounded-md px-3 py-1 -rotate-90 ">
+                                        <div className="absolute bottom-8 ml-[15px] rounded-md px-3 py-1 ">
                                             <p className="text-5xl font-bold text-lime-700">ucode</p>
                                         </div>
                                     </div>
-
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                        <div className="ipad:hidden flex flex-wrap justify-center items-center w-full">
-                            {event.ticketOptions.map((ticket, index) => (
-                                <div key={index} className="relative select-none w-[200px] h-[450px] col-span-1">
-                                    <div className="absolute inset-0 flex items-center justify-center ">
-                                        <img src="/ticket-rotated.png" alt="ticket" className='w-full h-full rounded-lg' />
-                                    </div>
-                                    <div className="absolute inset-0 ml-6 mr-36 my-6 rounded-md w-[153px] h-[300px]">
-                                        <div className="rounded-lg flex flex-col justify-between py-4 h-full w-full bg-white">
-                                            <div className="justify-center items-center flex flex-col w-full pb-2">
-                                                <h1 className="text-3xl font-bold">{ticket.name}</h1>
-                                                <p className="text-muted-foreground">
-                                                    tickets left: {ticket.quantity}
-                                                </p>
-                                            </div>
-                                            <div className='col-span-1 flex flex-col items-center justify-center'>
-                                                <p className="text-xl font-bold">{ticket.price / 100}$</p>
-                                                <button className="bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2">
-                                                    buy now
-                                                </button>
-                                            </div>
-
-
-                                        </div>
-
-                                    </div>
-                                    <div className="absolute bottom-8 ml-[15px] rounded-md px-3 py-1 ">
-                                        <p className="text-5xl font-bold text-lime-700">ucode</p>
-                                    </div>
-                                </div>
-                            ))}
-
-                        </div>
-
                     </div>
-                </div>
+                }
                 <div className="flex flex-col mt-14">
                     <p className="font-bold text-xl mb-2">Who is performing</p>
                     <Carousel
@@ -212,25 +244,31 @@ const Event = ({ org, eventData }) => {
                         className="w-full"
                     >
                         <CarouselContent>
-                            {Array.from({ length: 20 }).map((_, index) => (
+                            {artistsInfo.map((artist, index) => (
                                 <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6">
                                     <div className="p-1">
-                                        <Card className="relative flex w-full items-start bg-cover bg-center select-none overflow-hidden h-[245px]"
+                                        <Card className="relative flex w-full items-start bg-cover bg-center select-none overflow-hidden h-[245px] cursor-pointer"
                                             style={{
-                                                backgroundImage: `url('/concert.webp')`,
-                                            }}>
+                                                backgroundImage: `url('${artist.image ? artist.image : "/concert.webp"}')`,
+                                            }}
+                                            onClick={() => (router.push(`/artist/${artist.id}`))}>
                                             <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-                                            <p className="absolute bottom-0 mb-2 ml-6 font-bold text-xl text-white z-10">Playboi Carti</p>
+                                            <p className="absolute bottom-0 mb-2 ml-6 font-bold text-xl text-white z-10">{artist.artist}</p>
                                         </Card>
                                     </div>
                                 </CarouselItem>
                             ))}
                         </CarouselContent>
 
-                        <CarouselPrevious />
-                        <CarouselNext />
+                        {artistsInfo.length > 2 && (
+                            <>
+                                <CarouselPrevious />
+                                <CarouselNext />
+                            </>
+                        )}
                     </Carousel>
                 </div>
+
             </div>
         </div>
     );
