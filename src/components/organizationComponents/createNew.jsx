@@ -170,7 +170,10 @@ const CreateNew = ({ organization, setEvents, events }) => {
             }
         }
 
-
+        const timeHours = Number(startTime.slice(0, 2));
+        const timeMinutes = Number(startTime.slice(3, 5));
+        endDate.setHours(timeHours);
+        endDate.setMinutes(timeMinutes);
         const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, countryCode: countryCode }
         const data = { organizationId: organization._id, name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
         let res;

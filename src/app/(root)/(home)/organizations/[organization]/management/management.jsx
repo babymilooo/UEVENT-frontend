@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import OrganizationService from '@/service/orgService';
 import { useRouter } from "next/navigation";
 
-const Render = ({ res, eventsData, total, totalPages }) => {
+const Render = ({ res }) => {
     const rootStore = useContext(RootStoreContext);
     const router = useRouter();
     const { userStore } = rootStore;
@@ -27,20 +27,40 @@ const Render = ({ res, eventsData, total, totalPages }) => {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
     const [buttonLoading, setButtonLoading] = useState(true);
-    const [events, setEvents] = useState(eventsData);
+    const [events, setEvents] = useState([]);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
     const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
     const isVerified = organization.isVerified;
 
     const [currentPage, setCurrentPage] = useState(0);
-    const [totalItems, setTotalItems] = useState(total);
+    const [totalItems, setTotalItems] = useState(0);
     const itemsPerPage = 10;
-    const [pageCount, setPageCount] = useState(totalPages);
-    const [isAuthor, setIsAuthor] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [pageCount, setPageCount] = useState(0);
+
+   
+    useEffect(() => {
+        setButtonLoading(true);
+        const fetchEvents = async () => {
+            setLoading(true);
+            try {
+                const result = await EventService.getEvents(organization._id, itemsPerPage, currentPage+1);
+                if (result) {
+                    setEvents(result.data.events);
+                    setTotalItems(result.data.totalItems);
+                    setPageCount(result.data.totalPages);
+                }
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+            setLoading(false);
+        };
+        fetchEvents();
+        setButtonLoading(false);
+    }, [currentPage]);
 
     useEffect(() => {
+        setButtonLoading(true);
         const fetchData = async () => {
             try {
                 const processedEvents = await Promise.all(
@@ -122,14 +142,7 @@ const Render = ({ res, eventsData, total, totalPages }) => {
         // Fetch data if events array is not empty
         if (events.length > 0)
             fetchData();
-        else
-            setLoading(false);
-
-        if (userStore.user && organization) {
-            setIsAuthor(userStore.user._id === organization.createdBy);
-            setIsAdmin(userStore.user.role === "admin");
-            setButtonLoading(false);
-        }
+        setButtonLoading(false);    
     }, []);
 
     const handlePageClick = (data) => {
@@ -156,13 +169,13 @@ const Render = ({ res, eventsData, total, totalPages }) => {
                             <Skeleton className="h-20 w-20 rounded-full" />
                         ) : (
                             <div className='flex justify-center items-center w-full gap-2 border-b pb-5'>
-                                {isAdmin && !isAuthor && (
+                                {(userStore.user.role === "admin") && !(userStore.user._id === organization.createdBy) && (
                                     <>
                                         <Button className="bg-lime-400 hover:bg-lime-400 px-6 py-1 rounded-3xl font-bold text-xs text-black" onClick={handleClickVerify}> Verify This Organization </Button>
                                     </>
                                 )}
 
-                                {isAuthor && (
+                                {(userStore.user._id === organization.createdBy) && (
                                     <>
                                         <CreateNew organization={organization} setEvents={setEvents} events={events} />
                                     </>
@@ -174,7 +187,7 @@ const Render = ({ res, eventsData, total, totalPages }) => {
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
 
-                                {isAuthor && (
+                                {(userStore.user._id === organization.createdBy) && (
                                     <>
                                         <Edit organization={organization} setOrganization={setOrganization} />
                                     </>

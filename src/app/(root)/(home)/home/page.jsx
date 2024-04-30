@@ -1,5 +1,5 @@
 "use client"
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Carousel,
     CarouselContent,
@@ -17,11 +17,22 @@ import { Footer } from '@/components/footer/Footer';
 import { useRouter } from 'next/navigation';
 import { observer } from 'mobx-react-lite';
 import { RootStoreContext } from '@/providers/rootStoreProvider';
+import EventService from '@/service/eventService';
 
 const page = observer(() => {
     const router = useRouter();
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
+
+    useEffect(() => {
+        const fetchUpcoming = async () => {
+            const resp = await EventService.getUpcomingEvents();
+            setUpcomingEvents(resp.data.eventTwo);
+            console.log(resp.data);
+        }
+        fetchUpcoming();
+    }, [])
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex items-center overflow-x-hidden ">

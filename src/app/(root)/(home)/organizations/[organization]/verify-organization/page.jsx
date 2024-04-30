@@ -19,8 +19,8 @@ function OrganizationVerificationPage() {
   const [creatorData, setCreatorData] = useState(null);
 
   useEffect(() => {
-    if (userStore.role != "admin") router.push("/");
-  }, [userStore.role]);
+    if (userStore?.user?.role == "user") router.push("/");
+  }, [userStore?.user?.role]);
 
   useEffect(() => {
     OrganizationService.getOrganization(organization).then((resp) => {
@@ -44,6 +44,20 @@ function OrganizationVerificationPage() {
   return (
     <>
       <div className="m-auto">
+        {!userStore.user && (
+          <>
+            <div className="flex flex-col m-auto">
+              <p className="text-center">This page only accessible for logged in admins</p>
+              <button
+                type="button"
+                className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6"
+                onClick={() => router.push("/login")}
+              >
+                To Login
+              </button>
+            </div>
+          </>
+        )}
         {!orgData && (
           <>
             <Loader size={40} />
