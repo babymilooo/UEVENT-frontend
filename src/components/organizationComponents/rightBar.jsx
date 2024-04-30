@@ -134,25 +134,28 @@ export function RightBar({
                 <p className="font-bold mt-4 mb-2 text-sm">
                     Events
                 </p>
-                {events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1" style={{
-                    backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}`
-                }}>
-                    <div className="absolute inset-0 bg-black opacity-60"></div>
-                    <CardContent className="flex items-center h-full w-full">
-                        <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
-                            <div className="flex flex-col items-center justify-center w-full h-full z-10">
-                                <p className="font-bold text-white">{event.month}</p>
-                                <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
+                {events.map((event, index) => (
+                    <Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer" style={{
+                        backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}`
+                    }}
+                        onClick={() => router.push(`/events/${event._id}`)}
+                    >
+                        <div className="absolute inset-0 bg-black opacity-60"></div>
+                        <CardContent className="flex items-center h-full w-full">
+                            <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
+                                <div className="flex flex-col items-center justify-center w-full h-full z-10">
+                                    <p className="font-bold text-white">{event.month}</p>
+                                    <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
 
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex flex-col">
-                            <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
-                            <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
-                            <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
-                        </div>
-                    </CardContent>
-                </Card>))}
+                            <div className="flex flex-col">
+                                <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
+                                <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
+                                <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
+                            </div>
+                        </CardContent>
+                    </Card>))}
             </div>
         </div>
     </ScrollArea>;

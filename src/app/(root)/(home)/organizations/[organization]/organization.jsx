@@ -86,9 +86,10 @@ const Render = ({ res, eventsData }) => {
                             Events
                         </p>
                         <div className="grid grid-cols-2 gap-1">
-                            {events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1" style={{
-                                backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}`
-                            }}>
+                            {events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer"
+                                style={{ backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}` }}
+                                onClick={() => (router.push(`/events/${event._id}`))}
+                            >
                                 <div className="absolute inset-0 bg-black opacity-60"></div>
                                 <CardContent className="flex items-center h-full w-full">
                                     <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">

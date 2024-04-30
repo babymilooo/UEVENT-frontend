@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 export default class EventService {
 
-    static async createOrganization(data) {
+    static async createEvent(data) {
         try {
             const response = await $api.post(`${API_URL}/events/create`, data);
             return response;
@@ -32,7 +32,7 @@ export default class EventService {
 
     static async createTicket(data) {
         try {
-            const response = await $api.post(`${API_URL}/tickets/create`, data);
+            const response = await $api.post(`${API_URL}/ticketOptions/create`, data);
             return response;
         } catch (e) {
             toast.error(e.response?.data?.message);
@@ -41,5 +41,9 @@ export default class EventService {
 
     static async getEvents(id, limit, page) {
         return $api.get(`${API_URL}/organization/get-events/${id}?limit=${limit}&page=${page}`);
+    }
+
+    static async getEvent(id) {
+        return $api.get(`${API_URL}/events/get-event/${id}`);
     }
 }

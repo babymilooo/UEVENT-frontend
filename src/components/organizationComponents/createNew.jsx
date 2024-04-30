@@ -173,13 +173,31 @@ const CreateNew = ({ organization, setEvents, events }) => {
 
         const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, countryCode: countryCode }
         const data = { organizationId: organization._id, name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
-        await EventService.createOrganization(data);
+        let res;
+        const event = await EventService.createEvent(data);
         if (bg) {
-            const res = await EventService.updatePicture(response.data._id, bg);
+            res = await EventService.updatePicture(event.data._id, bg);
         }
         if (tickets.length > 0) {
             // const res = await 
         }
+        const ticketPromises = tickets.map(async (ticket) => {
+            const ticketData = {
+                event: event.data._id,
+                name: ticket.name,
+                price: ticket.price,
+                quantity: ticket.quantity
+            };
+            // Await the result of EventService.createTicket
+            return EventService.createTicket(ticketData);
+        });
+
+        // Wait for all ticket creation promises to resolve
+        const ticketResults = await Promise.all(ticketPromises);
+
+        const eventData = { ...response.data, tickets: ticketResults };
+
+        setEvents([...events, eventData]);
         handleClose();
     }
 

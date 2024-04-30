@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;

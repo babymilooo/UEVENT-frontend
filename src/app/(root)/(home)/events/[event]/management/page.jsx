@@ -1,5 +1,5 @@
 import React from 'react';
-import Events from './render';
+import Events from './EventManagement';
 
 const page = () => {
     return (
