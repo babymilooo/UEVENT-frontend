@@ -131,58 +131,69 @@ const Event = ({ org, eventData }) => {
                 </div>
                 <div className='mt-14 flex flex-col'>
                     <p className="font-bold text-xl">Buy ticket</p>
-                    <div className="flex flex-col ipad:flex-row  gap-7 mt-2">
-                        {/* <Card className="xl:w-1/3 w-full">
-                            <CardTitle className="font-bold text-lg p-1 pl-4 bg-neutral-200 rounded-t-md">VIP ticket</CardTitle>
-                            <CardContent className="mt-4">
-                                <p className="font-bold text-xl">Access to the VIP area</p>
-                                <div className="flex items-center justify-end">
-                                    <div className="flex flex-col items-center justify-center">
-                                        <div className="font-bold text-lg">$100</div>
-                                        <button className=" bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2">
-                                            buy now
-                                        </button>
-                                    </div>
-                                </div>
-                                <p className="font-bold text-neutral-400">total ended: 34 </p>
-                            </CardContent>
-                        </Card>
-                        <Card className="xl:w-1/3 w-full">
-                            <CardTitle className="font-bold text-lg p-1 pl-4 bg-neutral-200 rounded-t-md">Default ticket</CardTitle>
-                            <CardContent className="mt-4">
-                                <p className="font-bold text-xl">Access to the common area</p>
-                                <div className="flex items-center justify-end">
-                                    <div className="flex flex-col items-center justify-center">
-                                        <div className="font-bold text-lg">$50</div>
-                                        <button className=" bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2">
-                                            buy now
-                                        </button>
-                                    </div>
-                                </div>
-                                <p className="font-bold text-neutral-400">total ended: 156 </p>
-                            </CardContent>
-                        </Card> */}
-                        {event.ticketOptions.map((ticket, index) => (
-                            <div key={index}>
-                                <div className='relative'>
-                                    <img src="/ticket.png" alt="ticket" className='w-[500px] h-[200px] rounded-lg' />
-                                    <div className="absolute inset-0 bg-white ml-6 mr-7 my-6 rounded-md">
-                                        <div className="rounded-lg grid grid-cols-3 gap-4 h-full">
-                                            <div className='col-span-1 flex flex-col justify-between pb-2 pt-2 pl-2'>
-                                                <h1 className="text-lg font-bold col-span-1 justify-center flex h-full items-center pb-2 ">Ticket {index + 1}</h1>
+                    <div className="flex flex-row  gap-7 mt-2">
+                        <div className="hidden ipad:block">
+                            {event.ticketOptions.map((ticket, index) => (
+                                <div key={index}>
+                                    <div className='relative select-none'>
+                                        <img src="/ticket.png" alt="ticket" className='w-[500px] h-[200px] rounded-lg' />
+                                        <div className="absolute inset-0  ml-6 mr-36 my-6 rounded-md">
+                                            <div className="rounded-lg grid grid-cols-2 gap-4 h-full bg-white">
+                                                <div className='col-span-1 flex flex-col pb-2 pt-2 pl-2 h-full items-center justify-center'>
+                                                    <h1 className="text-3xl font-bold col-span-1 justify-center flexpb-2">{ticket.name}</h1>
+                                                    <p className="text-muted-foreground">
+                                                        tickets left: {ticket.quantity}
+                                                    </p>
+                                                </div>
 
-                                            </div>
-
-                                            <div className='col-span-2 flex flex-col gap-2 pt-2 pr-2'>
-
-
+                                                <div className='col-span-1 flex flex-col items-center justify-center'>
+                                                    <p className="text-xl font-bold">{ticket.price / 100}$</p>
+                                                    <button className="bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2">
+                                                        buy now
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="absolute right-[-20px] top-[72px] rounded-md px-3 py-1 -rotate-90 ">
+                                            <p className="text-5xl font-bold text-lime-700">ucode</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            ))}
+                        </div>
+                        <div className="ipad:hidden flex flex-wrap justify-center items-center w-full">
+                            {event.ticketOptions.map((ticket, index) => (
+                                <div key={index} className="relative select-none w-[200px] h-[450px] col-span-1">
+                                    <div className="absolute inset-0 flex items-center justify-center ">
+                                        <img src="/ticket-rotated.png" alt="ticket" className='w-full h-full rounded-lg' />
+                                    </div>
+                                    <div className="absolute inset-0 ml-6 mr-36 my-6 rounded-md w-[153px] h-[300px]">
+                                        <div className="rounded-lg flex flex-col justify-between py-4 h-full w-full bg-white">
+                                            <div className="justify-center items-center flex flex-col w-full pb-2">
+                                                <h1 className="text-3xl font-bold">{ticket.name}</h1>
+                                                <p className="text-muted-foreground">
+                                                    tickets left: {ticket.quantity}
+                                                </p>
+                                            </div>
+                                            <div className='col-span-1 flex flex-col items-center justify-center'>
+                                                <p className="text-xl font-bold">{ticket.price / 100}$</p>
+                                                <button className="bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2">
+                                                    buy now
+                                                </button>
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+                                    <div className="absolute bottom-8 ml-[15px] rounded-md px-3 py-1 ">
+                                        <p className="text-5xl font-bold text-lime-700">ucode</p>
                                     </div>
                                 </div>
+                            ))}
 
-                            </div>
-                        ))}
+                        </div>
 
                     </div>
                 </div>
