@@ -38,7 +38,7 @@ import axios from 'axios';
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 
-const CreateNew = ({ organization, setEvents, events }) => {
+const CreateNew = ({ organization, setEvents, events, setCurrentPage }) => {
     const [backgroundImage, setBackgroundImage] = useState("/gradient.jpeg");
     const [bg, setBg] = useState(null);
     const [endDate, setEndDate] = useState(new Date());
@@ -184,23 +184,18 @@ const CreateNew = ({ organization, setEvents, events }) => {
         if (tickets.length > 0) {
             // const res = await 
         }
-        const ticketPromises = tickets.map(async (ticket) => {
+        tickets.map(async (ticket) => {
             const ticketData = {
                 event: event.data._id,
                 name: ticket.name,
-                price: ticket.price,
-                quantity: ticket.quantity
+                price: parseFloat(ticket.price) * 100,
+                quantity: parseInt(ticket.quantity)
             };
             // Await the result of EventService.createTicket
             return EventService.createTicket(ticketData);
         });
 
-        // Wait for all ticket creation promises to resolve
-        const ticketResults = await Promise.all(ticketPromises);
-
-        const eventData = { ...response.data, tickets: ticketResults };
-
-        setEvents([...events, eventData]);
+        setCurrentPage(0);
         handleClose();
     }
 

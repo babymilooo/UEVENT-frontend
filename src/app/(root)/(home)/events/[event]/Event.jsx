@@ -33,7 +33,7 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 const Event = ({ org, eventData }) => {
     const [event, setEvent] = useState(eventData);
     const [organization, setOrganization] = useState(org);
-    const [position, setPosition] = useState({ lat: parseFloat(organization.location.latitude), lng: parseFloat(organization.location.longitude) });
+    const [position, setPosition] = useState({ lat: parseFloat(event.location.latitude), lng: parseFloat(event.location.longitude) });
     const [address, setAddress] = useState("");
     const router = useRouter();
 
@@ -82,7 +82,13 @@ const Event = ({ org, eventData }) => {
                         // Add additional checks for other types if needed
                     });
 
-                    address = `${route} ${street}, ${city}, ${country} `;
+                    if (route && street) {
+                        address = `${route} ${street}, ${city}, ${country}`;
+                    } else if (route || street) {
+                        address = `${route || street}, ${city}, ${country}`;
+                    } else {
+                        address = `${city}, ${country}`;
+                    }
 
                     setAddress(address);
                 }
@@ -156,25 +162,19 @@ const Event = ({ org, eventData }) => {
                                 <p className="font-bold text-neutral-400">total ended: 156 </p>
                             </CardContent>
                         </Card> */}
-                        {/* {event.tickets.map((ticket, index) => (
+                        {event.ticketOptions.map((ticket, index) => (
                             <div key={index}>
                                 <div className='relative'>
-                                    <img src="/ticket.png" alt="ticket" className='w-full h-[150px] rounded-lg' />
+                                    <img src="/ticket.png" alt="ticket" className='w-[500px] h-[200px] rounded-lg' />
                                     <div className="absolute inset-0 bg-white ml-6 mr-7 my-6 rounded-md">
                                         <div className="rounded-lg grid grid-cols-3 gap-4 h-full">
                                             <div className='col-span-1 flex flex-col justify-between pb-2 pt-2 pl-2'>
                                                 <h1 className="text-lg font-bold col-span-1 justify-center flex h-full items-center pb-2 ">Ticket {index + 1}</h1>
-                                                <Input
-                                                    className=''
-                                                    onChange={(e) => handleTicketChange(index, 'quantity', e.target.value)}
-                                                    placeholder={`quantity`} />
+
                                             </div>
 
                                             <div className='col-span-2 flex flex-col gap-2 pt-2 pr-2'>
-                                                <Input onChange={(e) => handleTicketChange(index, 'name', e.target.value)} placeholder={`Enter name`} />
-                                                <Input
-                                                    onChange={(e) => handleTicketChange(index, 'price', e.target.value)}
-                                                    placeholder={`Enter price $`} />
+
 
                                             </div>
                                         </div>
@@ -182,7 +182,8 @@ const Event = ({ org, eventData }) => {
                                 </div>
 
                             </div>
-                        ))} */}
+                        ))}
+
                     </div>
                 </div>
                 <div className="flex flex-col mt-14">

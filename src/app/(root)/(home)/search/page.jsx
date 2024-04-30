@@ -99,7 +99,7 @@ const page = () => {
     }, [search]);
 
     return (
-        <div className='xl:pl-[250px] lg:pl-[200px] flex flex-col items-center lg:items-start mb-12 w-full '>
+        <div className='xl:pl-[250px] lg:pl-[200px] flex flex-col items-center lg:items-start mb-12 w-full pt-14'>
             <Input
                 placeholder='Search for artists'
                 value={search}

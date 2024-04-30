@@ -38,76 +38,49 @@ const Render = ({ res }) => {
     const itemsPerPage = 10;
     const [pageCount, setPageCount] = useState(0);
 
-   
     useEffect(() => {
-        setButtonLoading(true);
-        const fetchEvents = async () => {
-            setLoading(true);
-            try {
-                const result = await EventService.getEvents(organization._id, itemsPerPage, currentPage+1);
-                if (result) {
-                    setEvents(result.data.events);
-                    setTotalItems(result.data.totalItems);
-                    setPageCount(result.data.totalPages);
-                }
-            } catch (error) {
-                console.error('Error fetching events:', error);
-            }
-            setLoading(false);
-        };
-        fetchEvents();
-        setButtonLoading(false);
-    }, [currentPage]);
-
-    useEffect(() => {
-        setButtonLoading(true);
         const fetchData = async () => {
             try {
-                const processedEvents = await Promise.all(
-                    events.map(async (event) => {
-                        const eventDate = new Date(event.date);
-                        const month = months[eventDate.getMonth()];
-                        const dayOfWeek = days[eventDate.getDay()];
-                        const dayOfMonth = eventDate.getDate();
+                setLoading(true);
 
-                        if (event.location?.latitude && event.location?.longitude) {
-                            const response = await axios.get(
-                                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${event.location.latitude},${event.location.longitude}&key=${API_KEY}`
-                            );
+                // Fetch events based on currentPage
+                const result = await EventService.getEvents(organization._id, itemsPerPage, currentPage + 1);
+
+                if (result && result.data) {
+                    const updatedEvents = await Promise.all(
+                        result.data.events.map(async (event) => {
+                            const eventDate = new Date(event.date);
+                            const month = months[eventDate.getMonth()];
+                            const dayOfWeek = days[eventDate.getDay()];
+                            const dayOfMonth = eventDate.getDate();
+
                             let address = '';
-                            let city = '';
-                            let country = '';
-                            let street = '';
-                            let route = '';
-                            if (response.data.results.length > 0) {
-                                const placeInfo = response.data.results[0];
+                            if (event.location?.latitude && event.location?.longitude) {
+                                // Fetch address details from Google Maps Geocoding API
+                                const response = await axios.get(
+                                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${event.location.latitude},${event.location.longitude}&key=${API_KEY}`
+                                );
 
-                                // Iterate over address components to extract short names
-                                placeInfo.address_components.forEach((component) => {
-                                    const types = component.types;
-                                    const shortName = component.short_name;
+                                if (response.data.results.length > 0) {
+                                    const placeInfo = response.data.results[0];
+                                    const { city, country, route, street_number } = placeInfo.address_components.reduce(
+                                        (acc, component) => {
+                                            if (component.types.includes('locality')) acc.city = component.short_name;
+                                            if (component.types.includes('country')) acc.country = component.short_name;
+                                            if (component.types.includes('route')) acc.route = component.short_name;
+                                            if (component.types.includes('street_number')) acc.street_number = component.short_name;
+                                            return acc;
+                                        },
+                                        {}
+                                    );
 
-                                    // Check types and assign short names accordingly
-                                    if (types.includes('locality')) {
-                                        city = shortName;
-                                    } else if (types.includes('country')) {
-                                        country = shortName;
-                                    } else if (types.includes('route')) {
-                                        route = shortName;
-                                    } else if (types.includes('street_number')) {
-                                        street = shortName;
+                                    if (route && street_number) {
+                                        address = `${route} ${street_number}, ${city}, ${country}`;
+                                    } else if (route || street_number) {
+                                        address = `${route || street_number}, ${city}, ${country}`;
+                                    } else {
+                                        address = `${city}, ${country}`;
                                     }
-                                    // Add additional checks for other types if needed
-                                });
-
-                                // Construct formatted address using extracted data
-
-                                if (route && street) {
-                                    address = `${route} ${street}, ${city}, ${country}`;
-                                } else if (route || street) {
-                                    address = `${route}${street}, ${city}, ${country}`;
-                                } else {
-                                    address = `${city}, ${country}`;
                                 }
                             }
 
@@ -118,32 +91,27 @@ const Render = ({ res }) => {
                                 dayOfMonth,
                                 address
                             };
-                        } else {
-                            // If latitude or longitude is missing, return event without address
-                            return {
-                                ...event,
-                                month,
-                                dayOfWeek,
-                                dayOfMonth,
-                                address: ''
-                            };
-                        }
-                    })
-                );
+                        })
+                    );
 
-                setEvents(processedEvents);
+                    setEvents(updatedEvents);
+                    setTotalItems(result.data.totalItems);
+                    setPageCount(result.data.totalPages);
+                }
+
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching data:', error);
-                setLoading(false); // Handle loading state in case of error
+                console.error('Error fetching events:', error);
+                setLoading(false);
             }
         };
 
-        // Fetch data if events array is not empty
-        if (events.length > 0)
-            fetchData();
-        setButtonLoading(false);    
-    }, []);
+        fetchData();
+    }, [currentPage]);
+
+    useEffect(() => {
+        setButtonLoading(loading); // Update button loading state based on general loading state
+    }, [loading]);
 
     const handlePageClick = (data) => {
         setCurrentPage(data.selected);
@@ -177,7 +145,7 @@ const Render = ({ res }) => {
 
                                 {(userStore.user._id === organization.createdBy) && (
                                     <>
-                                        <CreateNew organization={organization} setEvents={setEvents} events={events} />
+                                        <CreateNew organization={organization} setEvents={setEvents} events={events} setCurrentPage={setCurrentPage}/>
                                     </>
                                 )}
 
