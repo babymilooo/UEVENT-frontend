@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, useContext } from 'react';
 import EventService from '@/service/eventService';
-
+import ReactPaginate from 'react-paginate';
 import { Main } from '@/components/organizationComponents/main';
 import { OpenLeftBar } from '@/components/organizationComponents/openLeftBar';
 import CreateNew from '@/components/organizationComponents/createNew';
@@ -13,8 +13,16 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from "@/components/ui/card"
 import Image from 'next/image';
 import axios from 'axios';
+import { RootStoreContext } from '@/providers/rootStoreProvider';
+import { is } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import OrganizationService from '@/service/orgService';
+import {  useRouter } from "next/navigation";
 
-const Render = ({ res, eventsData }) => {
+const Render = ({ res, eventsData, total, totalPages }) => {
+    const rootStore = useContext(RootStoreContext);
+    const router = useRouter();
+    const { userStore } = rootStore;
     const [organization, setOrganization] = useState(res);
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
@@ -23,6 +31,15 @@ const Render = ({ res, eventsData }) => {
     const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
     const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalItems, setTotalItems] = useState(total);
+    const itemsPerPage = 10;
+    const [pageCount, setPageCount] = useState(totalPages);
+    const [isAuthor, setIsAuthor] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -103,13 +120,32 @@ const Render = ({ res, eventsData }) => {
             }
         };
 
+        
         // Fetch data if events array is not empty
-        if (events.length > 0) {
+        if (events.length > 0)
             fetchData();
-        }
-    }, []);
+        else
+            setLoading(false);
 
-    const isVerified = organization.IsVerified;
+        if (userStore.user && organization) {
+            setIsAuthor(userStore.user._id === organization.createdBy);
+            setIsAdmin(userStore.user.role === "admin");
+        }
+    }, [userStore.user, organization]);
+
+    const handlePageClick = (data) => {
+        setCurrentPage(data.selected);
+    };
+    const isVerified = organization.isVerified;
+
+    const handleClickVerify = async () => {
+        try {
+            await OrganizationService.verifyOrganization(organization._id);
+            router.push("/admin");
+        } catch (error) {
+            console.log(error);
+        }
+      };
 
     return (
         <div className='flex bg-muted h-full'>
@@ -118,7 +154,17 @@ const Render = ({ res, eventsData }) => {
                 <OpenLeftBar isVerified={isVerified} organization={organization} events={events}/>
                 <div className='bg-background rounded-t-md h-full ipad:p-5'>
                     <div className='flex justify-center items-center w-full gap-2 border-b pb-5'>
+                    {isAdmin && !isAuthor && (
+                        <>
+                        <Button className="bg-lime-400 hover:bg-lime-400 px-6 py-1 rounded-3xl font-bold text-xs text-black" onClick={handleClickVerify}> Verify This Organization </Button>
+                        </>
+                        )}
+                        
+                        {isAuthor   && (
+                        <>
                         <CreateNew organization={organization} setEvents={setEvents} events={events} />
+                        </>
+                        )}
 
                         <Input
                             placeholder='Search organization'
@@ -126,7 +172,11 @@ const Render = ({ res, eventsData }) => {
                             onChange={(e) => setSearch(e.target.value)}
                         />
 
+                        {isAuthor  && (
+                        <>
                         <Edit organization={organization} setOrganization={setOrganization} />
+                        </>
+                        )}
                     </div>
                     {
                         loading ? (
@@ -168,6 +218,30 @@ const Render = ({ res, eventsData }) => {
                             ))
                         )
                     }
+                    
+                    {!loading && totalItems > itemsPerPage && (
+                    <div className="mt-10">
+                        <ReactPaginate
+                            previousLabel={"<"}
+                            nextLabel={">"}
+                            breakLabel={"..."}
+                            pageCount={pageCount}
+                            onPageChange={handlePageClick}
+                            containerClassName="flex list-none justify-center p-4"
+                            activeClassName="bg-black text-white rounded-full"
+                            pageClassName="mx-1"
+                            pageLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                            previousClassName="mx-1"
+                            nextClassName="mx-1"
+                            previousLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                            nextLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                            breakClassName="mx-1"
+                            breakLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                            forcePage={currentPage}
+                            disabledClassName="opacity-30 cursor-not-allowed"
+                        />
+                    </div>
+                )}
                 </div>
             </div>
             <div className="z-10 h-full hidden xl:block ">
@@ -178,7 +252,7 @@ const Render = ({ res, eventsData }) => {
                 </div>
             </div>
         </div>
-    );
+);
 };
 
 export default Render;

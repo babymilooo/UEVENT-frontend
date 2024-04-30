@@ -84,9 +84,9 @@ const Navbar = () => {
                 {
                     !userStore.isLoggedIn ? (
                         <div className='flex flex-1 items-center space-x-2 justify-end'>
-                            <Button variant="ghost" onClick={() => router.push("/auth/login")}>login</Button>
+                            <Button variant="ghost" onClick={() => router.push("/auth/login")}>Sign IN</Button>
                             <button className=" bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs" onClick={() => router.push("/auth/registration")} >
-                                Registration
+                                Sign UP
                             </button>
                         </div>) : (
                         <div className='flex flex-1 items-center space-x-2 justify-end cursor-pointer'>
@@ -102,15 +102,22 @@ const Navbar = () => {
                                 <MyPopoverContent className="rounded-lg">
                                     <div className="flex flex-col font-bold">
                                         <div className="p-3 pl-4 cursor-pointer hover:bg-muted" onClick={() => router.push(`/user/${userStore.user?._id}`)}>
-                                            account
+                                            Account
                                         </div>
                                         <div className="p-3 pl-4 cursor-pointer hover:bg-muted" onClick={() => router.push("/organizations")}>
                                             <p>
                                                 My organizations
                                             </p>
                                         </div>
+                                        {userStore.user?.role === 'admin' && (
+                                            <div className="p-3 pl-4 cursor-pointer hover:bg-muted" onClick={() => router.push("/admin")}>
+                                                <p>
+                                                    Admin Panel
+                                                </p>
+                                            </div>
+                                        )}
                                         <div className="p-3 pl-4 cursor-pointer hover:bg-muted" onClick={() => router.push("/user/settings")}>
-                                            settings
+                                            Settings
                                         </div>
                                         <div className="w-full border-t">
                                             <p className="p-4 cursor-pointer" onClick={handleLogout}>

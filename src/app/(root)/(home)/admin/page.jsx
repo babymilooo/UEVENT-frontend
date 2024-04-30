@@ -1,11 +1,12 @@
 import React from 'react';
+import Render from './render';
 
-const Page = () => {
+const page = () => {
     return (
         <div>
-            asdasdas
+            <Render />
         </div>
     );
 };
 
-export default Page;
+export default page;

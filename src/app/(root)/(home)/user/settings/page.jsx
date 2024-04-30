@@ -126,9 +126,7 @@ const page = () => {
                                                 className="w-full px-3 py-2 border rounded-l"
                                             />
                                             <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                {isModified ? (
-                                                    <span className="text-red-500">✖️</span>
-                                                ) : userStore.user?.emailVerified ? (
+                                                {userStore.user?.emailVerified ? (
                                                     <span className="text-green-500">✔️</span>
                                                 ) : (
                                                     <span className="text-red-500">✖️</span>

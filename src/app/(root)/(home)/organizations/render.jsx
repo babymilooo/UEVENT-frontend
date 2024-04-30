@@ -88,13 +88,18 @@ const Render = () => {
     useEffect(() => {
         const fetchOrganizations = async () => {
             setLoading(true);
-            const response = await OrganizationService.getOrganizations(currentPage + 1, itemsPerPage);
-            const res = response.data;
-            const organizationsData = Object.values(res.organizations);
-            setOrganizations(organizationsData);
-            setFilteredOrganizations(organizationsData);
-            setPageCount(res.totalPages);
-            setTotalItems(res.totalItems);
+            try {
+                const response = await OrganizationService.getOrganizations(currentPage + 1, itemsPerPage);
+                const res = response.data;
+                const organizationsData = Object.values(res.organizations);
+                console.log(organizationsData);
+                setOrganizations(organizationsData);
+                setFilteredOrganizations(organizationsData);
+                setPageCount(res.totalPages);
+                setTotalItems(res.totalItems);
+            } catch (error) {
+                console.error('Failed to fetch organizations:', error);
+            }
             setLoading(false);
         }
         fetchOrganizations();
@@ -214,7 +219,7 @@ const Render = () => {
                     </Dialog>
 
                     <Input
-                        placeholder='Search organization'
+                        placeholder='Search my organizations'
                         value={searchInput}
                         onChange={handleInputChange}
                     />
@@ -246,6 +251,13 @@ const Render = () => {
                                         }} />
                                     <div className='ipad:pl-5 flex-col justify-between flex h-[200px]'>
                                         <div className='pt-10'>
+                                        {organization.isVerified && (
+                                                <div className="flex items-center gap-2 mr-4">
+                                                <Image src="/verified.svg" alt="verified" width={20} height={20} />
+                                                <div className="text-primary">Verified</div>
+                                            </div>
+                                            
+                                            )}
                                             <h1 className='iphone:text-6xl text-5xl font-bold pt-5 ipad:pt-0'>{organization?.name}</h1>
                                             <div className='w-3/4 text-muted-foreground '>
                                                 {organization?.description}
@@ -259,32 +271,34 @@ const Render = () => {
                                 </div>
                             </Card>
                         ))
+                    }
+
+                    {!loading && totalItems > itemsPerPage && (
+                        <div className="mt-10">
+                            <ReactPaginate
+                                previousLabel={"<"}
+                                nextLabel={">"}
+                                breakLabel={"..."}
+                                pageCount={pageCount}
+                                onPageChange={handlePageClick}
+                                containerClassName="flex list-none justify-center p-4"
+                                activeClassName="bg-black text-white rounded-full"
+                                pageClassName="mx-1"
+                                pageLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                                previousClassName="mx-1"
+                                nextClassName="mx-1"
+                                previousLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                                nextLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                                breakClassName="mx-1"
+                                breakLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                                forcePage={currentPage}
+                                disabledClassName="opacity-30 cursor-not-allowed"
+                            />
+                        </div>
+                    )
+                    
                 }
 
-                {!loading && totalItems > 10 && (
-                    <div className="mt-10">
-                        <ReactPaginate
-                            previousLabel={"<"}
-                            nextLabel={">"}
-                            breakLabel={"..."}
-                            pageCount={pageCount}
-                            onPageChange={handlePageClick}
-                            containerClassName="flex list-none justify-center p-4"
-                            activeClassName="bg-black text-white rounded-full"
-                            pageClassName="mx-1"
-                            pageLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
-                            previousClassName="mx-1"
-                            nextClassName="mx-1"
-                            previousLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
-                            nextLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
-                            breakClassName="mx-1"
-                            breakLinkClassName="block px-5 py-2 border border-black rounded-full text-black-700 bg-black-200 hover:bg-black-300"
-                            forcePage={currentPage}
-                            disabledClassName="opacity-30 cursor-not-allowed"
-                        />
-                    </div>
-
-                )}
             </div>
         </div >
     );

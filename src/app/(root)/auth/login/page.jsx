@@ -104,7 +104,7 @@ const Page = () => {
               type="button"
               onClick={handeLogin}
             >
-              Login
+              Sign in
             </button>
             <div className="flex text-xs text-foreground">
               <p>Don&apos;t have an account?</p>
@@ -126,7 +126,7 @@ const Page = () => {
                 height={20}
                 className="mr-1"
               />
-              <p>Login with Spotify</p>
+              <p>Continue with Spotify</p>
             </div>
           </div>
         </div>

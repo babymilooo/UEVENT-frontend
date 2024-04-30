@@ -24,7 +24,7 @@ const page = () => {
         }
     }
 
-    const handeAuthSpotify = async (state) => {
+    const handleAuthSpotify = async (state) => {
         const responce = await AuthService.authSpotify(state);
         if (responce?.status === 200)
             window.location.href = responce.data;
@@ -38,16 +38,17 @@ const page = () => {
                     <div className="flex flex-col gap-2 lg:mx-16 mx-2">
                         <Input placeholder="Email" onChange={e => setEmail(e.target.value)} />
                         <Input placeholder="Password" type="password" onChange={e => setPassword(e.target.value)} />
-                        <button className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6" onClick={handeLogin}>Registration</button>
+                        <button className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6" onClick={handeLogin}>Sign up</button>
                         <div className="flex text-xs text-foreground">
                             <p>Already have an account?</p>
                             <p className="underline cursor-pointer ml-1" onClick={() => router.push("/auth/login")}>Sign in</p>
                         </div>
+        
                         <div className="lg:mt-12 mb-2 flex items-center justify-center border border-foreground px-6 py-2 rounded-md text-xs font-bold cursor-pointer"
-                            onClick={() => handeAuthSpotify("register")}>
+                            onClick={() => handleAuthSpotify("register")}>
                             <Image src="/spotify-2.svg" alt="spotify" width={20} height={20} className="mr-1" />
                             <p>
-                                Login with Spotify
+                                Sign up with Spotify
                             </p>
                         </div>
                     </div>
