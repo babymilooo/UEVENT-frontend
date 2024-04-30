@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from "@/components/ui/card"
 import Image from 'next/image';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
 const Render = ({ res, eventsData }) => {
     const [organization, setOrganization] = useState(res);
@@ -23,9 +22,7 @@ const Render = ({ res, eventsData }) => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
     const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
-    const isVerified = organization.isVerified;
 
-    const router = useRouter();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -40,6 +37,7 @@ const Render = ({ res, eventsData }) => {
                             const response = await axios.get(
                                 `https://maps.googleapis.com/maps/api/geocode/json?latlng=${event.location.latitude},${event.location.longitude}&key=${API_KEY}`
                             );
+                            console.log(response.data.results[0]);
                             let address = '';
                             let city = '';
                             let country = '';
@@ -111,11 +109,13 @@ const Render = ({ res, eventsData }) => {
         }
     }, []);
 
+    const isVerified = organization.IsVerified;
+
     return (
         <div className='flex bg-muted h-full'>
-            <div className="rounded-md pt-20 flex flex-col w-full xl:mr-[415px]">
+            <div className="rounded-md mt-2 flex flex-col w-full xl:mr-[415px]">
                 <Main isVerified={isVerified} organization={organization} />
-                <OpenLeftBar isVerified={isVerified} organization={organization} events={events} />
+                <OpenLeftBar isVerified={isVerified} organization={organization} events={events}/>
                 <div className='bg-background rounded-t-md h-full ipad:p-5'>
                     <div className='flex justify-center items-center w-full gap-2 border-b pb-5'>
                         <CreateNew organization={organization} setEvents={setEvents} events={events} />
@@ -146,13 +146,9 @@ const Render = ({ res, eventsData }) => {
                             ))
                         ) : (
                             events.map((event, index) => (
-                                <Card key={index}
-                                    className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[250px] mb-4"
-                                    style={{
-                                        backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}`
-                                    }}
-                                    onClick={() => (router.push(`/events/${event.id}/management`))}
-                                >
+                                <Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[250px] mb-4" style={{
+                                    backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}`
+                                }}>
                                     <div className="absolute inset-0 bg-black opacity-50"></div>
                                     <CardContent className="flex items-center h-full w-full">
                                         <div className="bg-neutral-800 w-[200px] rounded-md h-[200px] ml-[20px] flex ">

@@ -81,4 +81,22 @@ export default class OrganizationService {
             toast.error(e.response?.data?.message);
         }
     }
+
+    static async getOrganizationsForVerification(page, limit) {
+        try {
+            const response = await $api.get(`${API_URL}/organization/get-unverified-organizations?page=${page}&limit=${limit}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async verifyOrganization(id) {
+        try {
+            const response = await $api.post(`${API_URL}/organization/verify-organization/${id}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
 }

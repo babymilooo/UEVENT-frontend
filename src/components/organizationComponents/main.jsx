@@ -12,10 +12,12 @@ export function Main({
             objectPosition: 'center'
         }} />
         <div className='ipad:pl-5 flex-col'>
-            {isVerified && <div className="hidden ipad:flex items-center none">
-                <Image src="/verified.svg" alt="verified" width={20} height={20} />
-                <div className="text-primary">Verified</div>
-            </div>}
+            {organization.isVerified && (
+                <div className="flex items-center gap-2 mr-4">
+                    <Image src="/verified.svg" alt="verified" width={20} height={20} />
+                    <div className="text-primary">Verified</div>
+                </div>)
+            }
 
             <h1 className='iphone:text-6xl text-5xl font-bold pt-5 ipad:pt-0'>{organization.name}</h1>
 

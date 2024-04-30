@@ -39,7 +39,7 @@ export default class EventService {
         }
     }
 
-    static async getEvents(id) {
-        return $api.get(`${API_URL}/organization/get-events/${id}`);
+    static async getEvents(id, limit, page) {
+        return $api.get(`${API_URL}/organization/get-events/${id}?limit=${limit}&page=${page}`);
     }
 }
