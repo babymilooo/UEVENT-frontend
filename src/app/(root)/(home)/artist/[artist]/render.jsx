@@ -36,7 +36,7 @@ const Render = ({ artist }) => {
         localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
     }, [artist.id]);
 
-    useEffect(() => {s
+    useEffect(() => {
         if ((userStore.userArtists.map(o => o.id)).includes(artist.id)) {
             setIsFollowing(true);
         }
