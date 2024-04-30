@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -49,7 +50,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex justify-center items-center bg-background my-32">
+    <div className="flex justify-center items-center bg-background h-full">
       <div className="ipad:m-2 flex items-center border-foreground border rounded-lg overflow-hidden">
         <div className="lg:w-1/2 ipad:w-1/3 lg:ml-12 lg:mt-16 lg:mb-32">
           <p className="p-12 text-foreground text-center text-3xl font-bold">
@@ -73,7 +74,7 @@ const Page = () => {
                   Forgot password?
                 </span>
               </DialogTrigger>
-
+              <DialogOverlay />
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Reset Password</DialogTitle>
@@ -91,10 +92,10 @@ const Page = () => {
                     onChange={(e) => setPassResetEmail(e.target.value)}
                   />
                   <button
-                    className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black"
+                    className="bg-lime-400 px-8 py-4 rounded-3xl font-bold text-xs text-black"
                     type="button"
                     onClick={handleSendPassReset}
-                  >Send Link</button>
+                  >Send</button>
                 </div>
               </DialogContent>
             </Dialog>

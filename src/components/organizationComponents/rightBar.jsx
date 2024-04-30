@@ -17,6 +17,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { APIProvider, Marker, Map } from '@vis.gl/react-google-maps';
 import MapHandler from '@/components/googlemap/map-handler';
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
@@ -28,7 +29,7 @@ export function RightBar({
     const [selectedPlace, setSelectedPlace] = useState(organization.location);
     const [position, setPosition] = useState({ lat: parseFloat(selectedPlace.latitude), lng: parseFloat(selectedPlace.longitude) });
     const [address, setAddress] = useState("");
-
+    const router = useRouter();
     useEffect(() => {
         setSelectedPlace(organization.location);
     }, [organization]);
@@ -100,7 +101,7 @@ export function RightBar({
                     <AvatarImage src={organization.logo ? organization.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
-                <div className="font-bold">
+                <div className="font-bold hover:underline cursor-pointer" onClick={() => (router.push(`/organizations/${organization._id}`))}>
                     {organization.name}
                 </div>
 

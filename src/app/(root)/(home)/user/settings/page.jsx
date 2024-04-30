@@ -54,9 +54,7 @@ const page = () => {
     }
 
     const handleChange = async () => {
-        console.log('username:', username, 'profilePic:', selectedImage);
         const userdata = { userName: username };
-        console.log(userdata);
         try {
             await userStore.updateUser(userdata, selectedImage);
         } catch (error) {

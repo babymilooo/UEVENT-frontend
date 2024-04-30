@@ -165,7 +165,6 @@ const CreateNew = ({ organization, setEvents, events }) => {
                 if (component.types.includes('country')) {
                     // Получение ISO-кода страны (например, "US" для США)
                     countryCode = component.short_name;
-                    console.log(countryCode);
                     break;
                 }
             }
