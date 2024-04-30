@@ -20,6 +20,7 @@ import {
     CarouselPrevious,
 } from "@/components/ui/MyCarousel"
 import Autoplay from 'embla-carousel-autoplay';
+import { observer } from 'mobx-react-lite';
 
 const Render = ({ artist }) => {
     const isVerified = artist.followers.total > 5000;
@@ -33,14 +34,14 @@ const Render = ({ artist }) => {
         const filteredHistory = history.filter(id => id !== artist.id);
         const updatedHistory = [artist.id, ...filteredHistory];
         localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
-    }, []);
+    }, [artist.id]);
 
-    useEffect(() => {
-        if (userStore.userArtists.includes(artist.id)) {
+    useEffect(() => {s
+        if ((userStore.userArtists.map(o => o.id)).includes(artist.id)) {
             setIsFollowing(true);
         }
     }
-        , []);
+        , [artist.id, userStore.userArtists]);
 
     // Определите функцию для переключения отображения треков
     const toggleTracksDisplay = () => setShowAllTracks(!showAllTracks);
@@ -153,4 +154,4 @@ const Render = ({ artist }) => {
     );
 };
 
-export default Render;
+export default observer(Render);
