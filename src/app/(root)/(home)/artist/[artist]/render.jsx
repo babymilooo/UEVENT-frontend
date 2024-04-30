@@ -64,7 +64,7 @@ const Render = ({ artist }) => {
                     <p className=' text-muted-foreground '>{artist.genres[0]}</p>
                     <div className='flex items-center ipad:justify-normal justify-between ipad:mt-16 mb-5 ipad:mb-0 gap-1 '>
                         <div className='flex items-center gap-1'>
-                            <p className='text-xl font-bold'>{artist.followers.total.toLocaleString()}</p>
+                            <p className='text-xl font-bold'>{artist.followers.total.toLocaleString("en-US")}</p>
                             <p className='font-bold text-xs pt-1'>Followers</p>
                         </div>
                         <button onClick={() => setIsFollowing(!isFollowing)}>{
