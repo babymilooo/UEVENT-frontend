@@ -26,6 +26,7 @@ const Render = ({ res, eventsData, total, totalPages }) => {
     const [organization, setOrganization] = useState(res);
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
+    const [buttonLoading, setButtonLoading] = useState(true);
     const [events, setEvents] = useState(eventsData);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
@@ -127,6 +128,7 @@ const Render = ({ res, eventsData, total, totalPages }) => {
         if (userStore.user && organization) {
             setIsAuthor(userStore.user._id === organization.createdBy);
             setIsAdmin(userStore.user.role === "admin");
+            setButtonLoading(false);
         }
     }, []);
 
@@ -149,31 +151,37 @@ const Render = ({ res, eventsData, total, totalPages }) => {
                 <Main isVerified={isVerified} organization={organization} />
                 <OpenLeftBar isVerified={isVerified} organization={organization} events={events} />
                 <div className='bg-background rounded-t-md h-full ipad:p-5'>
-                    <div className='flex justify-center items-center w-full gap-2 border-b pb-5'>
-                        {isAdmin && !isAuthor && (
-                            <>
-                                <Button className="bg-lime-400 hover:bg-lime-400 px-6 py-1 rounded-3xl font-bold text-xs text-black" onClick={handleClickVerify}> Verify This Organization </Button>
-                            </>
-                        )}
+                    {
+                        buttonLoading ? (
+                            <Skeleton className="h-20 w-20 rounded-full" />
+                        ) : (
+                            <div className='flex justify-center items-center w-full gap-2 border-b pb-5'>
+                                {isAdmin && !isAuthor && (
+                                    <>
+                                        <Button className="bg-lime-400 hover:bg-lime-400 px-6 py-1 rounded-3xl font-bold text-xs text-black" onClick={handleClickVerify}> Verify This Organization </Button>
+                                    </>
+                                )}
 
-                        {isAuthor && (
-                            <>
-                                <CreateNew organization={organization} setEvents={setEvents} events={events} />
-                            </>
-                        )}
+                                {isAuthor && (
+                                    <>
+                                        <CreateNew organization={organization} setEvents={setEvents} events={events} />
+                                    </>
+                                )}
 
-                        <Input
-                            placeholder='Search organization'
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
+                                <Input
+                                    placeholder='Search organization'
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
 
-                        {isAuthor && (
-                            <>
-                                <Edit organization={organization} setOrganization={setOrganization} />
-                            </>
-                        )}
-                    </div>
+                                {isAuthor && (
+                                    <>
+                                        <Edit organization={organization} setOrganization={setOrganization} />
+                                    </>
+                                )}
+                            </div>
+                        )
+                    }
                     {
                         loading ? (
                             Array.from({ length: 5 }).map((_, index) => (

@@ -16,12 +16,12 @@ export default async function page({ params }) {
 
 async function getServerSideProps(params) {
     const res = await OrganizationService.getOrganization(params.organization);
-    const events = await EventService.getEvents(res.data._id);
+    const events = await EventService.getEvents(res.data._id, 10, 1);
 
     if (!res)
         return null;
     const org = res.data;
-    const evdata = events.data;
+    const evdata = events.data.events;
     return {
         evdata,
         org
