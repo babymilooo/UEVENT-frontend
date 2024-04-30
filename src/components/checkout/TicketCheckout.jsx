@@ -32,16 +32,19 @@ export const TicketCheckout = ({ ticketOptionId }) => {
   }, [ticketOptionId, ownerName]);
   return (
     <>
-      <div>
+      <div
+        className="w-full"
+      >
         {/* collect personal info */}
 
         {!collectedPersonalInfo && (
-          <div className="flex flex-col m-auto justify-center gap-2 p-2">
+          <div className="flex flex-col m-auto justify-center gap-2 p-2 w-11/12 max-w-96">
             <p className="m-0 p-0">Owner Name</p>
             <Input
               type="text"
               value={ownerName}
               onChange={(e) => setOwnerName(e.target.value)}
+              placeholder="Name"
               required
             />
             <button
@@ -55,20 +58,23 @@ export const TicketCheckout = ({ ticketOptionId }) => {
           </div>
         )}
         {collectedPersonalInfo && (
-          <div className="m-auto p-2 flex flex-col justify-center">
+          <div className="m-auto p-2 flex flex-col justify-center gap-3 items-center w-full">
             <button
               type="button"
-              className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6"
+              className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6 w-1/3 min-w-fit"
               onClick={() => setCollectedPersonalInfo(false)}
             >
               Back To Personal Info
             </button>
-            <EmbeddedCheckoutProvider
+            <div className="w-full">
+              <EmbeddedCheckoutProvider
               stripe={stripePromise}
               options={{ fetchClientSecret }}
             >
               <EmbeddedCheckout />
             </EmbeddedCheckoutProvider>
+            </div>
+            
           </div>
         )}
       </div>
