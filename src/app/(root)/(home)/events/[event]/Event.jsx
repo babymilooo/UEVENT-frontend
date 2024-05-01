@@ -112,12 +112,12 @@ const Event = ({ org, eventData }) => {
                     <div className='mt-14 flex flex-col'>
                         <p className="font-bold text-xl">Buy ticket</p>
                         <div className="flex flex-row  gap-7 mt-2">
-                            <div className="hidden ipad:block">
+                            <div className="hidden ipad:flex flex-wrap items-center w-full">
                                 {event.ticketOptions.map((ticket, index) => (
                                     <div key={index}>
                                         <div className='relative select-none'>
                                             <img src="/ticket.png" alt="ticket" className='w-[500px] h-[200px] rounded-lg' />
-                                            <div className="absolute inset-0  ml-6 mr-36 my-6 rounded-md">
+                                            <div className="absolute inset-0  ml-6 mr-36 my-6 rounded-md w-[350px] h-[150px]">
                                                 <div className="rounded-lg grid grid-cols-2 gap-4 h-full bg-white">
                                                     <div className='col-span-1 flex flex-col pb-2 pt-2 pl-2 h-full items-center justify-center'>
                                                         <h1 className="text-3xl font-bold col-span-1 justify-center flexpb-2">{ticket.name}</h1>
@@ -133,12 +133,11 @@ const Event = ({ org, eventData }) => {
                                                         </button>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div className="absolute right-[-20px] top-[72px] rounded-md px-3 py-1 -rotate-90 ">
-                                                <p className="text-5xl font-bold text-lime-700">ucode</p>
+                                                <div className="absolute top-12 right-[-140px] rounded-md px-3 py-1 -rotate-90 ">
+                                                    <p className="text-5xl font-bold text-lime-700">ucode</p>
+                                                </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 ))}
                             </div>

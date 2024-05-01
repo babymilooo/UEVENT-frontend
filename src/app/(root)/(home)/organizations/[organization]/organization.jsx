@@ -75,7 +75,7 @@ const Render = ({ res, eventsData }) => {
                     backgroundImage: `url('${organization.picture ? organization.picture : "/gradient.jpeg"}')`
                 }}>
                 <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-
+                <p className="font-bold xl:text-5xl lg:text-4xl ipad:text-3xl phone:text-xl mb-[50px] ml-10 text-white z-10">{organization.name}</p>
             </div>
             <div className="relative w-full p-6 mt-[-35px] bg-background z-30 rounded-[40px]">
                 <div className="flex items-center gap-2">
@@ -83,9 +83,6 @@ const Render = ({ res, eventsData }) => {
                         <AvatarImage src={organization.logo ? organization.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    <div className="font-bold">
-                        {organization.name}
-                    </div>
 
                     {isVerified && <div className="hidden ipad:flex items-center none">
                         <Image src="/verified.svg" alt="verified" width={20} height={20} />
