@@ -38,6 +38,7 @@ import EventService from '@/service/eventService';
 import axios from 'axios';
 import { GearIcon } from '@radix-ui/react-icons';
 import Tickets from './editComponents/tickets';
+import { useRouter } from 'next/navigation';
 
 const EditDialog = ({ eventData, setEventData }) => {
     const [backgroundImage, setBackgroundImage] = useState(eventData.picture);
@@ -55,6 +56,9 @@ const EditDialog = ({ eventData, setEventData }) => {
     const [selectedPlace, setSelectedPlace] = useState("");
     const [timer, setTimer] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const orgId = eventData.organizationId;
+    const router = useRouter();
     useEffect(() => {
         const loadArtistsInfo = async () => {
             try {
@@ -189,6 +193,8 @@ const EditDialog = ({ eventData, setEventData }) => {
         setDescription(eventData.description);
         setBg(null);
         setSearch('');
+        setTickets([]);
+        // setDefaultTickets(eventData.ticketOptions);
         setdefaultTickets(eventData.ticketOptions);
     }
 
@@ -197,6 +203,20 @@ const EditDialog = ({ eventData, setEventData }) => {
         const timeMinutes = Number(startTime.slice(3, 5));
         endDate.setHours(timeHours);
         endDate.setMinutes(timeMinutes);
+        const ticketPromises = tickets.map(async (ticket) => {
+            const ticketData = {
+                event: eventData._id,
+                name: ticket.name,
+                price: parseFloat(ticket.price) * 100,
+                quantity: parseInt(ticket.quantity)
+            };
+            // Возвращаем результат создания билета (обещание)
+            return EventService.createTicket(ticketData);
+        });
+
+        // Дожидаемся завершения всех обещаний создания билетов
+        await Promise.all(ticketPromises);
+
         const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, countryCode: selectedPlace.countryCode, address: selectedPlace.address }
         const data = { name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
         console.log(data);
@@ -206,18 +226,6 @@ const EditDialog = ({ eventData, setEventData }) => {
             res = await EventService.updatePicture(eventData._id, bg);
         }
 
-        if (tickets.length > 0) {
-            tickets.map(async (ticket) => {
-                const ticketData = {
-                    event: event.data._id,
-                    name: ticket.name,
-                    price: parseFloat(ticket.price) * 100,
-                    quantity: parseInt(ticket.quantity)
-                };
-                // Await the result of EventService.createTicket
-                return EventService.createTicket(ticketData);
-            });
-        }
 
         console.log('Event updated:', event.data);
 
@@ -228,15 +236,15 @@ const EditDialog = ({ eventData, setEventData }) => {
                 updatedData.picture = res.data.picture;
             }
 
-            if (tickets.length > 0) {
-                updatedData.ticketOptions = [...defaultTickets, ...tickets];
-            }
-
             setEventData(updatedData);
+            setdefaultTickets(updatedData.ticketOptions);
         }
     }
 
     const handleDelete = async () => {
+        const res = await EventService.deleteEvent(eventData._id);
+        console.log('Event deleted:', res.data);
+        router.push(`/organizations/${orgId}/management`);
     }
     return (
         <Dialog>

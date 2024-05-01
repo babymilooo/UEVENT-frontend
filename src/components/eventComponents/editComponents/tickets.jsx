@@ -53,6 +53,12 @@ export function Tickets({
         toggleEditMode(index);
     };
 
+    const handleDeleteTicket = async (index) => {
+        const updatedDefaultTickets = defaultTickets.filter((_, i) => i !== index);
+        await EventService.deleteTicket(defaultTickets[index].id);
+        setDefaultTickets(updatedDefaultTickets);
+    };
+
     const addTicket = () => {
         setTickets([...tickets, { name: '', price: '' }]);
     };
@@ -136,7 +142,8 @@ export function Tickets({
                                             className='h-6 w-6 cursor-pointer'
                                             onClick={() => toggleEditMode(index)}
                                         />
-                                        <Cross2Icon className='h-6 w-6 cursor-pointer' />
+                                        <Cross2Icon className='h-6 w-6 cursor-pointer'
+                                        onClick={() => handleDeleteTicket(index)} />
                                     </>
                                 )}
                             </div>

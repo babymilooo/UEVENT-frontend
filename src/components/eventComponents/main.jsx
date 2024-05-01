@@ -30,13 +30,11 @@ const Main = ({ eventData, org, setEventData }) => {
             <div className="relative flex h-[560px] w-full items-end bg-cover bg-center select-none overflow-hidden rounded-t-md"
                 style={{ backgroundImage: `url('${eventData.picture ? eventData.picture : "/gradient.jpeg"}')` }}>
                 <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-                <div className="relative  ml-6  text-white z-10 w-full mr-5">
+                <div className="relative  ml-6  text-white w-full mr-5">
                     <div className='flex justify-between'>
                         <p className="font-bold xl:text-5xl lg:text-4xl ipad:text-3xl phone:text-xl mb-[20px]">Manage your event</p>
                         <div className="flex">
-                            <div className='flex text-white z-40'>
-                                <EditDialog eventData={eventData} setEventData={setEventData} />
-                            </div>
+                            <EditDialog eventData={eventData} setEventData={setEventData} />
                             <Sheet className="">
                                 <SheetTrigger className="text-white xl:hidden block">Open</SheetTrigger>
                                 <SheetContent className="w-full">

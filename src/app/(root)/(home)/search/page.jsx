@@ -18,6 +18,7 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
 
 import ArtistService from '@/service/artistService';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -37,7 +38,7 @@ const Page = () => {
         } catch (error) {
             return [];
         }
-        
+
     });
     const [artistsInfo, setArtistsInfo] = useState([]);
 
@@ -61,7 +62,7 @@ const Page = () => {
     useEffect(() => {
         if (searchHistory.length > 0) {
             loadArtistsInfo(searchHistory);
-            setLoading(false);
+
         }
     }, [searchHistory]);
 
@@ -75,6 +76,7 @@ const Page = () => {
                     image: artist.images[1]?.url,
                 };
             }));
+            setLoading(false);
         } catch (error) {
             console.error("Ошибка при загрузке информации об исполнителях:", error);
             // Обработка ошибок
@@ -122,9 +124,9 @@ const Page = () => {
                 });
                 setSearchResultEvents(resp.data);
             }
-            
+
         } catch (error) {
-            
+
         }
     }
 
@@ -162,28 +164,28 @@ const Page = () => {
             <div className='flex flex-wrap flex-row gap-3 w-2/3 mt-5 lg:ml-10 items-center justify-center'>
                 <div className='flex flex-row items-center gap-2'>
                     <label htmlFor="startDate" className='align-center'>From</label>
-                    <Input type="date" 
-                    id="startDate" 
-                    value={startDate.toISOString().substring(0, 10)} 
-                    onChange={(e) => setStartDate(new Date(e.target.value))}
-                    className="w-fit"
+                    <Input type="date"
+                        id="startDate"
+                        value={startDate.toISOString().substring(0, 10)}
+                        onChange={(e) => setStartDate(new Date(e.target.value))}
+                        className="w-fit"
                     />
                 </div>
-                
+
                 <div className='flex flex-row items-center gap-2'>
                     <label htmlFor="endDate">To</label>
-                    <Input type="date" 
-                    id="endDate" 
-                    value={endDate.toISOString().substring(0, 10)} 
-                    onChange={(e) => setEndDate(new Date(e.target.value))}
-                    className="w-fit"
+                    <Input type="date"
+                        id="endDate"
+                        value={endDate.toISOString().substring(0, 10)}
+                        onChange={(e) => setEndDate(new Date(e.target.value))}
+                        className="w-fit"
                     />
                 </div>
                 <div className='flex flex-row items-center gap-2'>
                     <label htmlFor="eventsOtherCountries">Events from other countries</label>
-                    <Checkbox id="eventsOtherCountries" 
-                    checked={!onlyLocalEvents} 
-                    onCheckedChange={() => setOnlyLocalEvents(!onlyLocalEvents)}
+                    <Checkbox id="eventsOtherCountries"
+                        checked={!onlyLocalEvents}
+                        onCheckedChange={() => setOnlyLocalEvents(!onlyLocalEvents)}
                     />
                 </div>
                 <div className='flex flex-row items-center gap-2'>
@@ -200,28 +202,24 @@ const Page = () => {
                         </SelectContent>
                     </Select>
                 </div>
-                
-               
+
+
             </div>
             {search === '' && searchHistory.length > 0 && (
                 <p className='mt-4 mb-2 font-bold pl-2'>Search History</p>
             )}
             <div className='grid grid-cols-1 ipad:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 overflow-y-auto p-2 gap-4 w-full'>
                 {/* Отображение истории поиска */}
-
                 {search === '' && searchHistory.length > 0 ? (
                     loading ? (
-                        Array.from({ length: 6 }).map((_, index) => (
+                        Array.from({ length: 12 }).map((_, index) => (
                             <div key={index} className="col-span-1">
                                 <Card className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center cursor-pointer hover:bg-secondary w-full">
-                                    <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4">
-                                        <Avatar>
-                                            <AvatarImage src="/search.svg" alt="search" className="ipad:w-full w-10" />
-                                            <AvatarFallback>AR</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex flex-col ml-2">
-                                            <p className="text-xd font-bold ml-2 pt-2">Search</p>
-                                            <p className="text-muted-foreground text-xs ml-2">Search</p>
+                                    <CardContent className="p-4 flex flex-row ipad:items-start items-center ipad:flex-col w-full pt-4 ">
+                                        <Skeleton className=" w-[230px] h-[230px] rounded-full" />
+                                        <div className="flex flex-col gap-2 mt-4">
+                                            <Skeleton className="h-4 w-[120px]" />
+                                            <Skeleton className="h-4 w-[200px]" />
                                         </div>
                                     </CardContent>
                                 </Card>
