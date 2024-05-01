@@ -54,42 +54,11 @@ const Render = ({ res }) => {
                             const dayOfWeek = days[eventDate.getDay()];
                             const dayOfMonth = eventDate.getDate();
 
-                            let address = '';
-                            if (event.location?.latitude && event.location?.longitude) {
-                                // Fetch address details from Google Maps Geocoding API
-                                const response = await axios.get(
-                                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${event.location.latitude},${event.location.longitude}&key=${API_KEY}`
-                                );
-
-                                if (response.data.results.length > 0) {
-                                    const placeInfo = response.data.results[0];
-                                    const { city, country, route, street_number } = placeInfo.address_components.reduce(
-                                        (acc, component) => {
-                                            if (component.types.includes('locality')) acc.city = component.short_name;
-                                            if (component.types.includes('country')) acc.country = component.short_name;
-                                            if (component.types.includes('route')) acc.route = component.short_name;
-                                            if (component.types.includes('street_number')) acc.street_number = component.short_name;
-                                            return acc;
-                                        },
-                                        {}
-                                    );
-
-                                    if (route && street_number) {
-                                        address = `${route} ${street_number}, ${city}, ${country}`;
-                                    } else if (route || street_number) {
-                                        address = `${route || street_number}, ${city}, ${country}`;
-                                    } else {
-                                        address = `${city}, ${country}`;
-                                    }
-                                }
-                            }
-
                             return {
                                 ...event,
                                 month,
                                 dayOfWeek,
                                 dayOfMonth,
-                                address
                             };
                         })
                     );
@@ -145,7 +114,7 @@ const Render = ({ res }) => {
 
                                 {(userStore.user._id === organization.createdBy) && (
                                     <>
-                                        <CreateNew organization={organization} setEvents={setEvents} events={events} setCurrentPage={setCurrentPage}/>
+                                        <CreateNew organization={organization} setEvents={setEvents} events={events} setCurrentPage={setCurrentPage} />
                                     </>
                                 )}
 

@@ -119,7 +119,7 @@ const Render = () => {
     };
 
     const handleCreate = async () => {
-        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng }
+        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, address: selectedPlace.address, countryCode: selectedPlace.countryCode }
         const data = { name, description, location, email: website, phone };
         const response = await OrganizationService.createOrganization(data);
         if (backgroundImage, selectedImage) {
@@ -251,12 +251,12 @@ const Render = () => {
                                         }} />
                                     <div className='ipad:pl-5 flex-col justify-between flex h-[200px]'>
                                         <div className='pt-10'>
-                                        {organization.isVerified && (
+                                            {organization.isVerified && (
                                                 <div className="flex items-center gap-2 mr-4">
-                                                <Image src="/verified.svg" alt="verified" width={20} height={20} />
-                                                <div className="text-primary">Verified</div>
-                                            </div>
-                                            
+                                                    <Image src="/verified.svg" alt="verified" width={20} height={20} />
+                                                    <div className="text-primary">Verified</div>
+                                                </div>
+
                                             )}
                                             <h1 className='iphone:text-6xl text-5xl font-bold pt-5 ipad:pt-0'>{organization?.name}</h1>
                                             <div className='w-3/4 text-muted-foreground '>
@@ -271,32 +271,32 @@ const Render = () => {
                                 </div>
                             </Card>
                         ))
-                    }
+                }
 
-                    {!loading && totalItems > itemsPerPage && (
-                        <div className="mt-10">
-                            <ReactPaginate
-                                previousLabel={"<"}
-                                nextLabel={">"}
-                                breakLabel={"..."}
-                                pageCount={pageCount}
-                                onPageChange={handlePageClick}
-                                containerClassName="flex list-none justify-center p-4"
-                                activeClassName="bg-black text-white rounded-full"
-                                pageClassName="mx-1"
-                                pageLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
-                                previousClassName="mx-1"
-                                nextClassName="mx-1"
-                                previousLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
-                                nextLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
-                                breakClassName="mx-1"
-                                breakLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
-                                forcePage={currentPage}
-                                disabledClassName="opacity-30 cursor-not-allowed"
-                            />
-                        </div>
-                    )
-                    
+                {!loading && totalItems > itemsPerPage && (
+                    <div className="mt-10">
+                        <ReactPaginate
+                            previousLabel={"<"}
+                            nextLabel={">"}
+                            breakLabel={"..."}
+                            pageCount={pageCount}
+                            onPageChange={handlePageClick}
+                            containerClassName="flex list-none justify-center p-4"
+                            activeClassName="bg-black text-white rounded-full"
+                            pageClassName="mx-1"
+                            pageLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                            previousClassName="mx-1"
+                            nextClassName="mx-1"
+                            previousLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                            nextLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                            breakClassName="mx-1"
+                            breakLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                            forcePage={currentPage}
+                            disabledClassName="opacity-30 cursor-not-allowed"
+                        />
+                    </div>
+                )
+
                 }
 
             </div>

@@ -154,27 +154,12 @@ const CreateNew = ({ organization, setEvents, events, setCurrentPage }) => {
     };
 
     const handleCreate = async () => {
-        let countryCode;
-
-        const response = await axios.get(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${selectedPlace.latLng.lat},${selectedPlace.latLng.lng}&key=${API_KEY}`
-        );
-        if (response.data.results.length > 0) {
-            const placeInfo = response.data.results[0];
-            for (let component of placeInfo.address_components) {
-                if (component.types.includes('country')) {
-                    // Получение ISO-кода страны (например, "US" для США)
-                    countryCode = component.short_name;
-                    break;
-                }
-            }
-        }
 
         const timeHours = Number(startTime.slice(0, 2));
         const timeMinutes = Number(startTime.slice(3, 5));
         endDate.setHours(timeHours);
         endDate.setMinutes(timeMinutes);
-        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, countryCode: countryCode }
+        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, countryCode: selectedPlace.countryCode, address: selectedPlace.address }
         const data = { organizationId: organization._id, name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
         let res;
         const event = await EventService.createEvent(data);

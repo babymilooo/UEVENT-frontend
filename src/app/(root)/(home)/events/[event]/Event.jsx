@@ -34,8 +34,8 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 const Event = ({ org, eventData }) => {
     const [event, setEvent] = useState(eventData);
     const [organization, setOrganization] = useState(org);
-    const [position, setPosition] = useState({ lat: parseFloat(event.location.latitude), lng: parseFloat(event.location.longitude) });
-    const [address, setAddress] = useState("");
+    // const [position, setPosition] = useState({ lat: parseFloat(event.location.latitude), lng: parseFloat(event.location.longitude) });
+    const [address, setAddress] = useState(event.location.address);
     const router = useRouter();
     const [artistsInfo, setArtistsInfo] = useState([]);
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -80,59 +80,6 @@ const Event = ({ org, eventData }) => {
     useEffect(() => {
         console.log(artistsInfo);
     }, [artistsInfo]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const { lat, lng } = position;
-            let address = '';
-            let city = '';
-            let country = '';
-            let street = '';
-            let route = '';
-            try {
-                const response = await axios.get(
-                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`
-                );
-                if (response.data.results.length > 0) {
-                    const placeInfo = response.data.results[0];
-
-                    placeInfo.address_components.forEach((component) => {
-                        const types = component.types;
-                        const shortName = component.short_name;
-
-                        // Check types and assign short names accordingly
-                        if (types.includes('locality')) {
-                            city = shortName;
-                        } else if (types.includes('country')) {
-                            country = shortName;
-                        } else if (types.includes('route')) {
-                            route = shortName;
-                        } else if (types.includes('street_number')) {
-                            street = shortName;
-                        }
-                        // Add additional checks for other types if needed
-                    });
-
-                    if (route && street) {
-                        address = `${route} ${street}, ${city}, ${country}`;
-                    } else if (route || street) {
-                        address = `${route || street}, ${city}, ${country}`;
-                    } else {
-                        address = `${city}, ${country}`;
-                    }
-
-                    setAddress(address);
-                }
-            } catch (error) {
-                console.error('Error fetching place information:', error);
-            }
-        };
-
-        // Вызываем fetchData только при изменении organization
-        if (organization) {
-            fetchData();
-        }
-    }, [position]);
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center overflow-x-hidden pt-14">

@@ -17,18 +17,44 @@ const App = ({ selectedPlace, setSelectedPlace }) => {
 
     const handleMapClick = async (event) => {
         const { lat, lng } = event.detail.latLng;
-
+        let countryCode;
+        let address;
 
         try {
             const response = await axios.get(
                 `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`
             );
-            console
             if (response.data.results.length > 0) {
                 const placeInfo = response.data.results[0];
+                for (let component of placeInfo.address_components) {
+                    if (component.types.includes('country')) {
+                        // Получение ISO-кода страны (например, "US" для США)
+                        countryCode = component.short_name;
+                        break;
+                    }
+                }
+                const { city, country, route, street_number } = placeInfo.address_components.reduce(
+                    (acc, component) => {
+                        if (component.types.includes('locality')) acc.city = component.short_name;
+                        if (component.types.includes('country')) acc.country = component.short_name;
+                        if (component.types.includes('route')) acc.route = component.short_name;
+                        if (component.types.includes('street_number')) acc.street_number = component.short_name;
+                        return acc;
+                    },
+                    {}
+                );
+
+                if (route && street_number) {
+                    address = `${route} ${street_number}, ${city}, ${country}`;
+                } else if (route || street_number) {
+                    address = `${route || street_number}, ${city}, ${country}`;
+                } else {
+                    address = `${city}, ${country}`;
+                }
                 setSelectedPlace({
                     latLng: { lat, lng },
-                    address: placeInfo.formatted_address,
+                    address: address,
+                    countryCode: countryCode,
                     // Другие данные о месте, которые вы хотите отобразить
                 });
             }

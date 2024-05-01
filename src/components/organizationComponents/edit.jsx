@@ -82,7 +82,8 @@ const Edit = ({ organization, setOrganization }) => {
     }
 
     const handeEdit = async () => {
-        const data = { name, description, location: selectedPlace.latLng, email: website, phone };
+        const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, address: selectedPlace.address, countryCode: selectedPlace.countryCode };
+        const data = { name, description, location: location, email: website, phone };
         const response = await OrganizationService.editOrganization(organization._id, data);
         let orgLogo;
         let picture;
