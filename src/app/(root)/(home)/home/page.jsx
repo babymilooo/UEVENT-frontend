@@ -28,7 +28,7 @@ const page = observer(() => {
     useEffect(() => {
         const fetchUpcoming = async () => {
             const resp = await EventService.getUpcomingEvents();
-            setUpcomingEvents(resp.data.eventTwo);
+            setUpcomingEvents(resp.data.events);
             console.log(resp.data);
         }
         fetchUpcoming();

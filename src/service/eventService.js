@@ -2,6 +2,7 @@ import axios from 'axios';
 import $api from '../https/axios';
 import { API_URL } from '../https/axios';
 import toast from 'react-hot-toast';
+import { getUserCountryCode, userCountryCode } from '@/lib/userCountryCode';
 
 export default class EventService {
 
@@ -49,14 +50,13 @@ export default class EventService {
     }
     static async getUpcomingEvents() {
         const now = new Date();
+        // const pastWeek = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7);
         const nextWeek = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
         return await $api.get('/events/get-events', {
             params: {
-                limit: 4,
-                page: 1,
+                countryCode: await getUserCountryCode(),
                 startDate: now.toISOString(),
                 endDate: nextWeek.toISOString(),
-                order: 'newest',
             }
         })
     }

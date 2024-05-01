@@ -19,19 +19,41 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Avatar } from '@/components/ui/avatar';
 import ArtistService from '@/service/artistService';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import $api from '@/https/axios';
+import { getUserCountryCode } from '@/lib/userCountryCode';
 
-const page = () => {
+const Page = () => {
     const [search, setSearch] = useState('');
     const [timer, setTimer] = useState(null);
     const [artists, setArtists] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchHistory, setSearchHistory] = useState(() => {
-        const savedHistory = localStorage.getItem('searchHistory');
-        return savedHistory ? JSON.parse(savedHistory) : [];
+        try {
+            const savedHistory = localStorage.getItem('searchHistory');
+            return savedHistory ? JSON.parse(savedHistory) : [];
+        } catch (error) {
+            return [];
+        }
+        
     });
     const [artistsInfo, setArtistsInfo] = useState([]);
+
+    //event search
+    const now = new Date();
+    // now.setHours(0, 0, 1, 0); //set to midnight
+    const [onlyLocalEvents, setOnlyLocalEvents] = useState(true);
+    const [startDate, setStartDate] = useState(now);
+    const [endDate, setEndDate] = useState(new Date(now.getTime() + 1000 * 60 * 60 * 24 * 30)); //default - till next month
+    const [order, setOrder] = useState('newest'); // 'newest' | 'oldest'
+    const [searchResultEvents, setSearchResultEvents] = useState({
+        total: 0,
+        page: 1,
+        pages: 0,
+        events: []
+    })
 
     const router = useRouter();
 
@@ -75,6 +97,37 @@ const page = () => {
         }
     };
 
+    const handleSearchEvents = async () => {
+        try {
+            if (onlyLocalEvents) {
+                const resp = await $api.get('/events/get-events', {
+                    params: {
+                        countryCode: await getUserCountryCode(),
+                        startDate: startDate.toISOString(),
+                        endDate: endDate.toISOString(),
+                        order,
+                        eventName: search
+                    }
+                });
+                setSearchResultEvents(resp.data);
+            }
+            else {
+                const resp = await $api.get('/events/get-events', {
+                    params: {
+                        startDate: startDate.toISOString(),
+                        endDate: endDate.toISOString(),
+                        order,
+                        eventName: search
+                    }
+                });
+                setSearchResultEvents(resp.data);
+            }
+            
+        } catch (error) {
+            
+        }
+    }
+
     useEffect(() => {
         if (timer) {
             clearTimeout(timer);
@@ -106,6 +159,50 @@ const page = () => {
                 onChange={(e) => setSearch(e.target.value)}
                 className='w-2/3 mt-10 lg:ml-10'
             />
+            <div className='flex flex-wrap flex-row gap-3 w-2/3 mt-5 lg:ml-10 items-center justify-center'>
+                <div className='flex flex-row items-center gap-2'>
+                    <label htmlFor="startDate" className='align-center'>From</label>
+                    <Input type="date" 
+                    id="startDate" 
+                    value={startDate.toISOString().substring(0, 10)} 
+                    onChange={(e) => setStartDate(new Date(e.target.value))}
+                    className="w-fit"
+                    />
+                </div>
+                
+                <div className='flex flex-row items-center gap-2'>
+                    <label htmlFor="endDate">To</label>
+                    <Input type="date" 
+                    id="endDate" 
+                    value={endDate.toISOString().substring(0, 10)} 
+                    onChange={(e) => setEndDate(new Date(e.target.value))}
+                    className="w-fit"
+                    />
+                </div>
+                <div className='flex flex-row items-center gap-2'>
+                    <label htmlFor="eventsOtherCountries">Events from other countries</label>
+                    <Checkbox id="eventsOtherCountries" 
+                    checked={!onlyLocalEvents} 
+                    onCheckedChange={() => setOnlyLocalEvents(!onlyLocalEvents)}
+                    />
+                </div>
+                <div className='flex flex-row items-center gap-2'>
+                    <label htmlFor="order">Order</label>
+                    <Select value={order} onValueChange={(val) => setOrder(val)}>
+                        <SelectTrigger>
+                            <SelectValue>{order == 'newest' ? "Newest first" : order == 'oldest' ? "Oldest first" : "Select Order"}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="newest">Newest first</SelectItem>
+                                <SelectItem value="oldest">Oldest first</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+                
+               
+            </div>
             {search === '' && searchHistory.length > 0 && (
                 <p className='mt-4 mb-2 font-bold pl-2'>Search History</p>
             )}
@@ -178,4 +275,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;
