@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import $api from "@/https/axios";
+import { passwordRegex } from "@/lib/passwordRegex";
 import { useParams, useRouter } from "next/navigation";
 
 import { useState } from "react";
@@ -14,7 +15,7 @@ export default function PasswordResetPage() {
 
   const handleSend = async () => {
     try {
-      const resp = await $api.post(`/auth/password-reset/${encodeURIComponent(token)}`, { password: newPassword });
+      const resp = await $api.post(`/auth/password-reset/${encodeURIComponent(token)}`, { password: newPassword.trim() });
       router.push('/auth/login');
     } catch (error) {
       //alert user of error
@@ -51,6 +52,12 @@ export default function PasswordResetPage() {
         >
           Passwords must be identical
         </p>
+        <p
+          className="m-auto p-0 text-red-500 text-center max-w-96"
+          hidden={newPassword.trim().match(passwordRegex) || newPassword.length === 0}
+        >
+          Passwords must be at least 8 characters long, have 1 letter and 1 number and no whitespaces
+        </p>
         <button
         type="button"
           className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6"
@@ -59,7 +66,8 @@ export default function PasswordResetPage() {
             newPassword.trim().length < 8 ||
             !confirmPassword ||
             confirmPassword.trim().length < 8 ||
-            newPassword.trim() != confirmPassword.trim()
+            newPassword.trim() != confirmPassword.trim() ||
+            !newPassword.trim().match(passwordRegex)
           }
           onClick={handleSend}
         >
