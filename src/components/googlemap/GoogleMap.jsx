@@ -15,6 +15,18 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const App = ({ selectedPlace, setSelectedPlace }) => {
 
+    const [position, setPosition] = useState({ lat: 37.7749, lng: -122.4194 });
+    const [zoom, setZoom] = useState(3);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        if (selectedPlace && selectedPlace.latLng) {
+            setPosition({ lat: parseFloat(selectedPlace.latLng?.lat), lng: parseFloat(selectedPlace.latLng?.lng) });
+            setZoom(15);
+        }
+        setLoading(false);
+    }
+        , [selectedPlace]);
+
     const handleMapClick = async (event) => {
         const { lat, lng } = event.detail.latLng;
         let countryCode;
@@ -79,37 +91,42 @@ const App = ({ selectedPlace, setSelectedPlace }) => {
     };
 
     return (
-        <APIProvider apiKey={API_KEY}>
-            <PlaceAutocompleteClassic onPlaceSelect={setSelectedPlace} />
-            <Map
-                // style={{ width: '500px', height: '500px' }}
-                className='w-full h-[450px]'
-                defaultCenter={{ lat: 22.54992, lng: 0 }}
-                defaultZoom={3}
-                gestureHandling={'greedy'}
-                disableDefaultUI={true}
-                onClick={handleMapClick}
-                language="en"
+        <>
+            {
+                loading ? <div>Loading...</div> :
+                    <APIProvider apiKey={API_KEY}>
+                        <PlaceAutocompleteClassic onPlaceSelect={setSelectedPlace} />
+                        <Map
+                            // style={{ width: '500px', height: '500px' }}
+                            className='w-full h-[450px]'
+                            defaultCenter={position}
+                            defaultZoom={zoom}
+                            gestureHandling={'greedy'}
+                            disableDefaultUI={true}
+                            onClick={handleMapClick}
+                            language="en"
 
-            >
-                {selectedPlace && (
-                    <Marker
-                        position={selectedPlace.latLng}
-                        title={selectedPlace.name}
-                        onClick={handleMarkerClick} // Обработчик клика по маркеру
-                    />
-                )}
-                {selectedPlace && (
-                    <div style={{ position: 'absolute', top: 10, left: 10, background: 'white', padding: 10 }}>
-                        <p>{selectedPlace.address}</p>
-                        {/* Другие данные о месте, которые вы хотите отобразить */}
-                    </div>
-                )}
-            </Map>
+                        >
+                            {selectedPlace && (
+                                <Marker
+                                    position={selectedPlace.latLng}
+                                    title={selectedPlace.name}
+                                    onClick={handleMarkerClick} // Обработчик клика по маркеру
+                                />
+                            )}
+                            {selectedPlace && (
+                                <div style={{ position: 'absolute', top: 10, left: 10, background: 'white', padding: 10 }}>
+                                    <p>{selectedPlace.address}</p>
+                                    {/* Другие данные о месте, которые вы хотите отобразить */}
+                                </div>
+                            )}
+                        </Map>
 
 
-            <MapHandler place={selectedPlace} />
-        </APIProvider>
+                        <MapHandler place={selectedPlace} />
+                    </APIProvider>
+            }
+        </>
     );
 };
 

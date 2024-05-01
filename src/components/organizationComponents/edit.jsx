@@ -32,6 +32,20 @@ const Edit = ({ organization, setOrganization }) => {
     const router = useRouter();
     const [logo, setLogo] = useState(null);
     const [bg, setBg] = useState(null);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const selectPlace = async () => {
+            const position = { lat: parseFloat(organization.location.latitude), lng: parseFloat(organization.location.longitude) };
+            const latLng = { latLng: position, address: organization.location.address, countryCode: organization.location.countryCode }
+            setSelectedPlace(latLng);
+        }
+
+        if (organization.location.latitude && organization.location.longitude) {
+            selectPlace();
+        }
+
+        setLoading(false);
+    }, [organization]);
 
     const handleNameChange = (e) => {
         Setname(e.target.value);
@@ -54,7 +68,6 @@ const Edit = ({ organization, setOrganization }) => {
         setBackgroundImage(organization.picture);
         Setname(organization.name);
         SetDescription(organization.description);
-        setSelectedPlace(organization.location);
         setPhone(organization.phone);
         setWebsite(organization.email);
         setLogo(null);
@@ -156,7 +169,10 @@ const Edit = ({ organization, setOrganization }) => {
                         </div>
                     </div>
                     <div className='col-span-1'>
-                        <GoogleMap selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
+                        {
+                            loading ? <div>Loading...</div> : <GoogleMap selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
+                        }
+
                     </div>
                     <div className='grid grid-cols-6 justify-end col-span-2 gap-4'>
                         <div></div>
