@@ -43,7 +43,7 @@ const CreateNew = ({ organization, setEvents, events, setCurrentPage }) => {
     const [bg, setBg] = useState(null);
     const [endDate, setEndDate] = useState(new Date());
     const [startTime, setStartTime] = useState("");
-    const [selectedPlace, setSelectedPlace] = useState(organization.location);
+    const [selectedPlace, setSelectedPlace] = useState("");
     const [name, Setname] = useState("");
     const [description, SetDescription] = useState("");
     const [artists, setArtists] = useState([]);
@@ -154,7 +154,7 @@ const CreateNew = ({ organization, setEvents, events, setCurrentPage }) => {
     };
 
     const handleCreate = async () => {
-
+ 
         const timeHours = Number(startTime.slice(0, 2));
         const timeMinutes = Number(startTime.slice(3, 5));
         endDate.setHours(timeHours);
