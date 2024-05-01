@@ -42,7 +42,7 @@ const Page = () => {
                         <Input placeholder="Password" type="password" onChange={e => setPassword(e.target.value)} />
                         <p
                             className="m-auto p-0 text-red-500 text-center max-w-96"
-                            hidden={password.trim().match(passwordRegex)}
+                            hidden={password.trim().match(passwordRegex) || password.length === 0}
                         >
                             Passwords must be at least 8 characters long, have 1 letter and 1 number and no whitespaces
                         </p>

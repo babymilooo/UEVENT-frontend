@@ -206,7 +206,7 @@ const Page = () => {
                                 </div>
                                 <p
                                         className="m-auto p-0 text-red-500 text-center max-w-96"
-                                        hidden={newPassword.trim().match(passwordRegex)}
+                                        hidden={newPassword.trim().match(passwordRegex) || newPassword.length === 0}
                                     >
                                         Passwords must be at least 8 characters long, have 1 letter and 1 number and no whitespaces
                                     </p>
