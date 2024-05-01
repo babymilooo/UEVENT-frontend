@@ -167,7 +167,7 @@ const Render = ({ res }) => {
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
-                                            <p className="text-xl font-bold ml-2 text-white z-10">{event.address}</p>
+                                            <p className="text-xl font-bold ml-2 text-white z-10">{event.location.address}</p>
                                             <p className="text-xl font-bold ml-2 text-white z-10">{event.name}</p>
                                             <p className="text-xl font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
                                         </div>

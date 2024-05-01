@@ -1,23 +1,27 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Main from '@/components/eventComponents/main';
 import RightBar from '@/components/eventComponents/rightBar';
 
 const Events = ({ org, eventData }) => {
     const [event, setEventData] = useState(eventData);
 
+    useEffect(() => {
+        console.log(event);
+    }, [event]);
+
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col overflow-x-hidden pt-16 w-full h-full xl:mr-[415px] rounded-t-lg">
             <Main eventData={event} org={org} setEventData={setEventData} />
             <div className='flex flex-col bg-background h-full w-full'>
-                <div className="flex flex-row  gap-7 mt-2">
-                    <div className="hidden ipad:block">
-                        {eventData.ticketOptions.map((ticket, index) => (
+                <div className="flex flex-row w-full  gap-7 mt-2">
+                    <div className="hidden ipad:flex flex-wrap justify-center items-center w-full">
+                        {event.ticketOptions.map((ticket, index) => (
                             <div key={index}>
                                 <div className='relative select-none'>
                                     <img src="/ticket.png" alt="ticket" className='w-[500px] h-[200px] rounded-lg' />
-                                    <div className="absolute inset-0  ml-6 mr-36 my-6 rounded-md">
+                                    <div className="absolute inset-0  ml-6 mr-36 my-6 rounded-md w-[350px] h-[150px]">
                                         <div className="rounded-lg grid grid-cols-2 gap-4 h-full bg-white">
                                             <div className='col-span-1 flex flex-col pb-2 pt-2 pl-2 h-full items-center justify-center'>
                                                 <h1 className="text-3xl font-bold col-span-1 justify-center flexpb-2">{ticket.name}</h1>
@@ -33,16 +37,17 @@ const Events = ({ org, eventData }) => {
                                                 </button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="absolute right-[-20px] top-[72px] rounded-md px-3 py-1 -rotate-90 ">
-                                        <p className="text-5xl font-bold text-lime-700">ucode</p>
+                                        <div className="absolute top-12 right-[-140px] rounded-md px-3 py-1 -rotate-90 ">
+                                            <p className="text-5xl font-bold text-lime-700">ucode</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
+
                     <div className="ipad:hidden flex flex-wrap justify-center items-center w-full">
-                        {eventData.ticketOptions.map((ticket, index) => (
+                        {event.ticketOptions.map((ticket, index) => (
                             <div key={index} className="relative select-none w-[200px] h-[450px] col-span-1">
                                 <div className="absolute inset-0 flex items-center justify-center ">
                                     <img src="/ticket-rotated.png" alt="ticket" className='w-full h-full rounded-lg' />

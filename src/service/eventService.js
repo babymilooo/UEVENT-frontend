@@ -69,5 +69,31 @@ export default class EventService {
             toast.error(e.response?.data?.message);
         }
     }
-}
 
+    static async deleteEvent(id) {
+        try {
+            const response = await $api.delete(`${API_URL}/events/${id}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async editTicket(id, data) {
+        try {
+            const response = await $api.patch(`${API_URL}/ticketOptions/${id}`, data);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+
+    static async deleteTicket(id) {
+        try {
+            const response = await $api.delete(`${API_URL}/ticketOptions/${id}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
+}

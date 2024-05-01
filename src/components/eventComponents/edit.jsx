@@ -32,11 +32,12 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 import Image from 'next/image';
-import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
+import { Cross2Icon, MinusIcon, Pencil2Icon, PlusIcon } from '@radix-ui/react-icons';
 import ArtistService from '@/service/artistService';
 import EventService from '@/service/eventService';
 import axios from 'axios';
 import { GearIcon } from '@radix-ui/react-icons';
+import Tickets from './editComponents/tickets';
 
 const EditDialog = ({ eventData, setEventData }) => {
     const [backgroundImage, setBackgroundImage] = useState(eventData.picture);
@@ -45,7 +46,8 @@ const EditDialog = ({ eventData, setEventData }) => {
     const [description, setDescription] = useState(eventData.description);
     const [endDate, setEndDate] = useState(new Date(eventData.date));
     const [startTime, setStartTime] = useState(eventData.time);
-    const [tickets, setTickets] = useState(eventData.ticketOptions);
+    const [defaultTickets, setdefaultTickets] = useState(eventData.ticketOptions);
+    const [tickets, setTickets] = useState([]);
     const [artists, setArtists] = useState([]);
     const [addedArtistsId, setAddedArtistsId] = useState(eventData.artists);
     const [addedArtists, setAddedArtists] = useState([]);
@@ -53,7 +55,6 @@ const EditDialog = ({ eventData, setEventData }) => {
     const [selectedPlace, setSelectedPlace] = useState("");
     const [timer, setTimer] = useState(null);
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
         const loadArtistsInfo = async () => {
             try {
@@ -182,28 +183,13 @@ const EditDialog = ({ eventData, setEventData }) => {
     };
 
 
-    const addTicket = () => {
-        setTickets([...tickets, { name: '', price: '' }]);
-    };
-
-    // Функция для удаления последнего билета
-    const deleteTicket = () => {
-        setTickets(tickets.slice(0, tickets.length - 1));
-    };
-
-    // Функция для обновления значения имени или цены в билете
-    const handleTicketChange = (index, fieldName, value) => {
-        const newTickets = [...tickets];
-        newTickets[index][fieldName] = value;
-        setTickets(newTickets);
-    };
-
     const handleClose = async () => {
         setBackgroundImage(eventData.picture);
         setName(eventData.name);
         setDescription(eventData.description);
         setBg(null);
         setSearch('');
+        setdefaultTickets(eventData.ticketOptions);
     }
 
     const handleEdit = async () => {
@@ -220,32 +206,30 @@ const EditDialog = ({ eventData, setEventData }) => {
             res = await EventService.updatePicture(eventData._id, bg);
         }
 
-        const uniqueTickets = tickets.filter(ticket => {
-            return !eventData.ticketOptions.some(existingTicket => existingTicket.name === ticket.name && existingTicket.price === parseFloat(ticket.price) * 100 && existingTicket.quantity === parseInt(ticket.quantity));
-        });
-
-        // Create new tickets for unique ticket data
-        const createTicketPromises = uniqueTickets.map(async (ticket) => {
-            const ticketData = {
-                event: eventData._id,
-                name: ticket.name,
-                price: parseFloat(ticket.price) * 100,
-                quantity: parseInt(ticket.quantity)
-            };
-            // Await the result of EventService.createTicket
-            return EventService.createTicket(ticketData);
-        });
-
-        // Wait for all ticket creation promises to resolve
-        const createdTickets = await Promise.all(createTicketPromises);
-        console.log('Created tickets:', createdTickets);
+        if (tickets.length > 0) {
+            tickets.map(async (ticket) => {
+                const ticketData = {
+                    event: event.data._id,
+                    name: ticket.name,
+                    price: parseFloat(ticket.price) * 100,
+                    quantity: parseInt(ticket.quantity)
+                };
+                // Await the result of EventService.createTicket
+                return EventService.createTicket(ticketData);
+            });
+        }
 
         console.log('Event updated:', event.data);
+
         if (event.data) {
             const updatedData = { ...event.data };
 
             if (bg) {
                 updatedData.picture = res.data.picture;
+            }
+
+            if (tickets.length > 0) {
+                updatedData.ticketOptions = [...defaultTickets, ...tickets];
             }
 
             setEventData(updatedData);
@@ -297,46 +281,7 @@ const EditDialog = ({ eventData, setEventData }) => {
                                         <DatePicker date={endDate} setDate={setEndDate} />
                                         <MyTimePicker time={startTime} setTime={setStartTime} />
                                     </div>
-                                    <div className="border rounded-md mt-4">
-                                        <div className='flex justify-between items-center py-1 pl-2'>
-                                            <h1 className="text-lg font-bold">Tickets</h1>
-                                            <div className='flex items-center font-bold text-muted-foreground mt-1'>
-                                                <PlusIcon onClick={addTicket} className='w-12 h-6 cursor-pointer' />
-                                                <MinusIcon onClick={deleteTicket} className='w-12 h-6 cursor-pointer' />
-                                            </div>
-                                        </div>
-                                        <ScrollArea className="h-[260px] w-full col-span-1">
-                                            {tickets.map((ticket, index) => (
-                                                <div key={index}>
-                                                    <div className='relative'>
-                                                        <img src="/ticket.png" alt="ticket" className='w-full h-[150px] rounded-lg' />
-                                                        <div className="absolute inset-0 bg-white ml-6 mr-7 my-6 rounded-md">
-                                                            <div className="rounded-lg grid grid-cols-3 gap-4 h-full">
-                                                                <div className='col-span-1 flex flex-col justify-between pb-2 pt-2 pl-2'>
-                                                                    <h1 className="text-lg font-bold col-span-1 justify-center flex h-full items-center pb-2 ">Ticket {index + 1}</h1>
-                                                                    <Input
-                                                                        className=''
-                                                                        onChange={(e) => handleTicketChange(index, 'quantity', e.target.value)}
-                                                                        placeholder={`quantity`}
-                                                                        value={ticket.quantity} />
-                                                                </div>
-
-                                                                <div className='col-span-2 flex flex-col gap-2 pt-2 pr-2'>
-                                                                    <Input onChange={(e) => handleTicketChange(index, 'name', e.target.value)} placeholder={`Enter name`} value={ticket.name} />
-                                                                    <Input
-                                                                        onChange={(e) => handleTicketChange(index, 'price', e.target.value)}
-                                                                        placeholder={`Enter price $`}
-                                                                        defaultValue={ticket?.price / 100} />
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            ))}
-                                        </ScrollArea>
-                                    </div>
+                                    <Tickets defaultTickets={defaultTickets} tickets={tickets} setTickets={setTickets} setDefaultTickets={setdefaultTickets} />
                                 </div>
                             </div>
                         </div>
