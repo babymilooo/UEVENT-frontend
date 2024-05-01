@@ -32,7 +32,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-const page = () => {
+import { passwordRegex } from '@/lib/passwordRegex';
+import $api from '@/https/axios';
+import toast from 'react-hot-toast';
+const Page = () => {
 
     const router = useRouter();
     const rootStore = useContext(RootStoreContext);
@@ -42,6 +45,9 @@ const page = () => {
     const [username, setUsername] = useState(userStore.user?.userName);
     const [profilePic, setProfilePic] = useState(userStore.user?.profilePicture);
     const [selectedImage, setSelectedImage] = useState(null);
+
+    const [newPassword, setNewPassword] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
 
 
     const handleDelete = async () => {
@@ -78,8 +84,18 @@ const page = () => {
         setSelectedImage(e.target.files[0]);
     };
 
+    const handlePasswordChange = async () => {
+        if (!newPassword.trim().match(passwordRegex)) return;
+        try {
+            await $api.patch(`/user/edit-password`, { newPassword: newPassword.trim(), currentPassword: currentPassword.trim() });
+            router.push('/auth/login');
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        }
+    }
+
     return (
-        <Tabs defaultValue="account" className="mx-auto my-8">
+        <Tabs defaultValue="account" className="mx-auto my-8 pt-14">
             {!userStore.user?.isRegisteredViaSpotify && (
                 <>
                     <TabsList className="grid w-full grid-cols-2">
@@ -92,7 +108,7 @@ const page = () => {
                             <CardHeader className="mb-4">
                                 <CardTitle className="text-lg font-semibold">Account</CardTitle>
                                 <CardDescription>
-                                    Make changes to your account here. Click save when you're done.
+                                    Make changes to your account here. Click save when you&apos;re done.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="flex flex-col md:flex-row gap-4">
@@ -157,7 +173,7 @@ const page = () => {
                             <CardHeader className="mb-6">
                                 <CardTitle className="text-lg font-semibold">Password</CardTitle>
                                 <CardDescription>
-                                    Change your password here. After saving, you'll be logged out.
+                                    Change your password here. After saving, you&apos;ll be logged out.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -167,6 +183,9 @@ const page = () => {
                                             id="current"
                                             placeholder="Current Password"
                                             type="password"
+                                            autocomplete="current-password"
+                                            value={currentPassword}
+                                            onChange={(e) => setCurrentPassword(e.target.value)}
                                             className="w-full px-3 py-2 border rounded shadow-sm placeholder-gray-400 focus:ring-1 focus:ring-lime-500 focus:border-lime-500"
                                         />
                                     </div>
@@ -177,14 +196,24 @@ const page = () => {
                                             id="new"
                                             placeholder="New Password"
                                             type="password"
+                                            autocomplete="new-password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
                                             className="w-full px-3 py-2 border rounded shadow-sm placeholder-gray-400 focus:ring-1 focus:ring-lime-500 focus:border-lime-500"
                                         />
                                     </div>
+                                    
                                 </div>
+                                <p
+                                        className="m-auto p-0 text-red-500 text-center max-w-96"
+                                        hidden={newPassword.trim().match(passwordRegex)}
+                                    >
+                                        Passwords must be at least 8 characters long, have 1 letter and 1 number and no whitespaces
+                                    </p>
 
                             </CardContent>
                             <CardFooter className="flex justify-center pt-4">
-                                <Button className="px-4 py-2 rounded hover:bg-lime-600 focus:outline-none">
+                                <Button className="px-4 py-2 rounded hover:bg-lime-600 focus:outline-none" onClick={handlePasswordChange}>
                                     Save password
                                 </Button>
                             </CardFooter>
@@ -237,4 +266,4 @@ const page = () => {
     );
 };
 
-export default observer(page);
+export default observer(Page);

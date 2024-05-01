@@ -9,15 +9,17 @@ import { Card, CardContent } from "@/components/ui/card"
 import AuthService from '@/service/authService';
 import toast from 'react-hot-toast';
 import { RootStoreContext } from '@/providers/rootStoreProvider';
-const page = () => {
+import { passwordRegex } from '@/lib/passwordRegex';
+const Page = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
 
-    const handeLogin = async () => {
-        const responce = await userStore.registration(email, password);
+    const handeRegister = async () => {
+        if (!password.match(passwordRegex)) return;
+        const responce = await userStore.registration(email.trim(), password.trim());
         if (responce?.status === 201) {
             router.push("/home");
             toast.success("registration success");
@@ -38,7 +40,13 @@ const page = () => {
                     <div className="flex flex-col gap-2 lg:mx-16 mx-2">
                         <Input placeholder="Email" onChange={e => setEmail(e.target.value)} />
                         <Input placeholder="Password" type="password" onChange={e => setPassword(e.target.value)} />
-                        <button className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6" onClick={handeLogin}>Sign up</button>
+                        <p
+                            className="m-auto p-0 text-red-500 text-center max-w-96"
+                            hidden={password.trim().match(passwordRegex)}
+                        >
+                            Passwords must be at least 8 characters long, have 1 letter and 1 number and no whitespaces
+                        </p>
+                        <button className="bg-lime-400 px-6 py-3 rounded-md font-bold text-xs text-black mt-6" onClick={handeRegister}>Sign up</button>
                         <div className="flex text-xs text-foreground">
                             <p>Already have an account?</p>
                             <p className="underline cursor-pointer ml-1" onClick={() => router.push("/auth/login")}>Sign in</p>
@@ -67,4 +75,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;
