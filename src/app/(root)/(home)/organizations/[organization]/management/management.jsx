@@ -38,43 +38,43 @@ const Render = ({ res }) => {
     const itemsPerPage = 10;
     const [pageCount, setPageCount] = useState(0);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
+    const fetchData = async () => {
+        try {
+            setLoading(true);
 
-                // Fetch events based on currentPage
-                const result = await EventService.getEvents(organization._id, itemsPerPage, currentPage + 1);
+            // Fetch events based on currentPage
+            const result = await EventService.getEvents(organization._id, itemsPerPage, currentPage + 1);
 
-                if (result && result.data) {
-                    const updatedEvents = await Promise.all(
-                        result.data.events.map(async (event) => {
-                            const eventDate = new Date(event.date);
-                            const month = months[eventDate.getMonth()];
-                            const dayOfWeek = days[eventDate.getDay()];
-                            const dayOfMonth = eventDate.getDate();
+            if (result && result.data) {
+                const updatedEvents = await Promise.all(
+                    result.data.events.map(async (event) => {
+                        const eventDate = new Date(event.date);
+                        const month = months[eventDate.getMonth()];
+                        const dayOfWeek = days[eventDate.getDay()];
+                        const dayOfMonth = eventDate.getDate();
 
-                            return {
-                                ...event,
-                                month,
-                                dayOfWeek,
-                                dayOfMonth,
-                            };
-                        })
-                    );
+                        return {
+                            ...event,
+                            month,
+                            dayOfWeek,
+                            dayOfMonth,
+                        };
+                    })
+                );
 
-                    setEvents(updatedEvents);
-                    setTotalItems(result.data.totalItems);
-                    setPageCount(result.data.totalPages);
-                }
-
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching events:', error);
-                setLoading(false);
+                setEvents(updatedEvents);
+                setTotalItems(result.data.totalItems);
+                setPageCount(result.data.totalPages);
             }
-        };
 
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {    
         fetchData();
     }, [currentPage]);
 
@@ -114,7 +114,7 @@ const Render = ({ res }) => {
 
                                 {(userStore.user._id === organization.createdBy) && (
                                     <>
-                                        <CreateNew organization={organization} setEvents={setEvents} events={events} setCurrentPage={setCurrentPage} />
+                                        <CreateNew organization={organization} setEvents={setEvents} events={events} setCurrentPage={setCurrentPage} fetchData={fetchData}/>
                                     </>
                                 )}
 

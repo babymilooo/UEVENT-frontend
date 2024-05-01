@@ -17,14 +17,12 @@ import {
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import fetchData from '@/lib/proccessEvents';
-import positionOrg from '@/lib/positionOrg';
 
 import { APIProvider, Marker, Map } from '@vis.gl/react-google-maps';
 import MapHandler from '@/components/googlemap/map-handler';
 const Render = ({ res, eventsData }) => {
     const [organization, setOrganization] = useState(res);
-    const [events, setEvents] = useState(eventsData);
+    const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [position, setPosition] = useState({ lat: parseFloat(organization.location.latitude), lng: parseFloat(organization.location.longitude) });
     const [address, setAddress] = useState("");
@@ -37,9 +35,29 @@ const Render = ({ res, eventsData }) => {
     const router = useRouter();
 
     useEffect(() => {
-        if (events.length > 0) {
-            fetchData(events, setEvents);
-        }
+        const fetchAddress = async () => {
+            if (eventsData.length > 0) {
+                const updatedEvents = await Promise.all(
+                    eventsData.map(async (event) => {
+                        const eventDate = new Date(event.date);
+                        const month = months[eventDate.getMonth()];
+                        const dayOfWeek = days[eventDate.getDay()];
+                        const dayOfMonth = eventDate.getDate();
+
+                        return {
+                            ...event,
+                            month,
+                            dayOfWeek,
+                            dayOfMonth,
+                        };
+                    })
+                );
+
+                setEvents(updatedEvents);
+            }
+        };
+
+        fetchAddress();
         setLoading(false);
     }
         , []);
@@ -49,12 +67,6 @@ const Render = ({ res, eventsData }) => {
         console.log(organization);
 
     }, [events, organization]);
-
-    useEffect(() => {
-        if (organization) {
-            positionOrg(position, setAddress);
-        }
-    }, [position]);
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center overflow-x-hidden pt-14 select-none">
@@ -86,30 +98,35 @@ const Render = ({ res, eventsData }) => {
                             Events
                         </p>
                         <div className="grid grid-cols-2 gap-1">
-                            {events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer"
-                                style={{ backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}` }}
-                                onClick={() => (router.push(`/events/${event._id}`))}
-                            >
-                                <div className="absolute inset-0 bg-black opacity-60"></div>
-                                <CardContent className="flex items-center h-full w-full">
-                                    <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
-                                        <div className="flex flex-col items-center justify-center w-full h-full z-10">
-                                            <p className="font-bold text-white">{event.month}</p>
-                                            <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
+                            {
+                                loading ? <div></div> :
 
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
-                                        <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
-                                        <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
-                                    </div>
-                                </CardContent>
-                            </Card>))}
+                                    events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer"
+                                        style={{ backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}` }}
+                                        onClick={() => (router.push(`/events/${event._id}`))}
+                                    >
+                                        <div className="absolute inset-0 bg-black opacity-60"></div>
+                                        <CardContent className="flex items-center h-full w-full">
+                                            <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
+                                                <div className="flex flex-col items-center justify-center w-full h-full z-10">
+                                                    <p className="font-bold text-white">{event.month}</p>
+                                                    <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
+
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
+                                                <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
+                                                <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>))
+
+                            }
                         </div>
                     </div>
                     <div className="mt-4 col-span-1">
-                        <div className="font-bold mb-4">{address}</div>
+                        <div className="font-bold mb-4">{organization.location.address}</div>
                         <div className="w-full">
                             <APIProvider apiKey={API_KEY}>
                                 <Map className='w-full h-[350px]'

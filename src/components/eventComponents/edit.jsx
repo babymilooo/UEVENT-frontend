@@ -221,7 +221,7 @@ const EditDialog = ({ eventData, setEventData }) => {
         }
 
         const uniqueTickets = tickets.filter(ticket => {
-            return !eventData.ticketOptions.some(existingTicket => existingTicket.name === ticket.name);
+            return !eventData.ticketOptions.some(existingTicket => existingTicket.name === ticket.name && existingTicket.price === parseFloat(ticket.price) * 100 && existingTicket.quantity === parseInt(ticket.quantity));
         });
 
         // Create new tickets for unique ticket data
@@ -326,7 +326,7 @@ const EditDialog = ({ eventData, setEventData }) => {
                                                                     <Input
                                                                         onChange={(e) => handleTicketChange(index, 'price', e.target.value)}
                                                                         placeholder={`Enter price $`}
-                                                                        value={ticket.price / 100} />
+                                                                        defaultValue={ticket?.price / 100} />
 
                                                                 </div>
                                                             </div>

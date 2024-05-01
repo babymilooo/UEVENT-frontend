@@ -31,68 +31,70 @@ const Main = ({ eventData, org, setEventData }) => {
                 style={{ backgroundImage: `url('${eventData.picture ? eventData.picture : "/gradient.jpeg"}')` }}>
                 <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
                 <p className="relative mb-[20px] ml-6 font-bold xl:text-5xl lg:text-4xl ipad:text-3xl phone:text-xl text-white z-10">Manage your event</p>
-            </div>
-            <div className='fixed xl:right-5 right-16 top-[367px] text-white xl:mr-[415px] z-50'>
-                <EditDialog eventData={eventData} setEventData={setEventData}/>
-            </div>
-            <div className='xl:hidden fixed right-5 top-[370px]'>
-                <Sheet>
-                    <SheetTrigger className="text-white">Open</SheetTrigger>
-                    <SheetContent className="w-full">
-                        <div className="fixed h-full right-0 sm:max-w-sm w-full">
-                            <div className="bg-background h-full rounded-md">
-                                <ScrollArea className="h-full w-full rounded-md border lg:pb-12">
-                                    <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md" style={{
-                                        backgroundImage: `url('${eventData.picture ? eventData.picture : "/gradient.jpeg"}')`
-                                    }}>
-                                        <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-                                        <p className="relative mb-[20px] ml-6 font-bold xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-xl text-white z-10">{eventData.name}</p>
-                                    </div>
-                                    <div className="relative w-full p-6 mt-[-35px] bg-background z-30 rounded-[40px]">
-                                        <div className="flex items-center gap-2">
-                                            <Avatar>
-                                                <AvatarImage src={org.logo ? org.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
-                                                <AvatarFallback>CN</AvatarFallback>
-                                            </Avatar>
-                                            <div className="font-bold hover:underline cursor-pointer" onClick={() => (router.push(`/organizations/${org._id}`))}>
-                                                {org.name}
-                                            </div>
-
-                                            {org.isVerified && <div className="hidden ipad:flex items-center none">
-                                                <Image src="/verified.svg" alt="verified" width={20} height={20} />
-                                                <div className="text-primary">Verified</div>
-                                            </div>}
+                <div className='absolute xl:right-5 right-16 top-[367px] text-white z-40'>
+                    <EditDialog eventData={eventData} setEventData={setEventData} />
+                </div>
+                <div className='xl:hidden absolute right-5 top-[370px]'>
+                    <Sheet>
+                        <SheetTrigger className="text-white">Open</SheetTrigger>
+                        <SheetContent className="w-full">
+                            <div className="fixed h-full right-0 sm:max-w-sm w-full">
+                                <div className="bg-background h-full rounded-md">
+                                    <ScrollArea className="h-full w-full rounded-md border lg:pb-12">
+                                        <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md" style={{
+                                            backgroundImage: `url('${eventData.picture ? eventData.picture : "/gradient.jpeg"}')`
+                                        }}>
+                                            <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
+                                            <p className="relative mb-[40px] ml-6 font-bold xl:text-6xl lg:text-5xl ipad:text-4xl phone:text-xl text-white z-10">{eventData.name}</p>
                                         </div>
-                                        <div className="mt-4">
-                                            <p className="font-bold mt-4 text-sm">
-                                                About event
-                                            </p>
-                                            <p className=' text-muted-foreground text-sm'>
-                                                {eventData.description}
-                                            </p>
-                                            <div className="font-bold">{eventData.location.address}</div>
-                                            <div className="w-full">
-                                                <APIProvider apiKey={API_KEY}>
-                                                    <Map className='w-full h-[350px]'
-                                                        center={position}
-                                                        defaultZoom={15}
-                                                        gestureHandling={'greedy'}
-                                                        disableDefaultUI={true}>
-                                                        <Marker position={position} />
-                                                    </Map>
+                                        <div className="relative w-full p-6 mt-[-35px] bg-background z-30 rounded-[40px]">
+                                            <div className="flex items-center gap-2">
+                                                <Avatar>
+                                                    <AvatarImage src={org.logo ? org.logo : "/BigLogo.png"} alt="@avatar" className="w-[50px]" />
+                                                    <AvatarFallback>CN</AvatarFallback>
+                                                </Avatar>
+                                                <div className="font-bold hover:underline cursor-pointer" onClick={() => (router.push(`/organizations/${org._id}`))}>
+                                                    {org.name}
+                                                </div>
 
-                                                    <MapHandler place={eventData.location} />
-                                                </APIProvider>
+                                                {org.isVerified && <div className="hidden ipad:flex items-center none">
+                                                    <Image src="/verified.svg" alt="verified" width={20} height={20} />
+                                                    <div className="text-primary">Verified</div>
+                                                </div>}
                                             </div>
+                                            <div className="mt-4">
+                                                <p className="font-bold mt-4 text-sm">
+                                                    About event
+                                                </p>
+                                                <p className=' text-muted-foreground text-sm'>
+                                                    {eventData.description}
+                                                </p>
+                                                <div className="font-bold">{eventData.location.address}</div>
+                                                <div className="w-full">
+                                                    <APIProvider apiKey={API_KEY}>
+                                                        <Map className='w-full h-[350px]'
+                                                            center={position}
+                                                            defaultZoom={15}
+                                                            gestureHandling={'greedy'}
+                                                            disableDefaultUI={true}>
+                                                            <Marker position={position} />
+                                                        </Map>
 
+                                                        <MapHandler place={eventData.location} />
+                                                    </APIProvider>
+                                                </div>
+
+                                            </div>
                                         </div>
-                                    </div>
-                                </ScrollArea>;
+                                    </ScrollArea>;
+                                </div>
                             </div>
-                        </div>
-                    </SheetContent>
-                </Sheet>
+                        </SheetContent>
+                    </Sheet>
+                </div>
             </div>
+
+
         </>
 
     );
