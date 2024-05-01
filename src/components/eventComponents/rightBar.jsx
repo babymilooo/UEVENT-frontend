@@ -17,17 +17,19 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 import { APIProvider, Marker, Map } from '@vis.gl/react-google-maps';
 import MapHandler from '@/components/googlemap/map-handler';
+import { useRouter } from 'next/navigation';
 const RightBar = ({ eventData, org }) => {
 
     const [position, setPosition] = useState({ lat: parseFloat(eventData.location.latitude), lng: parseFloat(eventData.location.longitude) });
-
+    const router = useRouter();
     return (
         <ScrollArea className="h-full w-full rounded-md border lg:pb-12 z-50">
-            <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md" style={{
+            <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md cursor-pointer" style={{
                 backgroundImage: `url('${eventData.picture ? eventData.picture : "/gradient.jpeg"}')`
-            }}>
+            }}
+            onClick={() => (router.push(`/events/${eventData._id}`))}>
                 <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-                <p className="relative mb-[40px] ml-6 font-bold text-xl text-white z-10">{eventData.name}</p>
+                <p className="relative mb-[40px] ml-6 font-bold text-xl text-white z-10 hover:underline ">{eventData.name}</p>
             </div>
             <div className="relative w-full p-6 mt-[-35px] bg-background z-40 rounded-[40px]">
                 <div className="flex items-center gap-2">

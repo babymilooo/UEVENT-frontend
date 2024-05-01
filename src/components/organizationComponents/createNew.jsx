@@ -38,7 +38,7 @@ import axios from 'axios';
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 
-const CreateNew = ({ organization, setEvents, events, setCurrentPage }) => {
+const CreateNew = ({ organization, setEvents, events, setCurrentPage, fetchData }) => {
     const [backgroundImage, setBackgroundImage] = useState("/gradient.jpeg");
     const [bg, setBg] = useState(null);
     const [endDate, setEndDate] = useState(new Date());
@@ -52,7 +52,6 @@ const CreateNew = ({ organization, setEvents, events, setCurrentPage }) => {
     const [search, setSearch] = useState('');
     const [timer, setTimer] = useState(null);
     const [tickets, setTickets] = useState([{ name: '', price: '', quantity: '' }]);
-
     const handleBgChange = (e) => {
         setBg(e.target.files[0]);
     };
@@ -154,7 +153,7 @@ const CreateNew = ({ organization, setEvents, events, setCurrentPage }) => {
     };
 
     const handleCreate = async () => {
- 
+
         const timeHours = Number(startTime.slice(0, 2));
         const timeMinutes = Number(startTime.slice(3, 5));
         endDate.setHours(timeHours);
@@ -180,7 +179,7 @@ const CreateNew = ({ organization, setEvents, events, setCurrentPage }) => {
             return EventService.createTicket(ticketData);
         });
 
-        setCurrentPage(0);
+        fetchData();
         handleClose();
     }
 

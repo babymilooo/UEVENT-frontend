@@ -8,7 +8,8 @@ class UserStore {
         id: "",
         profilePicture: null,
         email: "",
-        isVerified: false
+        isVerified: false,
+        country: "",
     };
 
     isLoggedIn = false;
