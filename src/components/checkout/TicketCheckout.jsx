@@ -38,7 +38,7 @@ export const TicketCheckout = ({ ticketOptionId }) => {
         {/* collect personal info */}
 
         {!collectedPersonalInfo && (
-          <div className="flex flex-col m-auto justify-center gap-2 p-2 w-11/12 max-w-96">
+          <div className="flex flex-col m-auto justify-center gap-2 w-11/12 max-w-96">
             <p className="m-0 p-0">Owner Name</p>
             <Input
               type="text"

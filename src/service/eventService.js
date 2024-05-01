@@ -51,7 +51,7 @@ export default class EventService {
         const now = new Date();
         const nextWeek = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
         return await $api.get('/events/get-events', {params: {
-            limit: 4,
+            limit: 10,
             page: 1,
             startDate: now.toISOString(),
             endDate: nextWeek.toISOString(),
