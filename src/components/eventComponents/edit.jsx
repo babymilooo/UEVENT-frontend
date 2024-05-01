@@ -47,7 +47,7 @@ const EditDialog = ({ eventData, setEventData }) => {
     const [startTime, setStartTime] = useState(eventData.time);
     const [tickets, setTickets] = useState(eventData.ticketOptions);
     const [artists, setArtists] = useState([]);
-    const [addedArtistsId, setAddedArtistsId] = useState([...eventData.artists.map((artist) => artist?.id)]);
+    const [addedArtistsId, setAddedArtistsId] = useState(eventData.artists);
     const [addedArtists, setAddedArtists] = useState([]);
     const [search, setSearch] = useState('');
     const [selectedPlace, setSelectedPlace] = useState("");
@@ -58,7 +58,7 @@ const EditDialog = ({ eventData, setEventData }) => {
         const loadArtistsInfo = async () => {
             try {
                 const response = await ArtistService.getArtists(eventData.artists);
-                if (response.data.length > 0) {
+                if (response?.data?.length > 0) {
                     setAddedArtists(response.data.map((artist) => {
                         return {
                             artist: artist.name,
@@ -240,6 +240,7 @@ const EditDialog = ({ eventData, setEventData }) => {
         const createdTickets = await Promise.all(createTicketPromises);
         console.log('Created tickets:', createdTickets);
 
+        console.log('Event updated:', event.data);
         if (event.data) {
             const updatedData = { ...event.data };
 
