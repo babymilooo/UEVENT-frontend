@@ -128,7 +128,7 @@ const Event = ({ org, eventData }) => {
 
                                                     <div className='col-span-1 flex flex-col items-center justify-center'>
                                                         <p className="text-xl font-bold">{ticket.price / 100}$</p>
-                                                        <button className="bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2">
+                                                        <button className="bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs mt-2" type="button" onClick={() => router.push(`/checkout/${ticket._id}`)}>
                                                             buy now
                                                         </button>
                                                     </div>
