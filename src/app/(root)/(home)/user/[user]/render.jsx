@@ -45,10 +45,19 @@ const Render = () => {
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
     const [showAllArtists, setShowAllArtists] = useState(false);
-    const artistsToShow = showAllArtists ? userStore.userArtists : null;
+    const [artistsToShow, setArtistsToShow] = useState([])
+    // const artistsToShow = showAllArtists ? userStore.userArtists : null;
     const [loading, setLoading] = useState(true);
     const [tickets, setTickets] = useState([]);
     const router = useRouter();
+
+    useEffect(() => {
+        if (userStore.userArtists.length > 5) {
+            setArtistsToShow(showAllArtists ? userStore.userArtists : userStore.userArtists.slice(0, 5));
+        } else {
+            setArtistsToShow(userStore.userArtists);
+        }
+    }, [showAllArtists, userStore.userArtists]);
 
     useEffect(() => {
         const fetchTickets = async () => {
@@ -108,7 +117,7 @@ const Render = () => {
                     </div>
                 </div>
 
-                {tickets.length > 0 && artistsToShow ? (
+                {artistsToShow.length > 0 ? (
                     <div className='bg-background ipad:mr-2 rounded-t-md h-full ipad:p-5'>
                         <div className='flex justify-between items-center mr-4'>
                             {userStore.userArtists && userStore.userArtists.length > 5 && (
@@ -138,38 +147,44 @@ const Render = () => {
                                 </div>
                             ))}
                         </div>
-                        <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>My tickets</p>
-                        <div className="grid ipad:grid-cols-2 grid-cols-1 p-1 gap-2 2xl:grid-cols-3 items-center">
-                            {tickets.map((ticket, index) => (
-                                <Card key={index} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[200px] mb-1 cursor-pointer" style={{ backgroundImage: `url('${ticket.event?.picture ? ticket.event?.picture : "/gradient.jpeg"}'` }} onClick={() => router.push(`/events/${ticket.event._id}`)}>
-                                    <div className="absolute inset-0 bg-black opacity-60"></div>
-                                    <CardContent className="flex h-full w-full">
-                                        <div className="bg-neutral-800 w-[200px] rounded-md h-[200px] flex ">
-                                            <div className="flex flex-col items-center justify-center w-full h-full z-10">
-                                                <p className="font-bold text-5xl text-white">{ticket.event?.month}</p>
-                                                <p className="text-6xl font-bold text-white">{ticket.event?.dayOfMonth}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col justify-around py-4">
-                                            <p className=" font-bold ml-2 text-xl text-white mt-0 z-10">{ticket.event?.name}</p>
-                                            <div className='flex flex-col'>
-                                                <p className="font-bold ml-2 text-white text-lg z-10 text-wrap">{ticket.event?.location?.address}</p>
-                                                <p className=" font-bold ml-2 text-white z-10">{ticket.event?.dayOfWeek} {ticket.event?.time}</p>
-                                            </div>
-                                            <div className='flex flex-col'>
-                                                <p className="font-bold ml-2 text-white text-lg z-10 text-wrap">Owner: {ticket.ownerName}</p>
-                                                <p className="font-bold ml-2 text-white text-lg z-10 text-wrap">Ticket: {ticket.ticketOption?.name}</p>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
                     </div>
                 ) : (
-                    <div className="flex justify-center items-center h-full w-full bg-background rounded-t-md">
-                        <p className="text-5xl font-bold text-neutral-300">No information found</p>
-                    </div>
+                    tickets.length > 0 ? (
+                        <>
+                            <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>My tickets</p>
+                            <div className="grid ipad:grid-cols-2 grid-cols-1 p-1 gap-2 2xl:grid-cols-3 items-center">
+                                {tickets.map((ticket, index) => (
+                                    <Card key={index} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[200px] mb-1 cursor-pointer" style={{ backgroundImage: `url('${ticket.event?.picture ? ticket.event?.picture : "/gradient.jpeg"}'` }} onClick={() => router.push(`/events/${ticket.event._id}`)}>
+                                        <div className="absolute inset-0 bg-black opacity-60"></div>
+                                        <CardContent className="flex h-full w-full">
+                                            <div className="bg-neutral-800 w-[200px] rounded-md h-[200px] flex ">
+                                                <div className="flex flex-col items-center justify-center w-full h-full z-10">
+                                                    <p className="font-bold text-5xl text-white">{ticket.event?.month}</p>
+                                                    <p className="text-6xl font-bold text-white">{ticket.event?.dayOfMonth}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col justify-around py-4">
+                                                <p className=" font-bold ml-2 text-xl text-white mt-0 z-10">{ticket.event?.name}</p>
+                                                <div className='flex flex-col'>
+                                                    <p className="font-bold ml-2 text-white text-lg z-10 text-wrap">{ticket.event?.location?.address}</p>
+                                                    <p className=" font-bold ml-2 text-white z-10">{ticket.event?.dayOfWeek} {ticket.event?.time}</p>
+                                                </div>
+                                                <div className='flex flex-col'>
+                                                    <p className="font-bold ml-2 text-white text-lg z-10 text-wrap">Owner: {ticket.ownerName}</p>
+                                                    <p className="font-bold ml-2 text-white text-lg z-10 text-wrap">Ticket: {ticket.ticketOption?.name}</p>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex justify-center items-center h-full w-full bg-background rounded-t-md">
+                            <p className="text-5xl font-bold text-neutral-300">No information found</p>
+                        </div>
+                    )
+
                 )}
             </div>
         )
