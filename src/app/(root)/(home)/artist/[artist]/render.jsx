@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/MyCarousel"
 import Autoplay from 'embla-carousel-autoplay';
 import { observer } from 'mobx-react-lite';
+import ArtistService from '@/service/artistService';
 
 const Render = ({ artist }) => {
     const isVerified = artist.followers.total > 5000;
@@ -40,8 +41,18 @@ const Render = ({ artist }) => {
         if ((userStore.userArtists.map(o => o.id)).includes(artist.id)) {
             setIsFollowing(true);
         }
+    }, [artist.id, userStore.userArtists]);
+
+    async function toggleFollow() {
+        try {
+            console.log(artist);
+            const res = await ArtistService.followArtist(artist?.id);
+            if (res.status === 200)
+                setIsFollowing(!isFollowing);
+        } catch (error) {
+            console.error('Failed to toggle follow status', error);
+        }
     }
-        , [artist.id, userStore.userArtists]);
 
     // Определите функцию для переключения отображения треков
     const toggleTracksDisplay = () => setShowAllTracks(!showAllTracks);
@@ -67,7 +78,7 @@ const Render = ({ artist }) => {
                             <p className='text-xl font-bold'>{artist.followers.total.toLocaleString("en-US")}</p>
                             <p className='font-bold text-xs pt-1'>Followers</p>
                         </div>
-                        <button onClick={() => setIsFollowing(!isFollowing)}>{
+                        <button onClick={() => toggleFollow()}>{
                             !isFollowing ?
                                 <div>
                                     <Tooltip text="follow">
