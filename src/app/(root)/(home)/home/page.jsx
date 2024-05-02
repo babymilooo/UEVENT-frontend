@@ -100,7 +100,7 @@ const page = observer(() => {
             });
 
             setEventsArtists(updatedEvents);
-            // setLoading(false);
+            setLoading(false);
         }
         fetchEventsArtists();
         fetchUpcoming();
@@ -191,7 +191,7 @@ const page = observer(() => {
                 </div>
                 <p className="font-bold text-3xl p-4 plselect-none">Now in tour</p>
                 {
-                    loading ? (
+                    !loading ? (
                         eventsArtists.length > 0 && (
                             eventsArtists.map((event, index) => (
                                 <div key={index}>
@@ -248,7 +248,7 @@ const page = observer(() => {
                                     </div>
                                 </div>
                             )))) : (
-                        Array.from({ length: 13 }).map((_, index) => (
+                        Array.from({ length: 3 }).map((_, index) => (
                             <div className='grid 2xl:grid-cols-6 xl:grid-cols-4 phone:grid-cols-1 ipad:grid-cols-3 gap-4 m-1 p-4'>
                                 <div key={index} className="flex flex-col col-span-1 rounded-md cursor-pointer px-4 items-center ipad:items-start" >
 
