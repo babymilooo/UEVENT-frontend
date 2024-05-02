@@ -1,21 +1,26 @@
-import { useEffect, useContext } from 'react';
-import { useRouter } from "next/navigation";
-import { RootStoreContext } from '@/providers/rootStoreProvider';
+import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
+import AuthService from '@/service/authService';
 
 const withAuth = (WrappedComponent) => {
   return (props) => {
-    const rootStore = useContext(RootStoreContext);
-    const router = useRouter();
-    const { userStore } = rootStore;
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-      if (userStore.user._id === undefined || userStore.user._id === null) {
-        router.push('/auth/login');
+      const checkAuth = async () => {
+        const response = await AuthService.checkToken();
+        if (response.data) {
+          console.log('User is logged in');
+          setLoading(false);
+        } else {
+          router.push('/auth/login');
+        }
       }
-    }, [userStore.user]);
+      checkAuth();
+    }, []);
 
-    return userStore.user._id !== undefined ? <WrappedComponent {...props} /> : null;
+
+    return !loading ? <WrappedComponent {...props} /> : null;
   };
 };
 

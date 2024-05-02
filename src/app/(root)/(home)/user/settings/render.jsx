@@ -46,25 +46,26 @@ const Page = () => {
     const [username, setUsername] = useState(userStore.user?.userName);
     const [profilePic, setProfilePic] = useState(userStore.user?.profilePicture);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
-
+    const [auth, setAuth] = useState(true);
 
     useEffect(() => {
         const checkAuth = async () => {
-            const response = await AuthService.checkAuth();
-            if (response) {
+            const response = await AuthService.checkToken();
+            if (response.data) {
                 console.log('User is logged in');
-                setLoading(false);
-
+                setAuth(false);
             } else {
                 router.push('/auth/login');
             }
         }
-
         checkAuth();
     }, []);
+
+    if (auth) {
+        return null;
+    }
 
     const handleDelete = async () => {
         try {
@@ -112,7 +113,7 @@ const Page = () => {
 
     return (
         <Tabs defaultValue="account" className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center overflow-x-hidden pt-14 select-none h-full justify-center">
-            {!userStore.user?.isRegisteredViaSpotify && !loading && (
+            {!userStore.user?.isRegisteredViaSpotify && (
                 <>
                     <TabsList className="grid grid-cols-2 w-[500px]">
                         <TabsTrigger value="account">Account</TabsTrigger>
@@ -238,7 +239,7 @@ const Page = () => {
                 </>
             )}
 
-            {userStore.user?.isRegisteredViaSpotify && !loading && (
+            {userStore.user?.isRegisteredViaSpotify && (
                 <>
                     <div className="mt-8 text-center">
                         <a
@@ -255,8 +256,7 @@ const Page = () => {
                 </>
             )}
 
-            {
-                !loading && 
+
             <div className="mt-8 mb-4 text-center">
 
                 <Dialog className="col-span-1">
@@ -280,7 +280,7 @@ const Page = () => {
                     </DialogContent>
                 </Dialog>
             </div>
-            }
+            
         </Tabs>
     );
 };

@@ -4,9 +4,27 @@ import React, { useEffect, useState } from 'react';
 import Main from '@/components/eventComponents/main';
 import RightBar from '@/components/eventComponents/rightBar';
 import withAuth from '@/components/withAuth';
+import AuthService from '@/service/authService';
 const Events = ({ org, eventData }) => {
     const [event, setEventData] = useState(eventData);
+    const [auth, setAuth] = useState(true);
 
+    useEffect(() => {
+        const checkAuth = async () => {
+            const response = await AuthService.checkToken();
+            if (response.data) {
+                console.log('User is logged in');
+                setAuth(false);
+            } else {
+                router.push('/auth/login');
+            }
+        }
+        checkAuth();
+    }, []);
+
+    if (auth) {
+        return null;
+    }
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col overflow-x-hidden pt-16 w-full h-full xl:mr-[415px] rounded-t-lg">
@@ -86,4 +104,4 @@ const Events = ({ org, eventData }) => {
     );
 };
 
-export default withAuth(Events);
+export default Events;

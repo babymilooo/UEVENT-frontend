@@ -47,7 +47,6 @@ const Render = () => {
     const [showAllArtists, setShowAllArtists] = useState(false);
     const [artistsToShow, setArtistsToShow] = useState([])
     // const artistsToShow = showAllArtists ? userStore.userArtists : null;
-    const [loading, setLoading] = useState(true);
     const [tickets, setTickets] = useState([]);
     const router = useRouter();
 
@@ -87,23 +86,27 @@ const Render = () => {
 
     const toggleTracksDisplay = () => setShowAllArtists(!showAllArtists);
 
+    const [auth, setAuth] = useState(true);
+
     useEffect(() => {
         const checkAuth = async () => {
-            const response = await AuthService.checkAuth();
-            if (response) {
+            const response = await AuthService.checkToken();
+            if (response.data) {
                 console.log('User is logged in');
-                setLoading(false);
-
+                setAuth(false);
             } else {
                 router.push('/auth/login');
             }
         }
-
         checkAuth();
     }, []);
 
+    if (auth) {
+        return null;
+    }
+
     return (
-        !loading && (
+        (
             <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col bg-muted overflow-x-hidden select-none mb-[50px] lg:mb-0 h-full">
                 <div className='ipad:px-5 ipad:pt-40 pt-20 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
                     <Image src={userStore.user.profilePicture} alt='logo' height={200} width={200} className='rounded-md h-[200px]' />
@@ -120,6 +123,7 @@ const Render = () => {
                 {artistsToShow.length > 0 ? (
                     <div className='bg-background ipad:mr-2 rounded-t-md h-full ipad:p-5'>
                         <div className='flex justify-between items-center mr-4'>
+                            <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>My artists</p>
                             {userStore.userArtists && userStore.userArtists.length > 5 && (
                                 <button onClick={toggleTracksDisplay} className='font-bold text-md pl-5'>
                                     {showAllArtists ? 'Less' : 'More'}

@@ -19,6 +19,7 @@ import { RootStoreContext } from '@/providers/rootStoreProvider';
 import { Button } from '@/components/ui/button';
 import OrganizationService from '@/service/orgService';
 import { useRouter } from "next/navigation";
+import AuthService from '@/service/authService';
 
 const Render = ({ res }) => {
     const rootStore = useContext(RootStoreContext);
@@ -27,6 +28,7 @@ const Render = ({ res }) => {
     const [organization, setOrganization] = useState(res);
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
+    const [auth, setAuth] = useState(true);
     const [buttonLoading, setButtonLoading] = useState(true);
     const [events, setEvents] = useState([]);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -38,6 +40,19 @@ const Render = ({ res }) => {
     const [totalItems, setTotalItems] = useState(0);
     const itemsPerPage = 10;
     const [pageCount, setPageCount] = useState(0);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const response = await AuthService.checkToken();
+            if (response.data) {
+                console.log('User is logged in');
+                setAuth(false);
+            } else {
+                router.push('/auth/login');
+            }
+        }
+        checkAuth();
+    }, []);
 
     const fetchData = async () => {
         try {
@@ -78,7 +93,7 @@ const Render = ({ res }) => {
         }
     };
 
-    useEffect(() => {    
+    useEffect(() => {
         fetchData();
     }, [currentPage]);
 
@@ -99,6 +114,10 @@ const Render = ({ res }) => {
         }
     };
 
+    if (auth) {
+        return null;
+    }
+
     return (
         <div className='flex bg-muted h-full'>
             <div className="rounded-md pt-20 flex flex-col w-full xl:mr-[415px]">
@@ -118,7 +137,7 @@ const Render = ({ res }) => {
 
                                 {(userStore.user._id === organization.createdBy) && (
                                     <>
-                                        <CreateNew organization={organization} setEvents={setEvents} events={events} setCurrentPage={setCurrentPage} fetchData={fetchData}/>
+                                        <CreateNew organization={organization} setEvents={setEvents} events={events} setCurrentPage={setCurrentPage} fetchData={fetchData} />
                                     </>
                                 )}
 
@@ -217,4 +236,4 @@ const Render = ({ res }) => {
     );
 };
 
-export default withAuth(observer(Render));
+export default observer(Render);

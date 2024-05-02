@@ -35,6 +35,7 @@ import OrganizationService from '@/service/orgService';
 import GoogleMap from '@/components/googlemap/GoogleMap';
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/navigation';
+import AuthService from '@/service/authService';
 
 const Render = () => {
     const rootStore = useContext(RootStoreContext);
@@ -51,12 +52,11 @@ const Render = () => {
     const [bg, setBg] = useState(null);
     const [organizations, setOrganizations] = useState([]);
     const [loading, setLoading] = useState(true);
-
     const [currentPage, setCurrentPage] = useState(0);
     const [totalItems, setTotalItems] = useState(0);
     const itemsPerPage = 10;
     const [pageCount, setPageCount] = useState(0);
-
+    const [auth, setAuth] = useState(true);
     const router = useRouter();
 
     const [searchInput, setSearchInput] = useState('');
@@ -85,6 +85,21 @@ const Render = () => {
     const handleBgChange = (e) => {
         setBg(e.target.files[0]);
     };
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const response = await AuthService.checkToken();
+            if (response.data) {
+                console.log('User is logged in');
+                setAuth(false);
+            } else {
+                router.push('/auth/login');
+            }
+        }
+        checkAuth();
+    }, []);
+
+
     useEffect(() => {
         const fetchOrganizations = async () => {
             setLoading(true);
@@ -146,9 +161,13 @@ const Render = () => {
         }
     };
 
+    if (auth) {
+        return null;
+    }
+
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col bg-muted overflow-x-hidden h-full min-h-[94vh] select-none mb-[50px] lg:mb-0">
-            <div className='ipad:px-5 ipad:pt-32 pt-5 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
+            <div className='ipad:px-5 ipad:pt-40 pt-20 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
                 <Image src={userStore.user.profilePicture ? userStore.user?.profilePicture : "/BigLogo.png"} alt='logo' height={200} width={200} className='rounded-lg ' />
                 <div className='ipad:pl-5 flex-col'>
                     <h1 className='iphone:text-6xl text-5xl font-bold pt-5 ipad:pt-0'>My organizations</h1>

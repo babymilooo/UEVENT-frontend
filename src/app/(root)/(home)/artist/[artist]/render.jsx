@@ -51,7 +51,7 @@ const Render = ({ artist }) => {
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col bg-muted overflow-x-hidden select-none mb-[50px] lg:mb-0">
-            <div className='ipad:px-5 ipad:pt-20 pt-5 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
+            <div className='ipad:px-5 ipad:pt-40 pt-20 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
                 <Image src={artist.images[1].url} alt='logo' height={200} width={200} className='rounded-md' />
                 <div className='ipad:pl-5 flex-col'>
                     {isVerified && (
@@ -148,7 +148,7 @@ const Render = ({ artist }) => {
                         <CarouselNext />
                     </Carousel>
                 </div>
-                
+
             </div>
         </div>
     );

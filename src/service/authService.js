@@ -48,6 +48,15 @@ export default class AuthService {
         }
     }
 
+    static async checkToken() {
+        try {
+            const response = await $api.get(`${API_URL}/auth/check-auth`);
+            return response;
+        } catch (e) {
+            console.error(e.response?.data?.message);
+        }
+    }
+
     static async logout() {
         try {
             const response = await $api.post(`${API_URL}/auth/logout`);
