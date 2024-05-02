@@ -191,69 +191,72 @@ const page = observer(() => {
                         </Card>
                     ))}
                 </div>
-                <p className="font-bold text-3xl p-4 plselect-none">Now in tour</p>
+
                 {
                     !loading ? (
-                        eventsArtists.length > 0 && (
-                            eventsArtists.map((event, index) => (
-                                <div key={index}>
-                                    <div className='grid 2xl:grid-cols-6 xl:grid-cols-4 phone:grid-cols-1 ipad:grid-cols-3 gap-4 m-1 p-4'>
-                                        <div key={index} className="flex flex-col col-span-1 rounded-md cursor-pointer px-4 items-center ipad:items-start" >
-
-                                            <Image src={event.artist.images} alt='logo' height={50} width={200} className='rounded-md h-[200px]' />
-                                            <div className='ipad:pl-5 flex-col'>
-                                                {event.artist.followers > 5000 && (
-                                                    <div className="flex items-center none mt-4">
-                                                        <Image src="/verified.svg" alt="verified" width={20} height={20} />
-                                                        <div className="text-primary">Verified</div>
-                                                    </div>
-                                                )}
-                                                <h1 className='iphone:text-6xl text-2xl font-bold ipad:pt-0'>{event.artist.name}</h1>
-                                                <div className='flex items-center ipad:justify-normal justify-between ipad:mt-4 mb-5 ipad:mb-0 gap-1 '>
-                                                    <div className='flex items-center gap-1'>
-                                                        <p className='text-lg font-bold'>{event.artist.followers.toLocaleString("en-US")}</p>
-                                                        <p className='font-bold text-xs pt-1'>Followers</p>
+                        eventsArtists.length > 0 ? (
+                            <>
+                                <p className="font-bold text-3xl p-4 plselect-none">Now in tour</p>
+                                {eventsArtists.map((event, index) => (
+                                    <div key={index} className='border-t-2 border-muted'>
+                                        <div className='grid 2xl:grid-cols-6 xl:grid-cols-4 phone:grid-cols-1 ipad:grid-cols-3 gap-4 m-1 p-4'>
+                                            <div className="flex flex-col col-span-1 rounded-md cursor-pointer px-4 items-center ipad:items-start">
+                                                <Image src={event.artist.images} alt='logo' height={50} width={200} className='rounded-md h-[200px]' />
+                                                <div className='ipad:pl-5 flex-col'>
+                                                    {event.artist.followers > 5000 && (
+                                                        <div className="flex items-center mt-4">
+                                                            <Image src="/verified.svg" alt="verified" width={20} height={20} />
+                                                            <div className="text-primary ml-2">Verified</div>
+                                                        </div>
+                                                    )}
+                                                    <h1 className='iphone:text-6xl text-2xl font-bold ipad:pt-0'>{event.artist.name}</h1>
+                                                    <div className='flex items-center ipad:justify-normal justify-between ipad:mt-4 mb-5 ipad:mb-0 gap-1 '>
+                                                        <div className='flex items-center gap-1'>
+                                                            <p className='text-lg font-bold'>{event.artist.followers.toLocaleString("en-US")}</p>
+                                                            <p className='font-bold text-xs pt-1'>Followers</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className='grid ipad:grid-cols-1 grid-cols-1 gap-2 2xl:grid-cols-3 items-center 2xl:col-span-5 xl:col-span-3 ipad:col-span-2'>
-                                            {
-                                                event.events.map((eventData, index) => (
-                                                    <div key={index}>
-                                                        <Card key={index} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[150px] mb-1 cursor-pointer"
-                                                            style={{ backgroundImage: `url('${eventData.picture ? eventData.picture : "/gradient.jpeg"}` }}
-                                                            onClick={() => (router.push(`/events/${eventData._id}`))}
+                                            <div className='grid ipad:grid-cols-1 grid-cols-1 gap-2 2xl:grid-cols-3 items-center 2xl:col-span-5 xl:col-span-3 ipad:col-span-2'>
+                                                {event.events.map((eventData, idx) => (
+                                                    <div key={idx}>
+                                                        <Card key={idx} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[150px] mb-1 cursor-pointer"
+                                                            style={{ backgroundImage: `url('${eventData.picture ? eventData.picture : "/gradient.jpeg"}')` }}
+                                                            onClick={() => router.push(`/events/${eventData._id}`)}
                                                         >
                                                             <div className="absolute inset-0 bg-black opacity-60"></div>
                                                             <CardContent className="flex h-full w-full">
-                                                                <div className="bg-neutral-800 w-[150px] rounded-md h-[150px] flex ">
+                                                                <div className="bg-neutral-800 w-[150px] rounded-md h-[150px] flex">
                                                                     <div className="flex flex-col items-center justify-center w-full h-full z-10">
                                                                         <p className="font-bold text-4xl text-white">{eventData.month}</p>
                                                                         <p className="text-5xl font-bold text-white">{eventData.dayOfMonth}</p>
-
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex flex-col justify-between">
-                                                                    <p className=" font-bold ml-2 text-xl text-white mt-10 z-10">{eventData.name}</p>
-                                                                    <div className='flex flex-col mb-8'>
-                                                                        <p className="font-bold ml-2 text-white text-xs z-10 text-wrap">{eventData.location.address}</p>
-                                                                        <p className=" font-bold ml-2 text-white text-sm z-10">{eventData.dayOfWeek} {eventData.time}</p>
+                                                                    <p className="font-bold ml-2 text-xl text-white mt-10 z-10">{eventData.name}</p>
+                                                                    <div className='flex flex-col'>
+                                                                        <p className="font-bold ml-2 text-white text-xs z-10 text-wrap">{eventData.location?.address}</p>
+                                                                        <p className="font-bold ml-2 text-white text-sm z-10">{eventData.dayOfWeek} {eventData.time}</p>
                                                                     </div>
                                                                 </div>
                                                             </CardContent>
                                                         </Card>
                                                     </div>
-                                                ))
-                                            }
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )))) : (
+                                ))}
+                            </>
+                        ) : (
+                            <div className="flex justify-center items-center h-full w-full">
+                            </div>
+                        )
+                    ) : (
                         Array.from({ length: 3 }).map((_, index) => (
                             <div key={index} className='grid 2xl:grid-cols-6 xl:grid-cols-4 phone:grid-cols-1 ipad:grid-cols-3 gap-4 m-1 p-4'>
-                                <div key={index} className="flex flex-col col-span-1 rounded-md cursor-pointer px-4 items-center ipad:items-start" >
-
+                                <div className="flex flex-col col-span-1 rounded-md cursor-pointer px-4 items-center ipad:items-start">
                                     <Skeleton className="h-[200px] w-[200px] rounded-xl" />
                                     <div className='flex-col'>
                                         <div className="space-y-2">
@@ -264,30 +267,26 @@ const page = observer(() => {
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-1 gap-2 2xl:grid-cols-3 xl:gird-cols-2 items-center 2xl:col-span-5 xl:col-span-3 ipad:col-span-2'>
-                                    {
-                                        Array.from({ length: 6 }).map((_, index) => (
-                                            <div key={index}>
-                                                <Card key={index} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[150px] mb-1 cursor-pointer"
-                                                >
-                                                    <CardContent className="flex h-full w-full border  rounded-lg">
-                                                        <Skeleton className="h-[150px] w-[150px] rounded-md" />
-                                                        <div className="flex flex-col justify-between">
-                                                            <div className="ml-4 flex justify-center items-center flex-col gap-4 h-full">
-                                                                <Skeleton className="h-4 w-[200px]" />
-                                                                <Skeleton className="h-4 w-[200px]" />
-                                                                <Skeleton className="h-4 w-[200px]" />
-                                                            </div>
+                                    {Array.from({ length: 6 }).map((_, idx) => (
+                                        <div key={idx}>
+                                            <Card key={idx} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[150px] mb-1 cursor-pointer">
+                                                <CardContent className="flex h-full w-full border rounded-lg">
+                                                    <Skeleton className="h-[150px] w-[150px] rounded-md" />
+                                                    <div className="flex flex-col justify-between">
+                                                        <div className="ml-4 flex justify-center items-center flex-col gap-4 h-full">
+                                                            <Skeleton className="h-4 w-[200px]" />
+                                                            <Skeleton className="h-4 w-[200px]" />
+                                                            <Skeleton className="h-4 w-[200px]" />
                                                         </div>
-                                                    </CardContent>
-                                                </Card>
-                                            </div>
-                                        ))
-                                    }
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         ))
                     )
-
                 }
 
             </div>

@@ -9,8 +9,8 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
     return (
-        <html lang="en">
-            <body className={inter.className}>
+        <html lang="en" className="w-full h-full">
+            <body className={`${inter.className} w-full h-full`}>
                 {children}
             </body>
         </html>

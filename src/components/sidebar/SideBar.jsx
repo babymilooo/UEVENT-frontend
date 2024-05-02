@@ -90,7 +90,7 @@ const SideBar = () => {
 
                         ) :
                         (filteredArtists.map((artist, index) => (
-                            <div key={index} className="flex rounded-md cursor-pointer m-1 h-[50px] items-center hover:bg-secondary" onClick={()=> (router.push(`/artist/${artist.id}`))}>
+                            <div key={index} className="flex rounded-md cursor-pointer m-1 h-[50px] items-center hover:bg-secondary" onClick={() => (router.push(`/artist/${artist.id}`))}>
                                 <Avatar>
                                     <AvatarImage src={artist.images[0].url} alt="@spotify" className="w-10" />
                                     <AvatarFallback>A</AvatarFallback>
