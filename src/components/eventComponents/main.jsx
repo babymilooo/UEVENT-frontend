@@ -21,6 +21,7 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 import { APIProvider, Marker, Map } from '@vis.gl/react-google-maps';
 import MapHandler from '@/components/googlemap/map-handler';
 import EditDialog from './edit';
+import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 
 const Main = ({ eventData, org, setEventData }) => {
     const [position, setPosition] = useState({ lat: parseFloat(eventData.location.latitude), lng: parseFloat(eventData.location.longitude) });
@@ -35,8 +36,10 @@ const Main = ({ eventData, org, setEventData }) => {
                         <p className="font-bold xl:text-5xl lg:text-4xl ipad:text-3xl phone:text-xl mb-[20px]">Manage your event</p>
                         <div className="flex">
                             <EditDialog eventData={eventData} setEventData={setEventData} />
-                            <Sheet className="">
-                                <SheetTrigger className="text-white xl:hidden block">Open</SheetTrigger>
+                            <Sheet>
+                                <SheetTrigger className="text-white xl:hidden block">
+                                    <HamburgerMenuIcon width={30} height={30} className="ml-4 mb-4"/>
+                                </SheetTrigger>
                                 <SheetContent className="w-full">
                                     <div className="fixed h-full right-0 sm:max-w-sm w-full">
                                         <div className="bg-background h-full rounded-md">

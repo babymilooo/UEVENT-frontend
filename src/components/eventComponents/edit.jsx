@@ -246,7 +246,7 @@ const EditDialog = ({ eventData, setEventData }) => {
     return (
         <Dialog>
             <DialogTrigger>
-                <GearIcon width={30} height={30} />
+                <GearIcon width={30} height={30} className='mb-4' />
             </DialogTrigger>
             <DialogOverlay onClick={handleClose} />
             <DialogContent className="max-w-[1500px] ">

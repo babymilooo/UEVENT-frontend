@@ -29,6 +29,7 @@ import React, { use, useEffect, useState } from "react";
 import { APIProvider, Marker, Map } from '@vis.gl/react-google-maps';
 import MapHandler from '@/components/googlemap/map-handler';
 import axios from "axios";
+import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
@@ -103,7 +104,7 @@ export function OpenLeftBar({
     return (
         <div className='xl:hidden fixed right-0'>
             <Sheet>
-                <SheetTrigger>Open</SheetTrigger>
+                <SheetTrigger><HamburgerMenuIcon width={30} height={30} className="mr-4"/></SheetTrigger>
                 <SheetContent className="w-full">
                     <div className="fixed h-full right-0 sm:max-w-sm w-full">
                         <div className="bg-background h-full rounded-md">
