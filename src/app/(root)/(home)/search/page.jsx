@@ -53,13 +53,19 @@ const Page = () => {
   const [searchHistory, setSearchHistory] = useState([]);
   useEffect(() => {
     try {
-        const savedHistory = localStorage.getItem("searchHistory");
-        setSearchHistory( savedHistory ? JSON.parse(savedHistory) : []);
-      } catch (error) {
-        setSearchHistory([]);
-      }
-  }, [])
+      const savedHistory = localStorage.getItem("searchHistory");
+      setSearchHistory(savedHistory ? JSON.parse(savedHistory) : []);
+    } catch (error) {
+      setSearchHistory([]);
+    }
+  }, []);
   const [artistsInfo, setArtistsInfo] = useState([]);
+
+  const [showAllArtists, setShowAllArtists] = useState(false);
+  const artistsToShow = useMemo(
+    () => (showAllArtists ? artists : artists.slice(0, 6)),
+    [showAllArtists, artists]
+  );
 
   //event search
   const [now, setNow] = useState(new Date());
@@ -158,7 +164,6 @@ const Page = () => {
           },
         });
         setSearchResultEvents(resp.data);
-        console.log(resp.data);
       } else {
         const resp = await $api.get("/events/get-events", {
           params: {
@@ -170,7 +175,6 @@ const Page = () => {
           },
         });
         setSearchResultEvents(resp.data);
-        console.log(resp.data);
       }
     } catch (error) {
       console.error(error?.response?.data?.message);
@@ -217,7 +221,7 @@ const Page = () => {
         onChange={(e) => setSearch(e.target.value)}
         className="w-2/3 mt-10 lg:ml-10"
       />
-      <div className="flex flex-wrap flex-row gap-3 w-2/3 mt-5 lg:ml-10 items-center justify-center">
+      <div className="flex flex-wrap flex-row gap-3 w-2/3 mt-5 lg:ml-10 items-center ">
         <div className="flex flex-row items-center gap-2">
           <label htmlFor="startDate" className="align-center">
             From
@@ -275,6 +279,14 @@ const Page = () => {
       {search === "" && searchHistory.length > 0 && (
         <p className="mt-4 mb-2 font-bold pl-2">Search History</p>
       )}
+      <div className="flex justify-between items-center mr-4">
+        <button
+          onClick={() => setShowAllArtists(!showAllArtists)}
+          className="font-bold text-md pl-5"
+        >
+          {showAllArtists ? "Less" : "More"}
+        </button>
+      </div>
       <div className="grid grid-cols-1 ipad:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 overflow-y-auto p-2 gap-4 w-full">
         {/* Отображение истории поиска */}
         {search === "" && searchHistory.length > 0
@@ -319,8 +331,8 @@ const Page = () => {
                   </Card>
                 </div>
               ))
-          : artists.map((artist) => (
-              <div key={artist.id} className="col-span-1 mt-10">
+          : artistsToShow.map((artist) => (
+              <div key={artist.id} className="">
                 <Card
                   onClick={() => router.push(`/artist/${artist.id}`)}
                   className="h-[80px] ipad:h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[350px] flex items-center cursor-pointer hover:bg-secondary w-full"
@@ -346,48 +358,48 @@ const Page = () => {
                 </Card>
               </div>
             ))}
-        <div className="w-96">
-          {/* searcehd events */}
-          {events &&
-            events.length > 0 &&
-            events.map((event, index) => (
-              <Card
-                key={event._id}
-                className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[250px] mb-4"
-                style={{
-                  backgroundImage: `url('${
-                    event.picture ? event.picture : "/gradient.jpeg"
-                  }`,
-                }}
-                onClick={() => router.push(`/events/${event._id}`)}
-              >
-                <div className="absolute inset-0 bg-black opacity-50"></div>
-                <CardContent className="flex items-center h-full w-full">
-                  <div className="bg-neutral-800 w-[200px] rounded-md h-[200px] ml-[20px] flex ">
-                    <div className="flex flex-col items-center justify-center w-full h-full z-10 gap-4">
-                      <p className="font-bold text-white text-5xl">
-                        {event.month}
-                      </p>
-                      <p className="text-5xl font-bold text-white">
-                        {event.dayOfMonth}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-xl font-bold ml-2 text-white z-10">
-                      {event.location.address}
+      </div>
+      <div className="m-auto w-2/3 min-w-[300px]">
+        {/* searcehd events */}
+        {events &&
+          events.length > 0 &&
+          events.map((event, index) => (
+            <Card
+              key={event._id}
+              className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[150px] mb-4"
+              style={{
+                backgroundImage: `url('${
+                  event.picture ? event.picture : "/gradient.jpeg"
+                }`,
+              }}
+              onClick={() => router.push(`/events/${event._id}`)}
+            >
+              <div className="absolute inset-0 bg-black opacity-50"></div>
+              <CardContent className="flex items-center h-full w-full">
+                <div className="bg-neutral-800 w-[200px] rounded-md h-[200px] ml-[20px] flex ">
+                  <div className="flex flex-col items-center justify-center w-full h-full z-10 gap-4">
+                    <p className="font-bold text-white text-5xl">
+                      {event.month}
                     </p>
-                    <p className="text-xl font-bold ml-2 text-white z-10">
-                      {event.name}
-                    </p>
-                    <p className="text-xl font-bold ml-2 text-white z-10">
-                      {event.dayOfWeek} {event.time}
+                    <p className="text-5xl font-bold text-white">
+                      {event.dayOfMonth}
                     </p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-        </div>
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-xl font-bold ml-2 text-white z-10">
+                    {event.location.address}
+                  </p>
+                  <p className="text-xl font-bold ml-2 text-white z-10">
+                    {event.name}
+                  </p>
+                  <p className="text-xl font-bold ml-2 text-white z-10">
+                    {event.dayOfWeek} {event.time}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
       </div>
     </div>
   );
