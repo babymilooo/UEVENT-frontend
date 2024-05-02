@@ -35,6 +35,7 @@ import {
 import { passwordRegex } from '@/lib/passwordRegex';
 import $api from '@/https/axios';
 import toast from 'react-hot-toast';
+import AuthService from '@/service/authService';
 const Page = () => {
 
     const router = useRouter();
@@ -45,10 +46,37 @@ const Page = () => {
     const [username, setUsername] = useState(userStore.user?.userName);
     const [profilePic, setProfilePic] = useState(userStore.user?.profilePicture);
     const [selectedImage, setSelectedImage] = useState(null);
-
+    const [loading, setLoading] = useState(true);
     const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
 
+
+    // useEffect(() => {
+    //     console.log(userStore.isLoggedIn);
+    //     console.log(userStore.user);
+    //     if (userStore.user) {
+    //         if (!userStore.isLoggedIn) {
+    //             router.push('/auth/login');
+    //         }
+    //     } else {
+    //         console.log('User data is not yet available');
+    //     }
+    // }, [userStore.user, userStore.isLoggedIn, router])
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const response = await AuthService.checkAuth();
+            if (response) {
+                console.log('User is logged in');
+                setLoading(false);
+
+            } else {
+                router.push('/auth/login');
+            }
+        }
+
+        checkAuth();
+    }, []);
 
     const handleDelete = async () => {
         try {
@@ -96,7 +124,7 @@ const Page = () => {
 
     return (
         <Tabs defaultValue="account" className="mx-auto my-8 pt-14">
-            {!userStore.user?.isRegisteredViaSpotify && (
+            {!userStore.user?.isRegisteredViaSpotify && !loading && (
                 <>
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="account">Account</TabsTrigger>
@@ -202,14 +230,14 @@ const Page = () => {
                                             className="w-full px-3 py-2 border rounded shadow-sm placeholder-gray-400 focus:ring-1 focus:ring-lime-500 focus:border-lime-500"
                                         />
                                     </div>
-                                    
+
                                 </div>
                                 <p
-                                        className="m-auto p-0 text-red-500 text-center max-w-96"
-                                        hidden={newPassword.trim().match(passwordRegex) || newPassword.length === 0}
-                                    >
-                                        Passwords must be at least 8 characters long, have 1 letter and 1 number and no whitespaces
-                                    </p>
+                                    className="m-auto p-0 text-red-500 text-center max-w-96"
+                                    hidden={newPassword.trim().match(passwordRegex) || newPassword.length === 0}
+                                >
+                                    Passwords must be at least 8 characters long, have 1 letter and 1 number and no whitespaces
+                                </p>
 
                             </CardContent>
                             <CardFooter className="flex justify-center pt-4">
@@ -222,7 +250,7 @@ const Page = () => {
                 </>
             )}
 
-            {userStore.user?.isRegisteredViaSpotify && (
+            {userStore.user?.isRegisteredViaSpotify && !loading && (
                 <>
                     <div className="mt-8 text-center">
                         <a
@@ -239,31 +267,34 @@ const Page = () => {
                 </>
             )}
 
-            <div className="mt-8 mb-4 text-center">
+            {
+                !loading &&
+                <div className="mt-8 mb-4 text-center">
 
-                <Dialog className="col-span-1">
-                    <DialogTrigger>
-                        <Button className="px-6 py-3 text-white font-bold rounded bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
-                            DELETE ACCOUNT
-                        </Button>
-                    </DialogTrigger>
-                    <DialogOverlay />
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Are you absolutely sure?</DialogTitle>
-                            <DialogDescription>
-                                This action cannot be undone. This will permanently delete your account
-                                and remove your data from our servers.
-                            </DialogDescription>
-                            <DialogClose className='flex justify-end'>
-                                <Button variant="destructive" className="w-24" onClick={handleDelete}>delete</Button>
-                            </DialogClose>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
-            </div>
+                    <Dialog className="col-span-1">
+                        <DialogTrigger>
+                            <Button className="px-6 py-3 text-white font-bold rounded bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                                DELETE ACCOUNT
+                            </Button>
+                        </DialogTrigger>
+                        <DialogOverlay />
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                <DialogDescription>
+                                    This action cannot be undone. This will permanently delete your account
+                                    and remove your data from our servers.
+                                </DialogDescription>
+                                <DialogClose className='flex justify-end'>
+                                    <Button variant="destructive" className="w-24" onClick={handleDelete}>delete</Button>
+                                </DialogClose>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+            }
         </Tabs>
     );
 };
 
-export default withAuth(observer(Page));
+export default observer(Page);

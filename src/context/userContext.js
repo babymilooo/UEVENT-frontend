@@ -81,7 +81,7 @@ class UserStore {
     async logout() {
         try {
             await AuthService.logout();
-            this.setUser({ username: null, id: null, email: null, profilePicture: null, isVerified: false });
+            this.setUser(null);
             this.setLoggedIn(false);
             this.setArtists([]);
             return true;
