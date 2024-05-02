@@ -11,7 +11,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-
+import { useRouter } from "next/navigation";
 import {
     Carousel,
     CarouselContent,
@@ -28,7 +28,9 @@ const Render = ({ artist }) => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [showAllTracks, setShowAllTracks] = useState(false);
     const rootStore = useContext(RootStoreContext);
+    const [artistsInfo, setArtistsInfo] = useState([]);
     const { userStore } = rootStore;
+    const router = useRouter();
 
     useEffect(() => {
         const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
@@ -43,14 +45,33 @@ const Render = ({ artist }) => {
         }
     }, [artist.id, userStore.userArtists]);
 
+    useEffect(() => {
+        const loadArtistsInfo = async () => {
+            try {
+                const response = await ArtistService.getRelatedArtist(artist.id);
+                if (response.data.length > 0) {
+                    setArtistsInfo(response.data.map((artist) => {
+                        return {
+                            artist: artist.name,
+                            id: artist.id,
+                            image: artist.images[1]?.url,
+                        };
+                    }));
+                }
+            } catch (error) {
+                console.error("Ошибка при загрузке информации об исполнителях:", error);
+            }
+        };
+        loadArtistsInfo();
+
+    }, []);
+
     async function toggleFollow() {
         try {
             console.log(artist);
             const res = await ArtistService.followArtist(artist?.id);
-            if (res.status === 200) {
+            if (res.status === 200)
                 setIsFollowing(!isFollowing);
-                userStore.setIsLoaded(true);
-            }
         } catch (error) {
             console.error('Failed to toggle follow status', error);
         }
@@ -142,15 +163,16 @@ const Render = ({ artist }) => {
                         className="w-full"
                     >
                         <CarouselContent>
-                            {Array.from({ length: 20 }).map((_, index) => (
+                            {artistsInfo.map((artist, index) => (
                                 <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6">
                                     <div className="p-1">
-                                        <Card className="relative flex w-full items-start bg-cover bg-center select-none overflow-hidden h-[245px]"
-                                            style={{
-                                                backgroundImage: `url('/concert.webp')`,
-                                            }}>
-                                            <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-                                            <p className="absolute bottom-0 mb-2 ml-6 font-bold text-xl text-white z-10">Playboi Carti</p>
+                                        <Card className="relative flex w-full items-start bg-cover bg-center select-none overflow-hidden h-[245px] cursor-pointer"
+                                                style={{
+                                                    backgroundImage: `url('${artist.image ? artist.image : "/concert.webp"}')`,
+                                                }}
+                                                onClick={() => (router.push(`/artist/${artist.id}`))}>
+                                                <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
+                                                <p className="absolute bottom-0 mb-2 ml-6 font-bold text-xl text-white z-10">{artist.artist}</p>
                                         </Card>
                                     </div>
                                 </CarouselItem>
