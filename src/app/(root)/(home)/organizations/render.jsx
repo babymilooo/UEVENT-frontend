@@ -92,7 +92,6 @@ const Render = () => {
                 const response = await OrganizationService.getOrganizations(currentPage + 1, itemsPerPage);
                 const res = response.data;
                 const organizationsData = Object.values(res.organizations);
-                console.log(organizationsData);
                 setOrganizations(organizationsData);
                 setFilteredOrganizations(organizationsData);
                 setPageCount(res.totalPages);
