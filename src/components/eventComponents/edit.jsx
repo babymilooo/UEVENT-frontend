@@ -95,7 +95,6 @@ const EditDialog = ({ eventData, setEventData }) => {
 
         setLoading(false);
 
-        console.log(eventData);
     }, [eventData]);
 
     const handleBgChange = (e) => {
@@ -219,7 +218,6 @@ const EditDialog = ({ eventData, setEventData }) => {
 
         const location = { latitude: selectedPlace.latLng.lat, longitude: selectedPlace.latLng.lng, countryCode: selectedPlace.countryCode, address: selectedPlace.address }
         const data = { name, description, date: endDate, time: startTime, location, artists: addedArtistsId };
-        console.log(data);
         let res;
         const event = await EventService.updateEvent(eventData._id, data);
         if (bg) {
@@ -227,7 +225,6 @@ const EditDialog = ({ eventData, setEventData }) => {
         }
 
 
-        console.log('Event updated:', event.data);
 
         if (event.data) {
             const updatedData = { ...event.data };
@@ -243,9 +240,9 @@ const EditDialog = ({ eventData, setEventData }) => {
 
     const handleDelete = async () => {
         const res = await EventService.deleteEvent(eventData._id);
-        console.log('Event deleted:', res.data);
         router.push(`/organizations/${orgId}/management`);
     }
+
     return (
         <Dialog>
             <DialogTrigger>

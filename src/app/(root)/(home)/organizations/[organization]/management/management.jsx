@@ -91,7 +91,7 @@ const Render = ({ res }) => {
             await OrganizationService.verifyOrganization(organization._id);
             router.push("/admin");
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
 

@@ -45,11 +45,6 @@ const Event = ({ org, eventData }) => {
     const dayOfWeek = days[eventDate.getDay()];
     const dayOfMonth = eventDate.getDate();
 
-    useEffect(() => {
-        console.log(event);
-        console.log(organization);
-    }
-        , [event, organization]);
 
     useEffect(() => {
         const loadArtistsInfo = async () => {
@@ -77,9 +72,6 @@ const Event = ({ org, eventData }) => {
 
     }, [event]);
 
-    useEffect(() => {
-        console.log(artistsInfo);
-    }, [artistsInfo]);
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center overflow-x-hidden pt-14">

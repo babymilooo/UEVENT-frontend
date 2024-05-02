@@ -29,7 +29,6 @@ const page = observer(() => {
         const fetchUpcoming = async () => {
             const resp = await EventService.getUpcomingEvents();
             setUpcomingEvents(resp.data.events);
-            console.log(resp.data);
         }
         fetchUpcoming();
     }, [])

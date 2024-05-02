@@ -7,9 +7,6 @@ import RightBar from '@/components/eventComponents/rightBar';
 const Events = ({ org, eventData }) => {
     const [event, setEventData] = useState(eventData);
 
-    useEffect(() => {
-        console.log(event);
-    }, [event]);
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col overflow-x-hidden pt-16 w-full h-full xl:mr-[415px] rounded-t-lg">

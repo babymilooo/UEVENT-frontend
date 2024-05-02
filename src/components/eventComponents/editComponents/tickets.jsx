@@ -31,7 +31,7 @@ export function Tickets({
 
     const handleSaveChanges = async (index) => {
         const updatedDefaultTickets = [...defaultTickets];
-        updatedDefaultTickets[index] = { ...editedTickets[index], price: parseFloat(editedTickets[index].price) * 100, quantity: parseInt(editedTickets[index].quantity) };
+        updatedDefaultTickets[index] = { ...editedTickets[index], price: parseFloat(editedTickets[index].price), quantity: parseInt(editedTickets[index].quantity) };
         // Update defaultTickets state with the modified array
         const ticketData = {
             name: updatedDefaultTickets[index].name,
@@ -143,7 +143,7 @@ export function Tickets({
                                             onClick={() => toggleEditMode(index)}
                                         />
                                         <Cross2Icon className='h-6 w-6 cursor-pointer'
-                                        onClick={() => handleDeleteTicket(index)} />
+                                            onClick={() => handleDeleteTicket(index)} />
                                     </>
                                 )}
                             </div>

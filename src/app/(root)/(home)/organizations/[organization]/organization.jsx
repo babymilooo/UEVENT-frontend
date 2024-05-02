@@ -62,11 +62,6 @@ const Render = ({ res, eventsData }) => {
     }
         , []);
 
-    useEffect(() => {
-        console.log(events);
-        console.log(organization);
-
-    }, [events, organization]);
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center overflow-x-hidden pt-14 select-none">
