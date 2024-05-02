@@ -51,18 +51,6 @@ const Page = () => {
     const [currentPassword, setCurrentPassword] = useState('');
 
 
-    // useEffect(() => {
-    //     console.log(userStore.isLoggedIn);
-    //     console.log(userStore.user);
-    //     if (userStore.user) {
-    //         if (!userStore.isLoggedIn) {
-    //             router.push('/auth/login');
-    //         }
-    //     } else {
-    //         console.log('User data is not yet available');
-    //     }
-    // }, [userStore.user, userStore.isLoggedIn, router])
-
     useEffect(() => {
         const checkAuth = async () => {
             const response = await AuthService.checkAuth();
@@ -123,15 +111,15 @@ const Page = () => {
     }
 
     return (
-        <Tabs defaultValue="account" className="mx-auto my-8 pt-14">
+        <Tabs defaultValue="account" className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center overflow-x-hidden pt-14 select-none h-full justify-center">
             {!userStore.user?.isRegisteredViaSpotify && !loading && (
                 <>
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid grid-cols-2 w-[500px]">
                         <TabsTrigger value="account">Account</TabsTrigger>
                         <TabsTrigger value="password">Password</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="account">
+                    <TabsContent value="account" className="w-[500px]">
                         <Card className="p-4 border rounded-lg">
                             <CardHeader className="mb-4">
                                 <CardTitle className="text-lg font-semibold">Account</CardTitle>
@@ -196,7 +184,7 @@ const Page = () => {
                         </Card>
                     </TabsContent>
 
-                    <TabsContent value="password">
+                    <TabsContent value="password" className="w-[500px]">
                         <Card className="p-4 border rounded-lg">
                             <CardHeader className="mb-6">
                                 <CardTitle className="text-lg font-semibold">Password</CardTitle>
@@ -268,30 +256,30 @@ const Page = () => {
             )}
 
             {
-                !loading &&
-                <div className="mt-8 mb-4 text-center">
+                !loading && 
+            <div className="mt-8 mb-4 text-center">
 
-                    <Dialog className="col-span-1">
-                        <DialogTrigger>
-                            <Button className="px-6 py-3 text-white font-bold rounded bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
-                                DELETE ACCOUNT
-                            </Button>
-                        </DialogTrigger>
-                        <DialogOverlay />
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                                <DialogDescription>
-                                    This action cannot be undone. This will permanently delete your account
-                                    and remove your data from our servers.
-                                </DialogDescription>
-                                <DialogClose className='flex justify-end'>
-                                    <Button variant="destructive" className="w-24" onClick={handleDelete}>delete</Button>
-                                </DialogClose>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                <Dialog className="col-span-1">
+                    <DialogTrigger>
+                        <Button className="px-6 py-3 text-white font-bold rounded bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                            DELETE ACCOUNT
+                        </Button>
+                    </DialogTrigger>
+                    <DialogOverlay />
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Are you absolutely sure?</DialogTitle>
+                            <DialogDescription>
+                                This action cannot be undone. This will permanently delete your account
+                                and remove your data from our servers.
+                            </DialogDescription>
+                            <DialogClose className='flex justify-end'>
+                                <Button variant="destructive" className="w-24" onClick={handleDelete}>delete</Button>
+                            </DialogClose>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
+            </div>
             }
         </Tabs>
     );
