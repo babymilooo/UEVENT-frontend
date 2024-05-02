@@ -31,6 +31,8 @@ const Render = ({ artist }) => {
     const [artistsInfo, setArtistsInfo] = useState([]);
     const { userStore } = rootStore;
     const router = useRouter();
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
@@ -120,33 +122,68 @@ const Render = ({ artist }) => {
 
             </div>
             <div className='bg-background ipad:mr-2 rounded-t-md h-full ipad:p-5'>
-                <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>Popular tracks</p>
-                <div>
-                    {
-                        tracksToShow?.map((track, index) => (
-                            <div key={index} className='flex items-center justify-between gap-5 mt-2 xl:w-2/3 hover:bg-muted rounded-md'>
-                                <div className='flex gap-2 ipad:pl-7 pl-3 w-full'>
-                                    <div className='flex items-center ipad:mr-3'>
-                                        <p className='font-bold text-muted-foreground text-xs ipad:text-lg'>{index + 1}</p>
+                <div className="grid ipad:grid-cols-2 grid:grid-cols-1 w-full h-full">
+                    <div className='col-span-1 w-full'>
+                        <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>Popular tracks</p>
+                        <div>
+                            {
+                                tracksToShow?.map((track, index) => (
+                                    <div key={index} className='flex items-center justify-between gap-5 mt-2 hover:bg-muted rounded-md'>
+                                        <div className='flex gap-2 ipad:pl-7 pl-3 w-full'>
+                                            <div className='flex items-center ipad:mr-3'>
+                                                <p className='font-bold text-muted-foreground text-xs ipad:text-lg'>{index + 1}</p>
+                                            </div>
+                                            <Image src={track.album.images[0].url} alt='album cover' height={50} width={50} className='rounded-xl p-2' />
+                                            <div className='flex-col max-w-40 ipad:max-w-[600px]'>
+                                                <p className='ipad:text-lg text-sm font-bold truncate'>{track.name}</p>
+                                                <p className='text-muted-foreground text-xs ipad:text-lg truncate'>{track.album.name}</p>
+                                            </div>
+                                        </div>
+                                        <div className='text-muted-foreground flex px-5'>
+                                            {Math.floor(track.duration_ms / 60000) + ":" + (Math.floor((track.duration_ms % 60000) / 1000) < 10 ? '0' : '') + Math.floor((track.duration_ms % 60000) / 1000)}
+                                        </div>
                                     </div>
-                                    <Image src={track.album.images[0].url} alt='album cover' height={50} width={50} className='rounded-xl p-2' />
-                                    <div className='flex-col max-w-40 ipad:max-w-[600px]'>
-                                        <p className='ipad:text-lg text-sm font-bold truncate'>{track.name}</p>
-                                        <p className='text-muted-foreground text-xs ipad:text-lg truncate'>{track.album.name}</p>
-                                    </div>
-                                </div>
-                                <div className='text-muted-foreground flex px-5'>
-                                    {Math.floor(track.duration_ms / 60000) + ":" + (Math.floor((track.duration_ms % 60000) / 1000) < 10 ? '0' : '') + Math.floor((track.duration_ms % 60000) / 1000)}
-                                </div>
-                            </div>
-                        ))
+                                ))
 
-                    }
-                    {artist.tracks && artist.tracks.length > 5 && (
-                        <button onClick={toggleTracksDisplay} className='font-bold text-xs pl-5'>
-                            {showAllTracks ? 'Less' : 'More'}
-                        </button>
-                    )}
+                            }
+                            {artist.tracks && artist.tracks.length > 5 && (
+                                <button onClick={toggleTracksDisplay} className='font-bold text-xs pl-5'>
+                                    {showAllTracks ? 'Less' : 'More'}
+                                </button>
+                            )}
+                        </div>
+
+                    </div>
+                    <div className="col-span-1">
+                        <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0 text-end'>Now in tour</p>
+                        <div className="grid ipad:grid-cols-2 grid-cols-1 gap-1">
+                            {
+                                loading ? <div></div> :
+
+                                    events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer"
+                                        style={{ backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}` }}
+                                        onClick={() => (router.push(`/events/${event._id}`))}
+                                    >
+                                        <div className="absolute inset-0 bg-black opacity-60"></div>
+                                        <CardContent className="flex items-center h-full w-full">
+                                            <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
+                                                <div className="flex flex-col items-center justify-center w-full h-full z-10">
+                                                    <p className="font-bold text-white">{event.month}</p>
+                                                    <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
+
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
+                                                <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
+                                                <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>))
+
+                            }
+                        </div>
+                    </div>
                 </div>
                 <div className="flex flex-col mt-14">
                     <p className="font-bold text-xl mb-2">similar artists</p>
@@ -167,12 +204,12 @@ const Render = ({ artist }) => {
                                 <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6">
                                     <div className="p-1">
                                         <Card className="relative flex w-full items-start bg-cover bg-center select-none overflow-hidden h-[245px] cursor-pointer"
-                                                style={{
-                                                    backgroundImage: `url('${artist.image ? artist.image : "/concert.webp"}')`,
-                                                }}
-                                                onClick={() => (router.push(`/artist/${artist.id}`))}>
-                                                <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
-                                                <p className="absolute bottom-0 mb-2 ml-6 font-bold text-xl text-white z-10">{artist.artist}</p>
+                                            style={{
+                                                backgroundImage: `url('${artist.image ? artist.image : "/concert.webp"}')`,
+                                            }}
+                                            onClick={() => (router.push(`/artist/${artist.id}`))}>
+                                            <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-black to-transparent"></div>
+                                            <p className="absolute bottom-0 mb-2 ml-6 font-bold text-xl text-white z-10">{artist.artist}</p>
                                         </Card>
                                     </div>
                                 </CarouselItem>
