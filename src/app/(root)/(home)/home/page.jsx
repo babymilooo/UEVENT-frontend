@@ -26,6 +26,7 @@ import { observer } from 'mobx-react-lite';
 import { RootStoreContext } from '@/providers/rootStoreProvider';
 import EventService from '@/service/eventService';
 import { Skeleton } from "@/components/ui/skeleton"
+import { getUserCountryName } from '@/lib/userCountryCode';
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
 
@@ -36,6 +37,12 @@ const page = observer(() => {
     const [upcomingEvents, setUpcomingEvents] = useState([]);
     const [eventsArtists, setEventsArtists] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [countryName, setCountryName] = useState('');
+
+    useEffect(() => {
+        getUserCountryName().then(name => setCountryName(name));
+    }, [])
+
     useEffect(() => {
         const fetchUpcoming = async () => {
             const resp = await EventService.getUpcomingEvents();
@@ -163,7 +170,7 @@ const page = observer(() => {
                     <CarouselPrevious />
                     <CarouselNext />
                 </Carousel>
-                <p className="font-bold text-3xl p-4 select-none">Upcoming events in</p>
+                <p className="font-bold text-3xl p-4 select-none">Upcoming events in {countryName}</p>
                 <div className="grid ipad:grid-cols-2 grid-cols-1 p-1 gap-2 2xl:grid-cols-3 items-center">
                     {upcomingEvents?.map((event, index) => (
 
