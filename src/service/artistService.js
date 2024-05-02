@@ -49,4 +49,13 @@ export default class ArtistService {
             toast.error(e.response?.data?.message);
         }
     }
+
+    static async followArtist(artistId) {
+        try {
+            const response = await $api.get(`${API_URL}/artists/follow-artist/${artistId}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
 }
