@@ -26,7 +26,7 @@ const SideBar = () => {
     useEffect(() => {
         const getArtists = async () => {
             try {
-                if (userStore.userArtists.length === 0 || userStore.isLoaded) {
+                if (userStore.isLoaded) {
                     const response = await userStore.getUserArtists();
                     if (response?.status !== 200) {
                         setLoading(false);
@@ -43,7 +43,7 @@ const SideBar = () => {
 
         getArtists();
 
-    }, [userStore.userArtists]);
+    }, [userStore.userArtists, userStore.isLoaded]);
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
