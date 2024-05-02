@@ -18,6 +18,8 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar"
+import withAuth from '@/components/withAuth';
+
 const Render = () => {
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
@@ -82,4 +84,4 @@ const Render = () => {
     );
 };
 
-export default observer(Render);
+export default withAuth(observer(Render));

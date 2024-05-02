@@ -30,18 +30,29 @@ export function RightBar({
     const [position, setPosition] = useState({ lat: parseFloat(selectedPlace.latitude), lng: parseFloat(selectedPlace.longitude) });
     const [address, setAddress] = useState(selectedPlace.address);
     const router = useRouter();
+    const [isLocation, setIsLocation] = useState(false);
     useEffect(() => {
         setSelectedPlace(organization.location);
     }, [organization]);
 
     useEffect(() => {
         // Обновляем position при изменении selectedPlace или organization
-        setPosition({
-            lat: parseFloat(selectedPlace.latitude),
-            lng: parseFloat(selectedPlace.longitude)
-        });
-        setAddress(selectedPlace.address);
+        if (selectedPlace && selectedPlace.latitude && selectedPlace.longitude) {
+            setPosition({
+                lat: parseFloat(selectedPlace.latitude),
+                lng: parseFloat(selectedPlace.longitude)
+            });
+            setAddress(selectedPlace.address);
+            setIsLocation(true)
+        } else {
+            setPosition("");  
+            setAddress("");
+            setIsLocation(false)
+        }
     }, [selectedPlace]);
+    
+    console.log(isLocation);
+    console.log(selectedPlace);
 
     return <ScrollArea className="h-full w-full rounded-md border lg:pb-12">
         <div className="relative flex h-[360px] w-full items-end bg-cover bg-center select-none rounded-t-md" style={{
@@ -73,17 +84,18 @@ export function RightBar({
                 </p>
                 <div className="font-bold">{address}</div>
                 <div className="w-full">
-                    <APIProvider apiKey={API_KEY}>
+                    {isLocation && (
+                        <APIProvider apiKey={API_KEY}>
                         <Map className='w-full h-[350px]'
-                            center={position}
+                                center={position}
                             defaultZoom={15}
                             gestureHandling={'greedy'}
                             disableDefaultUI={true}>
                             <Marker position={position} />
-                        </Map>
-
+                         </Map>
                         <MapHandler place={selectedPlace} />
-                    </APIProvider>
+                        </APIProvider>
+                    )}
                 </div>
                 <p className="font-bold mt-4 mb-2 text-sm">
                     Events

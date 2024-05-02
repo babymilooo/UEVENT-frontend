@@ -14,7 +14,10 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-
+import { useRouter } from "next/navigation";
+import { RootStoreContext } from '@/providers/rootStoreProvider';
+import Tooltip from '@/components/tooltip/tooltip';
+import EventService from "@/service/eventService";
 import {
     Carousel,
     CarouselContent,
@@ -23,7 +26,7 @@ import {
     CarouselPrevious,
 } from "@/components/ui/MyCarousel"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Image from 'next/image';
 import Autoplay from 'embla-carousel-autoplay';
 import { useRouter } from "next/navigation";
@@ -32,10 +35,13 @@ import ArtistService from "@/service/artistService";
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const Event = ({ org, eventData }) => {
+    const rootStore = useContext(RootStoreContext);
+    const { userStore } = rootStore;
     const [event, setEvent] = useState(eventData);
     const [organization, setOrganization] = useState(org);
     // const [position, setPosition] = useState({ lat: parseFloat(event.location.latitude), lng: parseFloat(event.location.longitude) });
     const [address, setAddress] = useState(event.location.address);
+    const [isFollowing, setIsFollowing] = useState(event.followers.includes(userStore.user._id.toString()));
     const router = useRouter();
     const [artistsInfo, setArtistsInfo] = useState([]);
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -72,6 +78,19 @@ const Event = ({ org, eventData }) => {
 
     }, [event]);
 
+    async function toggleFollow() {
+        try {
+            const res = await EventService.addFollowersToEvent(event._id);
+            if (res.status === 200) {
+                setIsFollowing(!isFollowing);
+                setEvent(res.body);
+                console.log("Event updated:", res.body); // Перевіряємо нові дані події
+            }
+        } catch (error) {
+            console.error('Failed to toggle follow status', error);
+        }
+    }
+
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center overflow-x-hidden pt-14">
@@ -98,6 +117,22 @@ const Event = ({ org, eventData }) => {
                 <div className="mt-4">
                     <div className="font-bold text-xl">{address}</div>
                     <div className=" text-neutral-400">{dayOfWeek}, {month} {dayOfMonth}, {event.time}</div>
+                    {userStore.user._id && 
+                    <button onClick={() => toggleFollow()}>{
+                            isFollowing  ?
+                                <div>
+                                    <Tooltip text="unfollow">
+                                        <Image src="/heart-clicked.svg" alt='heart' height={30} width={30} />
+                                    </Tooltip>
+                                </div>
+                                :
+                                <div>
+                                    <Tooltip text="follow">
+                                        <Image src="/heart.svg" alt='heart' height={30} width={30} />
+                                    </Tooltip>
+                                </div>
+                        }</button>
+                    }
                 </div>
                 {
                     event.ticketOptions && event.ticketOptions.length > 0 &&

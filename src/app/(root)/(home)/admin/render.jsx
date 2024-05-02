@@ -13,7 +13,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-
+import withAuth from '@/components/withAuth';
 import { Skeleton } from "@/components/ui/skeleton"
 
 import { RootStoreContext } from '@/providers/rootStoreProvider';
@@ -193,4 +193,4 @@ const Render = () => {
     );
 };
 
-export default observer(Render);
+export default withAuth(observer(Render));

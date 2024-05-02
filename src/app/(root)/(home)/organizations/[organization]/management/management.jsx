@@ -13,7 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from "@/components/ui/card"
 import Image from 'next/image';
 import axios from 'axios';
-
+import { observer } from 'mobx-react-lite';
+import withAuth from '@/components/withAuth';
 import { RootStoreContext } from '@/providers/rootStoreProvider';
 import { Button } from '@/components/ui/button';
 import OrganizationService from '@/service/orgService';
@@ -45,7 +46,8 @@ const Render = ({ res }) => {
             // Fetch events based on currentPage
             const result = await EventService.getEvents(organization._id, itemsPerPage, currentPage + 1);
 
-            if (result && result.data) {
+            if (result && result.data && result.data.events) {
+                console.log(result.data);
                 const updatedEvents = await Promise.all(
                     result.data.events.map(async (event) => {
                         const eventDate = new Date(event.date);
@@ -215,4 +217,4 @@ const Render = ({ res }) => {
     );
 };
 
-export default Render;
+export default withAuth(observer(Render));
