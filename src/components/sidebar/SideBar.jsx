@@ -26,20 +26,24 @@ const SideBar = () => {
     useEffect(() => {
         const getArtists = async () => {
             try {
-                const response = await userStore.getUserArtists();
-                if (response?.status !== 200) {
-                    setLoading(false);
-                } else {
-                    setFilteredArtists(response.data);
-                    setLoading(false);
+                if (userStore.userArtists.length === 0 || userStore.isLoaded) {
+                    const response = await userStore.getUserArtists();
+                    if (response?.status !== 200) {
+                        setLoading(false);
+                    } else {
+                        setFilteredArtists(response.data);
+                        setLoading(false);
+                    }
+                    userStore.setIsLoaded(false);
                 }
             } catch (error) {
                 console.error("user artists failed", error);
             }
         }
+
         getArtists();
 
-    }, [userStore]);
+    }, [userStore.userArtists]);
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);

@@ -47,8 +47,10 @@ const Render = ({ artist }) => {
         try {
             console.log(artist);
             const res = await ArtistService.followArtist(artist?.id);
-            if (res.status === 200)
+            if (res.status === 200) {
                 setIsFollowing(!isFollowing);
+                userStore.setIsLoaded(true);
+            }
         } catch (error) {
             console.error('Failed to toggle follow status', error);
         }

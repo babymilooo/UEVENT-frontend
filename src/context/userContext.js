@@ -14,12 +14,17 @@ class UserStore {
 
     isLoggedIn = false;
     userArtists = [];
+    isLoaded = true;
     constructor(user, rootStore) {
         this.rootStore = rootStore;
         makeAutoObservable(this);
         this.user = user || this.user;
     }
 
+    setIsLoaded(value) {
+        this.isLoaded = value;
+    }
+    
     setUser(user) {
         this.user = user;
     }
