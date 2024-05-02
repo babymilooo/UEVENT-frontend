@@ -45,12 +45,14 @@ const page = observer(() => {
                     const month = months[eventDate.getMonth()];
                     const dayOfWeek = days[eventDate.getDay()];
                     const dayOfMonth = eventDate.getDate();
+                    // const time = eventDate.toTimeString().substring(0, 5);
 
                     return {
                         ...event,
                         month,
                         dayOfWeek,
                         dayOfMonth,
+                        // time
                     };
                 })
             );
@@ -249,7 +251,7 @@ const page = observer(() => {
                                 </div>
                             )))) : (
                         Array.from({ length: 3 }).map((_, index) => (
-                            <div className='grid 2xl:grid-cols-6 xl:grid-cols-4 phone:grid-cols-1 ipad:grid-cols-3 gap-4 m-1 p-4'>
+                            <div key={index} className='grid 2xl:grid-cols-6 xl:grid-cols-4 phone:grid-cols-1 ipad:grid-cols-3 gap-4 m-1 p-4'>
                                 <div key={index} className="flex flex-col col-span-1 rounded-md cursor-pointer px-4 items-center ipad:items-start" >
 
                                     <Skeleton className="h-[200px] w-[200px] rounded-xl" />
