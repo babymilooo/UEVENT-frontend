@@ -106,23 +106,19 @@ const Render = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <div className='bg-background ipad:mr-2 rounded-t-md h-full ipad:p-5'>
-                    <div className='flex justify-between items-center mr-4'>
-                        {artistsToShow && (
-                            <>
-                                {userStore.userArtists && userStore.userArtists.length > 5 && (
-                                    <button onClick={toggleTracksDisplay} className='font-bold text-md pl-5'>
-                                        {showAllArtists ? 'Less' : 'More'}
-                                    </button>
-                                )}
-                            </>
-                        )}
-                    </div>
-                    <div className='grid grid-cols-1 ipad:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 overflow-y-auto p-2 gap-4 w-full'>
-                        {
-                            artistsToShow && artistsToShow?.map((artist, index) => (
+
+                {tickets.length > 0 && artistsToShow ? (
+                    <div className='bg-background ipad:mr-2 rounded-t-md h-full ipad:p-5'>
+                        <div className='flex justify-between items-center mr-4'>
+                            {userStore.userArtists && userStore.userArtists.length > 5 && (
+                                <button onClick={toggleTracksDisplay} className='font-bold text-md pl-5'>
+                                    {showAllArtists ? 'Less' : 'More'}
+                                </button>
+                            )}
+                        </div>
+                        <div className='grid grid-cols-1 ipad:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 overflow-y-auto p-2 gap-4 w-full'>
+                            {artistsToShow.map((artist, index) => (
                                 <div key={index} className="col-span-1">
                                     <Card
                                         onClick={() => router.push(`/artist/${artist.id}`)}
@@ -140,26 +136,18 @@ const Render = () => {
                                         </CardContent>
                                     </Card>
                                 </div>
-                            ))
-                        }
-                    </div>
-                    <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>My tickets</p>
-                    <div>
-
+                            ))}
+                        </div>
+                        <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>My tickets</p>
                         <div className="grid ipad:grid-cols-2 grid-cols-1 p-1 gap-2 2xl:grid-cols-3 items-center">
-                            {tickets?.map((ticket, index) => (
-
-                                <Card key={index} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[200px] mb-1 cursor-pointer"
-                                    style={{ backgroundImage: `url('${ticket.event?.picture ? ticket.event?.picture : "/gradient.jpeg"}` }}
-                                    onClick={() => (router.push(`/events/${ticket.event._id}`))}
-                                >
+                            {tickets.map((ticket, index) => (
+                                <Card key={index} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[200px] mb-1 cursor-pointer" style={{ backgroundImage: `url('${ticket.event?.picture ? ticket.event?.picture : "/gradient.jpeg"}'` }} onClick={() => router.push(`/events/${ticket.event._id}`)}>
                                     <div className="absolute inset-0 bg-black opacity-60"></div>
                                     <CardContent className="flex h-full w-full">
                                         <div className="bg-neutral-800 w-[200px] rounded-md h-[200px] flex ">
                                             <div className="flex flex-col items-center justify-center w-full h-full z-10">
                                                 <p className="font-bold text-5xl text-white">{ticket.event?.month}</p>
                                                 <p className="text-6xl font-bold text-white">{ticket.event?.dayOfMonth}</p>
-
                                             </div>
                                         </div>
                                         <div className="flex flex-col justify-around py-4">
@@ -178,8 +166,12 @@ const Render = () => {
                             ))}
                         </div>
                     </div>
-                </div>
-            </div >
+                ) : (
+                    <div className="flex justify-center items-center h-full w-full bg-background rounded-t-md">
+                        <p className="text-5xl font-bold text-neutral-300">No information found</p>
+                    </div>
+                )}
+            </div>
         )
     );
 };
