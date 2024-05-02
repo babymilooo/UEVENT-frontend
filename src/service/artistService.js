@@ -58,4 +58,13 @@ export default class ArtistService {
             toast.error(e.response?.data?.message);
         }
     }
+
+    static async getRelatedArtist(artistId){
+        try {
+            const response = await $api.get(`${API_URL}/artists/get-related-artists/${artistId}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
 }
