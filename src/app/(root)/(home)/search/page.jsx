@@ -2,7 +2,7 @@
 
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import {
     Card,
@@ -99,7 +99,7 @@ const Page = () => {
         }
     };
 
-    const handleSearchEvents = async () => {
+    const handleSearchEvents = useCallback(async () => {
         try {
             if (onlyLocalEvents) {
                 const resp = await $api.get('/events/get-events', {
@@ -112,6 +112,7 @@ const Page = () => {
                     }
                 });
                 setSearchResultEvents(resp.data);
+                console.log(resp.data);
             }
             else {
                 const resp = await $api.get('/events/get-events', {
@@ -123,12 +124,13 @@ const Page = () => {
                     }
                 });
                 setSearchResultEvents(resp.data);
+                console.log(resp.data);
             }
 
         } catch (error) {
 
         }
-    }
+    }, [endDate, onlyLocalEvents, order, search, startDate])
 
     useEffect(() => {
         if (timer) {
@@ -152,6 +154,10 @@ const Page = () => {
             }
         };
     }, [search]);
+
+    useEffect(() => {
+        handleSearchEvents();
+    },[handleSearchEvents])
 
     return (
         <div className='xl:pl-[250px] lg:pl-[200px] flex flex-col items-center lg:items-start mb-12 w-full pt-14'>
