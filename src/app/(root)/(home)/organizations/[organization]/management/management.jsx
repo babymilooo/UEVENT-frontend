@@ -52,12 +52,14 @@ const Render = ({ res }) => {
                         const month = months[eventDate.getMonth()];
                         const dayOfWeek = days[eventDate.getDay()];
                         const dayOfMonth = eventDate.getDate();
+                        const time = eventDate.toTimeString().substring(0, 5);
 
                         return {
                             ...event,
                             month,
                             dayOfWeek,
                             dayOfMonth,
+                            time
                         };
                     })
                 );

@@ -2,7 +2,7 @@
 
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import {
     Card,
@@ -26,6 +26,9 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import $api from '@/https/axios';
 import { getUserCountryCode } from '@/lib/userCountryCode';
 
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+
 const Page = () => {
     const [search, setSearch] = useState('');
     const [timer, setTimer] = useState(null);
@@ -44,7 +47,6 @@ const Page = () => {
 
     //event search
     const now = new Date();
-    // now.setHours(0, 0, 1, 0); //set to midnight
     const [onlyLocalEvents, setOnlyLocalEvents] = useState(true);
     const [startDate, setStartDate] = useState(now);
     const [endDate, setEndDate] = useState(new Date(now.getTime() + 1000 * 60 * 60 * 24 * 30)); //default - till next month
@@ -54,7 +56,31 @@ const Page = () => {
         page: 1,
         pages: 0,
         events: []
-    })
+    });
+    
+    const events = useMemo(() => {
+        return searchResultEvents.events.map(event => {
+            const eventDate = new Date(event.date);
+            const month = months[eventDate.getMonth()];
+            const dayOfWeek = days[eventDate.getDay()];
+            const dayOfMonth = eventDate.getDate();
+            const time = eventDate.toTimeString().substring(0, 5);
+
+            return {
+                ...event,
+                month,
+                dayOfWeek,
+                dayOfMonth,
+                time,
+            };
+        }
+    )
+    }, [searchResultEvents]);
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const totalItems = searchResultEvents?.total;
+    const itemsPerPage = 10;
+    const pageCount = searchResultEvents?.pages;
 
     const router = useRouter();
 
@@ -62,7 +88,6 @@ const Page = () => {
     useEffect(() => {
         if (searchHistory.length > 0) {
             loadArtistsInfo(searchHistory);
-
         }
     }, [searchHistory]);
 
@@ -108,7 +133,8 @@ const Page = () => {
                         startDate: startDate.toISOString(),
                         endDate: endDate.toISOString(),
                         order,
-                        eventName: search
+                        eventName: search,
+                        page: currentPage
                     }
                 });
                 setSearchResultEvents(resp.data);
@@ -120,7 +146,8 @@ const Page = () => {
                         startDate: startDate.toISOString(),
                         endDate: endDate.toISOString(),
                         order,
-                        eventName: search
+                        eventName: search,
+                        page: currentPage
                     }
                 });
                 setSearchResultEvents(resp.data);
@@ -128,9 +155,9 @@ const Page = () => {
             }
 
         } catch (error) {
-
+            console.error(error?.response?.data?.message);
         }
-    }, [endDate, onlyLocalEvents, order, search, startDate])
+    }, [endDate, onlyLocalEvents, order, search, startDate, currentPage])
 
     useEffect(() => {
         if (timer) {
@@ -158,6 +185,9 @@ const Page = () => {
     useEffect(() => {
         handleSearchEvents();
     },[handleSearchEvents])
+
+    console.log(events);
+    console.log(searchResultEvents);
 
     return (
         <div className='xl:pl-[250px] lg:pl-[200px] flex flex-col items-center lg:items-start mb-12 w-full pt-14'>
@@ -273,6 +303,34 @@ const Page = () => {
                         </div>
                     ))
                 )}
+                <div className='w-96'>
+                    {/* searcehd events */}
+                    { (events && events.length > 0) && events.map((event, index) => (
+                                <Card key={event._id}
+                                    className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[250px] mb-4"
+                                    style={{
+                                        backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}`
+                                    }}
+                                    onClick={() => (router.push(`/events/${event.id}/management`))}
+                                >
+                                    <div className="absolute inset-0 bg-black opacity-50"></div>
+                                    <CardContent className="flex items-center h-full w-full">
+                                        <div className="bg-neutral-800 w-[200px] rounded-md h-[200px] ml-[20px] flex ">
+                                            <div className="flex flex-col items-center justify-center w-full h-full z-10 gap-4">
+                                                <p className="font-bold text-white text-5xl">{event.month}</p>
+                                                <p className="text-5xl font-bold text-white">{event.dayOfMonth}</p>
+
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <p className="text-xl font-bold ml-2 text-white z-10">{event.location.address}</p>
+                                            <p className="text-xl font-bold ml-2 text-white z-10">{event.name}</p>
+                                            <p className="text-xl font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                </div>
             </div>
         </div>
 
