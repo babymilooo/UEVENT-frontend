@@ -76,4 +76,12 @@ export default class UserService {
         }
 
     }
+    static async getUserTickets() {
+        try {
+            const resp = await $api.get(`/tickets/myTickets`);
+            return resp.data;
+        } catch (error) {
+            return [];
+        }
+    }
 }
