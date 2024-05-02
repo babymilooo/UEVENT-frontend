@@ -3,7 +3,7 @@ import Render from './render';
 
 const page = () => {
     return (
-        <div>
+        <div className='w-full h-full'>
             <Render />
         </div>
     );

@@ -3,8 +3,8 @@ import Render from './render';
 
 const page = () => {
     return (
-        <div>
-            <Render />
+        <div  className="h-full">
+            <Render/>
         </div>
     );
 };
