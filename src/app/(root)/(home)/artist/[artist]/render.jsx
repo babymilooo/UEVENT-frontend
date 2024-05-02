@@ -22,7 +22,9 @@ import {
 import Autoplay from 'embla-carousel-autoplay';
 import { observer } from 'mobx-react-lite';
 import ArtistService from '@/service/artistService';
-
+import EventService from '@/service/eventService';
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
 const Render = ({ artist }) => {
     const isVerified = artist.followers.total > 5000;
     const [isFollowing, setIsFollowing] = useState(false);
@@ -64,8 +66,38 @@ const Render = ({ artist }) => {
                 console.error("Ошибка при загрузке информации об исполнителях:", error);
             }
         };
-        loadArtistsInfo();
 
+        const fetchEvents = async () => {
+            try {
+                const response = await EventService.getArtistEvents(artist.id);
+                if(response.status === 200) {
+                    const updatedEvents = await Promise.all(
+                        response.data.map(async (event) => {
+                            const eventDate = new Date(event.date);
+                            const month = months[eventDate.getMonth()];
+                            const dayOfWeek = days[eventDate.getDay()];
+                            const dayOfMonth = eventDate.getDate();
+                            
+                            return {
+                                ...event,
+                                month,
+                                dayOfWeek,
+                                dayOfMonth,
+                            };
+                        })
+                    );
+                    console.log(updatedEvents)
+                    setEvents(updatedEvents);
+                }
+                setLoading(false);
+            } catch (error) {
+                console.error(error);
+            }
+
+        };
+
+        loadArtistsInfo();
+        fetchEvents();
     }, []);
 
     async function toggleFollow() {
@@ -122,7 +154,7 @@ const Render = ({ artist }) => {
 
             </div>
             <div className='bg-background ipad:mr-2 rounded-t-md h-full ipad:p-5'>
-                <div className="grid ipad:grid-cols-2 grid:grid-cols-1 w-full h-full">
+                <div className="grid ipad:grid-cols-2 grid:grid-cols-1 w-full">
                     <div className='col-span-1 w-full'>
                         <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>Popular tracks</p>
                         <div>
@@ -155,12 +187,12 @@ const Render = ({ artist }) => {
 
                     </div>
                     <div className="col-span-1">
-                        <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0 text-end'>Now in tour</p>
-                        <div className="grid ipad:grid-cols-2 grid-cols-1 gap-1">
+                        <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0 ipad:text-end text-start'>Now in tour</p>
+                        <div className="grid xl:grid-cols-2 grid-cols-1 gap-1">
                             {
                                 loading ? <div></div> :
 
-                                    events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer"
+                                    events.map((event, index) => (<Card key={index} className="relative flex w-full col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer"
                                         style={{ backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}` }}
                                         onClick={() => (router.push(`/events/${event._id}`))}
                                     >
@@ -174,7 +206,7 @@ const Render = ({ artist }) => {
                                                 </div>
                                             </div>
                                             <div className="flex flex-col">
-                                                <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
+                                                <p className="text-[10px] font-bold ml-2 text-white z-10">{event.location.address}</p>
                                                 <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
                                                 <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
                                             </div>

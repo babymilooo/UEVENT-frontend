@@ -170,7 +170,10 @@ const page = observer(() => {
                     <CarouselPrevious />
                     <CarouselNext />
                 </Carousel>
-                <p className="font-bold text-3xl p-4 select-none">Upcoming events in {countryName}</p>
+                {
+                    upcomingEvents.length > 0 &&
+                    <p className="font-bold text-3xl p-4 select-none">Upcoming events in {countryName}</p>
+                }
                 <div className="grid ipad:grid-cols-2 grid-cols-1 p-1 gap-2 2xl:grid-cols-3 items-center">
                     {upcomingEvents?.map((event, index) => (
 
@@ -207,7 +210,7 @@ const page = observer(() => {
                                 {eventsArtists.map((event, index) => (
                                     <div key={index} className='border-t-2 border-muted'>
                                         <div className='grid 2xl:grid-cols-6 xl:grid-cols-4 phone:grid-cols-1 ipad:grid-cols-3 gap-4 m-1 p-4'>
-                                            <div className="flex flex-col col-span-1 rounded-md cursor-pointer px-4 items-center ipad:items-start">
+                                            <div className="flex flex-col col-span-1 rounded-md cursor-pointer px-4 ipad:items-start" onClick={() => (router.push(`/artist/${event.artist.id}`))}>
                                                 <Image src={event.artist.images} alt='logo' height={50} width={200} className='rounded-md h-[200px]' />
                                                 <div className='ipad:pl-5 flex-col'>
                                                     {event.artist.followers > 5000 && (
@@ -225,7 +228,7 @@ const page = observer(() => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className='grid ipad:grid-cols-1 grid-cols-1 gap-2 2xl:grid-cols-3 items-center 2xl:col-span-5 xl:col-span-3 ipad:col-span-2'>
+                                            <div className='grid ipad:grid-cols-1 grid-cols-1 gap-2 2xl:grid-cols-3 2xl:col-span-5 xl:col-span-3 ipad:col-span-2'>
                                                 {event.events.map((eventData, idx) => (
                                                     <div key={idx}>
                                                         <Card key={idx} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[150px] mb-1 cursor-pointer"

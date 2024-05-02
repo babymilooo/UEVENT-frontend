@@ -86,6 +86,8 @@ class UserStore {
     async logout() {
         try {
             await AuthService.logout();
+            localStorage.removeItem('searchHistory');
+            localStorage.clear();
             this.setUser(null);
             this.setLoggedIn(false);
             this.setArtists([]);

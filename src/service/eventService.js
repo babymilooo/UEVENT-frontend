@@ -109,4 +109,13 @@ export default class EventService {
             toast.error(e.response?.data?.message);
         }
     }
+
+    static async getArtistEvents(id) {
+        try {
+            const response = await $api.get(`${API_URL}/events/get-events-artist-id/${id}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
 }
