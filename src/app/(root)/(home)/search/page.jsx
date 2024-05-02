@@ -370,7 +370,7 @@ const Page = () => {
                 )}
 
             </div>
-            {!loadSearch && <p className="mt-4 mb-2 font-bold pl-2">Events</p>}
+            {!loadSearch && <p className="font-bold p-4 pl-6">Events</p>}
             <div className="grid ipad:grid-cols-2 grid-cols-1 p-1 gap-2 2xl:grid-cols-3 items-center w-full">
                 {
                     search != '' && !loadSearch &&

@@ -61,6 +61,10 @@ export default class EventService {
         })
     }
 
+    static async getEventsArtists() {
+        return await $api.get('/events/get-events-with-favourite-artists')
+    }
+
     static async updateEvent(id, data) {
         try {
             const response = await $api.patch(`${API_URL}/events/${id}`, data);
