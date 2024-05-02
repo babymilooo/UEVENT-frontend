@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-
+import withAuth from '@/components/withAuth';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
@@ -266,4 +266,4 @@ const Page = () => {
     );
 };
 
-export default observer(Page);
+export default withAuth(observer(page));

@@ -13,7 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from "@/components/ui/card"
 import Image from 'next/image';
 import axios from 'axios';
-
+import { observer } from 'mobx-react-lite';
+import withAuth from '@/components/withAuth';
 import { RootStoreContext } from '@/providers/rootStoreProvider';
 import { Button } from '@/components/ui/button';
 import OrganizationService from '@/service/orgService';
@@ -215,4 +216,4 @@ const Render = ({ res }) => {
     );
 };
 
-export default Render;
+export default withAuth(observer(Render));

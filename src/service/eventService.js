@@ -100,4 +100,13 @@ export default class EventService {
             toast.error(e.response?.data?.message);
         }
     }
+
+    static async addFollowersToEvent(id) {
+        try {
+            const response = await $api.get(`${API_URL}/events/toggle-attendee/${id}`);
+            return response;
+        } catch (e) {
+            toast.error(e.response?.data?.message);
+        }
+    }
 }

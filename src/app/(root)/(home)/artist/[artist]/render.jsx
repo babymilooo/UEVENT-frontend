@@ -70,13 +70,13 @@ const Render = ({ artist }) => {
                         <button onClick={() => setIsFollowing(!isFollowing)}>{
                             !isFollowing ?
                                 <div>
-                                    <Tooltip text="unfollow">
+                                    <Tooltip text="follow">
                                         <Image src="/heart.svg" alt='heart' height={30} width={30} />
                                     </Tooltip>
                                 </div>
                                 :
                                 <div>
-                                    <Tooltip text="follow">
+                                    <Tooltip text="unfollow">
                                         <Image src="/heart-clicked.svg" alt='heart' height={30} width={30} />
                                     </Tooltip>
                                 </div>

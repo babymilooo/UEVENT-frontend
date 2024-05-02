@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Main from '@/components/eventComponents/main';
 import RightBar from '@/components/eventComponents/rightBar';
-
+import withAuth from '@/components/withAuth';
 const Events = ({ org, eventData }) => {
     const [event, setEventData] = useState(eventData);
 
@@ -86,4 +86,4 @@ const Events = ({ org, eventData }) => {
     );
 };
 
-export default Events;
+export default withAuth(Events);
