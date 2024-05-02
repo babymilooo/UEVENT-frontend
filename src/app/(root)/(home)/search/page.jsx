@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import $api from "@/https/axios";
 import { getUserCountryCode } from "@/lib/userCountryCode";
+import ReactPaginate from "react-paginate";
 
 const months = [
     "Jan",
@@ -48,6 +49,7 @@ const days = ["Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."];
 const Page = () => {
     const [search, setSearch] = useState("");
     const [timer, setTimer] = useState(null);
+    const [eventTimer, setEventTimer] = useState(null);
     const [artists, setArtists] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadSearch, setLoadSearch] = useState(true);
@@ -107,6 +109,11 @@ const Page = () => {
     const pageCount = searchResultEvents?.pages;
 
     const router = useRouter();
+    const handlePageClick = (data) => {
+        // console.log(data);
+        setCurrentPage(data.selected);
+    };
+
 
     useEffect(() => {
         if (searchHistory.length > 0) {
@@ -162,7 +169,7 @@ const Page = () => {
                         endDate: endDate.toISOString(),
                         order,
                         eventName: search,
-                        page: currentPage,
+                        page: currentPage + 1,
                     },
                 });
                 setSearchResultEvents(resp.data);
@@ -173,7 +180,7 @@ const Page = () => {
                         endDate: endDate.toISOString(),
                         order,
                         eventName: search,
-                        page: currentPage,
+                        page: currentPage + 1,
                     },
                 });
                 setSearchResultEvents(resp.data);
@@ -196,8 +203,6 @@ const Page = () => {
                 setTimeout(() => {
                     if (search) {
                         handleSearch();
-                        handleSearchEvents();
-
                     }
                 }, 500)
             ); // Задержка в 500 мс
@@ -210,6 +215,33 @@ const Page = () => {
             }
         };
     }, [search]);
+
+    useEffect(() => {
+        // setLoadSearch(true);
+        if (eventTimer) {
+            clearTimeout(eventTimer);
+        }
+
+        if (search.length === 0) {
+            // setArtists([]); // Очистить список артистов, если строка поиска пуста
+        } else {
+            setEventTimer(
+                setTimeout(() => {
+                    if (search) {
+                        handleSearchEvents();
+                    }
+                }, 500)
+            ); // Задержка в 500 мс
+        }
+
+        // Очистка таймера при размонтировании компонента
+        return () => {
+            if (eventTimer) {
+                clearTimeout(eventTimer);
+            }
+        };
+    }, [handleSearchEvents]);
+
 
 
     return (
@@ -372,7 +404,8 @@ const Page = () => {
             <div className="grid ipad:grid-cols-2 grid-cols-1 p-1 gap-2 2xl:grid-cols-3 items-center w-full">
                 {
                     search != '' && !loadSearch &&
-                    events?.map((event, index) => (
+                    <>
+                    {events?.map((event, index) => (
 
                         <Card key={index} className="relative flex col-span-1 items-end bg-cover bg-center select-none overflow-hidden h-[200px] mb-1 cursor-pointer"
                             style={{ backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}` }}
@@ -396,9 +429,32 @@ const Page = () => {
                                 </div>
                             </CardContent>
                         </Card>
-                    ))
+                    ))}
+                    
+                    </>
                 }
             </div>
+            {(totalItems > itemsPerPage && search.length != 0 && events.length != 0) && <div className="mt-10 m-auto">
+                <ReactPaginate
+                    previousLabel={"<"}
+                    nextLabel={">"}
+                    breakLabel={"..."}
+                    pageCount={pageCount}
+                    onPageChange={handlePageClick}
+                    containerClassName="flex list-none justify-center p-4"
+                    activeClassName="bg-black text-white rounded-full"
+                    pageClassName="mx-1"
+                    pageLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                    previousClassName="mx-1"
+                    nextClassName="mx-1"
+                    previousLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                    nextLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                    breakClassName="mx-1"
+                    breakLinkClassName="block px-3 py-1 border border-black rounded-full text-sm text-black-700 bg-black-200 hover:bg-black-300" // Reduced padding and text-sm for smaller text
+                    forcePage={currentPage}
+                    disabledClassName="opacity-30 cursor-not-allowed"
+                />
+            </div>}
         </div>
     );
 };
