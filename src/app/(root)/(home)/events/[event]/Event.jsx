@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation";
 import { RootStoreContext } from '@/providers/rootStoreProvider';
 import Tooltip from '@/components/tooltip/tooltip';
 import EventService from "@/service/eventService";
+import { observer } from 'mobx-react-lite';
+
 import {
     Carousel,
     CarouselContent,
@@ -26,7 +28,7 @@ import {
     CarouselPrevious,
 } from "@/components/ui/MyCarousel"
 
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, use } from 'react';
 import Image from 'next/image';
 import Autoplay from 'embla-carousel-autoplay';
 import { useRouter } from "next/navigation";
@@ -40,17 +42,25 @@ const Event = ({ org, eventData }) => {
     const [event, setEvent] = useState(eventData);
     const [organization, setOrganization] = useState(org);
     // const [position, setPosition] = useState({ lat: parseFloat(event.location.latitude), lng: parseFloat(event.location.longitude) });
-    const [address, setAddress] = useState(event.location.address);
-    const [isFollowing, setIsFollowing] = useState(event.followers.includes(userStore.user._id.toString()));
+    const [address, setAddress] = useState(eventData.location.address);
+    const [isFollowing, setIsFollowing] = useState(false);
     const router = useRouter();
     const [artistsInfo, setArtistsInfo] = useState([]);
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const eventDate = new Date(event.date);
+    const eventDate = new Date(eventData.date);
     const month = months[eventDate.getMonth()];
     const dayOfWeek = days[eventDate.getDay()];
     const dayOfMonth = eventDate.getDate();
 
+    useEffect(() => {
+        console.log(eventData);
+        console.log(userStore.user?._id);
+        if (eventData.followers.includes(userStore.user?._id)) {
+            setIsFollowing(true);
+        }
+    }
+        , [userStore.user]);
 
     useEffect(() => {
         const loadArtistsInfo = async () => {
@@ -80,10 +90,9 @@ const Event = ({ org, eventData }) => {
 
     async function toggleFollow() {
         try {
-            const res = await EventService.addFollowersToEvent(event._id);
+            const res = await EventService.addFollowersToEvent(event?._id);
             if (res.status === 200) {
                 setIsFollowing(!isFollowing);
-                setEvent(res.body);
                 console.log("Event updated:", res.body); // Перевіряємо нові дані події
             }
         } catch (error) {
@@ -117,9 +126,9 @@ const Event = ({ org, eventData }) => {
                 <div className="mt-4">
                     <div className="font-bold text-xl">{address}</div>
                     <div className=" text-neutral-400">{dayOfWeek}, {month} {dayOfMonth}, {event.time}</div>
-                    {userStore.user._id && 
-                    <button onClick={() => toggleFollow()}>{
-                            isFollowing  ?
+                    {userStore.user._id &&
+                        <button onClick={() => toggleFollow()}>{
+                            isFollowing ?
                                 <div>
                                     <Tooltip text="unfollow">
                                         <Image src="/heart-clicked.svg" alt='heart' height={30} width={30} />
@@ -250,4 +259,4 @@ const Event = ({ org, eventData }) => {
     );
 };
 
-export default Event;
+export default observer(Event);
