@@ -46,7 +46,8 @@ const Render = ({ res }) => {
             // Fetch events based on currentPage
             const result = await EventService.getEvents(organization._id, itemsPerPage, currentPage + 1);
 
-            if (result && result.data) {
+            if (result && result.data && result.data.events) {
+                console.log(result.data);
                 const updatedEvents = await Promise.all(
                     result.data.events.map(async (event) => {
                         const eventDate = new Date(event.date);

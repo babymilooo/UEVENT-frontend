@@ -9,10 +9,13 @@ const withAuth = (WrappedComponent) => {
     const { userStore } = rootStore;
     
     useEffect(() => {
-      if (userStore.user._id === undefined || userStore.user._id === null) {
-        router.push('/auth/login');
-      }
-    }, []);
+      const timeoutId = setTimeout(() => {
+        if (userStore.user._id === undefined || userStore.user._id === null) {
+          router.push('/auth/login');
+        }
+      }, 5000);
+      return () => clearTimeout(timeoutId);
+    }, [userStore.user._id, router]);
 
     return userStore.user._id !== undefined ? <WrappedComponent {...props} /> : null;
   };

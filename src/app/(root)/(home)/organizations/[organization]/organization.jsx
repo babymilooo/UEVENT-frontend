@@ -36,7 +36,7 @@ const Render = ({ res, eventsData }) => {
 
     useEffect(() => {
         const fetchAddress = async () => {
-            if (eventsData.length > 0) {
+            if (eventsData.length > 0 && eventsData.events) {
                 const updatedEvents = await Promise.all(
                     eventsData.map(async (event) => {
                         const eventDate = new Date(event.date);
