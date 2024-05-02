@@ -31,7 +31,6 @@ import {
 import React, { useEffect, useState, useContext, use } from 'react';
 import Image from 'next/image';
 import Autoplay from 'embla-carousel-autoplay';
-import { useRouter } from "next/navigation";
 import axios from "axios";
 import ArtistService from "@/service/artistService";
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;

@@ -217,4 +217,4 @@ const Render = ({ res }) => {
     );
 };
 
-export default withAuth(observer(Render));
+export default observer(Render);
