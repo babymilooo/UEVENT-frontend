@@ -247,7 +247,7 @@ const Page = () => {
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col items-center lg:items-start mb-12 w-full pt-14">
             <Input
-                placeholder="Search for artists"
+                placeholder="Search for artists or events"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-2/3 mt-10 lg:ml-10"
