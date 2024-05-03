@@ -25,20 +25,11 @@ import OrganizationService from '@/service/orgService';
 import GoogleMap from '@/components/googlemap/GoogleMap';
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/navigation';
+import AuthService from '@/service/authService';
 
 const Render = () => {
-    const rootStore = useContext(RootStoreContext);
-    const { userStore } = rootStore;
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [name, Setname] = useState('');
-    const [description, SetDescription] = useState('');
-    const [backgroundImage, setBackgroundImage] = useState('');
-    const [selectedPlace, setSelectedPlace] = useState(null);
-    const [phone, setPhone] = useState('');
-    const [website, setWebsite] = useState('');
 
-    const [logo, setLogo] = useState(null);
-    const [bg, setBg] = useState(null);
+    const [auth, setAuth] = useState(true);
     const [organizations, setOrganizations] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -92,6 +83,22 @@ const Render = () => {
         setCurrentPage(data.selected);
     };
 
+    useEffect(() => {
+        const checkAuth = async () => {
+            const response = await AuthService.checkToken();
+            if (response.data) {
+                console.log('User is logged in');
+                setAuth(false);
+            } else {
+                router.push('/auth/login');
+            }
+        }
+        checkAuth();
+    }, []);
+
+    if (auth) {
+        return null;
+    }
 
     return (
         <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col bg-muted overflow-x-hidden h-full min-h-[94vh] select-none mb-[50px] lg:mb-0">
@@ -193,4 +200,4 @@ const Render = () => {
     );
 };
 
-export default withAuth(observer(Render));
+export default observer(Render);

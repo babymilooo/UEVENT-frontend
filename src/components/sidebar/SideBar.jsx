@@ -40,7 +40,7 @@ const SideBar = () => {
                 console.error("user artists failed", error);
             }
         }
-
+        setLoading(false);
         getArtists();
 
     }, [userStore.isLoaded]);

@@ -84,9 +84,9 @@ const Navbar = () => {
                 {
                     !userStore.isLoggedIn ? (
                         <div className='flex flex-1 items-center space-x-2 justify-end'>
-                            <Button variant="ghost" onClick={() => router.push("/auth/login")}>Sign IN</Button>
+                            <Button variant="ghost" onClick={() => router.push("/auth/login")}>login</Button>
                             <button className=" bg-lime-400 px-6 py-3 rounded-3xl font-bold text-xs" onClick={() => router.push("/auth/registration")} >
-                                Sign UP
+                                SIGN UP
                             </button>
                         </div>) : (
                         <div className='flex flex-1 items-center space-x-2 justify-end cursor-pointer'>
