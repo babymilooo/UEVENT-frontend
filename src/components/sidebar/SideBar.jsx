@@ -43,7 +43,7 @@ const SideBar = () => {
 
         getArtists();
 
-    }, [userStore.userArtists, userStore.isLoaded]);
+    }, [userStore.isLoaded]);
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
