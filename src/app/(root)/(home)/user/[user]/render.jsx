@@ -79,6 +79,7 @@ const Render = () => {
                 }
                 return ticket;
             });
+            console.log(newTickets);
             setTickets(newTickets);
         }
         fetchTickets();
@@ -106,7 +107,7 @@ const Render = () => {
     }
 
     return (
-        (
+        
             <div className="xl:pl-[250px] lg:pl-[200px] flex flex-col bg-muted overflow-x-hidden select-none mb-[50px] lg:mb-0 h-full">
                 <div className='ipad:px-5 ipad:pt-40 pt-20 ipad:pb-5 items-center flex flex-col ipad:flex-row w-full'>
                     <Image src={userStore.user.profilePicture} alt='logo' height={200} width={200} className='rounded-md h-[200px]' />
@@ -120,8 +121,9 @@ const Render = () => {
                     </div>
                 </div>
 
-                {artistsToShow.length > 0 ? (
+                
                     <div className='bg-background ipad:mr-2 rounded-t-md h-full ipad:p-5'>
+                    {artistsToShow.length > 0 && ( <>
                         <div className='flex justify-between items-center mr-4'>
                             <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>My artists</p>
                             {userStore.userArtists && userStore.userArtists.length > 5 && (
@@ -149,11 +151,13 @@ const Render = () => {
                                         </CardContent>
                                     </Card>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                ) : (
-                    tickets.length > 0 ? (
+                                ))}
+                                </div>
+                    </>
+                        
+                            
+                        ) }
+                    {tickets.length > 0 && (
                         <>
                             <p className='ipad:text-3xl text-2xl font-bold pl-5 pt-3 ipad:pl-0 ipad:pt-0'>My tickets</p>
                             <div className="grid ipad:grid-cols-2 grid-cols-1 p-1 gap-2 2xl:grid-cols-3 items-center">
@@ -182,16 +186,19 @@ const Render = () => {
                                     </Card>
                                 ))}
                             </div>
-                        </>
-                    ) : (
-                        <div className="flex justify-center items-center h-full w-full bg-background rounded-t-md">
-                            <p className="text-5xl font-bold text-neutral-300">No information found</p>
-                        </div>
-                    )
-
-                )}
+                        </>)}
+                        {(tickets.length <= 0 && artistsToShow.length <= 0)&& <div className="flex justify-center items-center h-full w-full bg-background rounded-t-md">
+                          <p className="text-5xl font-bold text-neutral-300">No information found</p>
+                       </div>}
+                    </div>
+                
+                
+                    
+                    
+                    
+                       
+                    
             </div>
-        )
     );
 };
 
