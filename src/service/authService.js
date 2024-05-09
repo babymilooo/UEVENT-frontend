@@ -44,7 +44,7 @@ export default class AuthService {
             const response = await axios.post(`${API_URL}/auth/refreshToken`, {}, { withCredentials: true });
             return response;
         } catch (e) {
-            console.error(e.response?.data?.message);
+            // console.error(e.response?.data?.message);
         }
     }
 

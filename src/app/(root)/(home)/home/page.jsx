@@ -30,7 +30,7 @@ import { getUserCountryName } from '@/lib/userCountryCode';
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const days = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
 
-const page = observer(() => {
+const page = () => {
     const router = useRouter();
     const rootStore = useContext(RootStoreContext);
     const { userStore } = rootStore;
@@ -42,6 +42,10 @@ const page = observer(() => {
     useEffect(() => {
         getUserCountryName().then(name => setCountryName(name));
     }, [])
+
+    useEffect(() => {
+        
+    }, [eventsArtists])
 
     useEffect(() => {
         const fetchUpcoming = async () => {
@@ -107,9 +111,8 @@ const page = observer(() => {
                 }
                 return 0; // даты равны
             });
-
-            setEventsArtists(updatedEvents);
             setLoading(false);
+            setEventsArtists(updatedEvents);
         }
         fetchEventsArtists();
         fetchUpcoming();
@@ -204,7 +207,7 @@ const page = observer(() => {
 
                 {
                     !loading ? (
-                        eventsArtists.length > 0 ? (
+                        eventsArtists.length > 0 && (
                             <>
                                 <p className="font-bold text-3xl p-4 plselect-none">Now in tour</p>
                                 {eventsArtists.map((event, index) => (
@@ -259,9 +262,6 @@ const page = observer(() => {
                                     </div>
                                 ))}
                             </>
-                        ) : (
-                            <div className="flex justify-center items-center h-full w-full">
-                            </div>
                         )
                     ) : (
                         Array.from({ length: 3 }).map((_, index) => (
@@ -302,6 +302,6 @@ const page = observer(() => {
             </div>
         </div>
     );
-});
+};
 
-export default page;
+export default observer(page);

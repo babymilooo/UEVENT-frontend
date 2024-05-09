@@ -36,7 +36,7 @@ const Navbar = () => {
                     userStore.setLoggedIn(true);
                 }
             } catch (error) {
-                console.error("Authentication check failed", error);
+                // console.error("Authentication check failed", error);
             }
         };
 

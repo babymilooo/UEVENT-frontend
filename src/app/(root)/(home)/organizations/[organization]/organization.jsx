@@ -33,10 +33,10 @@ const Render = ({ res, eventsData }) => {
     const isVerified = organization.isVerified;
 
     const router = useRouter();
-
+    // console.log(eventsData);
     useEffect(() => {
         const fetchAddress = async () => {
-            if (eventsData.length > 0 && eventsData.events) {
+            if (eventsData.length > 0) {
                 const updatedEvents = await Promise.all(
                     eventsData.map(async (event) => {
                         const eventDate = new Date(event.date);
@@ -52,7 +52,7 @@ const Render = ({ res, eventsData }) => {
                         };
                     })
                 );
-
+                console.log(updatedEvents);
                 setEvents(updatedEvents);
             }
         };
@@ -91,28 +91,28 @@ const Render = ({ res, eventsData }) => {
                         </p>
                         <div className="grid grid-cols-2 gap-1">
                             {
-                                loading ? <div></div> :
+                                !loading &&
 
-                                    events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer"
-                                        style={{ backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}` }}
-                                        onClick={() => (router.push(`/events/${event._id}`))}
-                                    >
-                                        <div className="absolute inset-0 bg-black opacity-60"></div>
-                                        <CardContent className="flex items-center h-full w-full">
-                                            <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
-                                                <div className="flex flex-col items-center justify-center w-full h-full z-10">
-                                                    <p className="font-bold text-white">{event.month}</p>
-                                                    <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
+                                events.map((event, index) => (<Card key={index} className="relative flex w-full items-end bg-cover bg-center select-none overflow-hidden h-[80px] mb-1 cursor-pointer"
+                                    style={{ backgroundImage: `url('${event.picture ? event.picture : "/gradient.jpeg"}` }}
+                                    onClick={() => (router.push(`/events/${event._id}`))}
+                                >
+                                    <div className="absolute inset-0 bg-black opacity-60"></div>
+                                    <CardContent className="flex items-center h-full w-full">
+                                        <div className="bg-neutral-800 w-[75px] rounded-md h-full flex ">
+                                            <div className="flex flex-col items-center justify-center w-full h-full z-10">
+                                                <p className="font-bold text-white">{event.month}</p>
+                                                <p className="text-4xl font-bold text-white">{event.dayOfMonth}</p>
 
-                                                </div>
                                             </div>
-                                            <div className="flex flex-col">
-                                                <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
-                                                <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
-                                                <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
-                                            </div>
-                                        </CardContent>
-                                    </Card>))
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <p className="text-[10px] font-bold ml-2 text-white z-10">{event.address}</p>
+                                            <p className="text-[12px] font-bold ml-2 text-white z-10">{event.name}</p>
+                                            <p className="text-[12px] font-bold ml-2 text-white z-10">{event.dayOfWeek} {event.time}</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>))
 
                             }
                         </div>

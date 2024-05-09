@@ -33,7 +33,7 @@ $api.interceptors.response.use((config) => {
             console.error("Non authorized");
         }
     }
-    throw error;
+    // throw error;
 });
 
 export default $api;
